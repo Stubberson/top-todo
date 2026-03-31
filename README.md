@@ -1,0 +1,2 @@
+# To-do list
+[An intermediate JS project within the Odin Project.](https://www.theodinproject.com/lessons/node-path-javascript-todo-list) The focus is in solidifying the learnings about `npm`, Webpack, OOP, and SOLID.

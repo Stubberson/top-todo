@@ -1,0 +1,23 @@
+{
+  "name": "top-todo",
+  "version": "1.0.0",
+  "description": "[An intermediate JS project within the Odin Project.](https://www.theodinproject.com/lessons/node-path-javascript-todo-list) The focus is in solidifying the learnings about `npm`, Webpack, OOP, and SOLID.",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack serve --open --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Stubberson/top-todo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Stubberson/top-todo/issues"
+  },
+  "homepage": "https://github.com/Stubberson/top-todo#readme"
+}

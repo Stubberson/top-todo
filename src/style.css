@@ -1,11 +1,26 @@
 body {
-    background-color: aliceblue;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+
+    display: flex;
 }
 
-h1 {
-    color: red;
+div.sidebar-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    max-width: calc(100vh / 3);
+    background-color: whitesmoke;
 }
 
-h2 {
-    color: blue;
+ul.projects-list {
+    flex-grow: 1;
+}
+
+div.content-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }

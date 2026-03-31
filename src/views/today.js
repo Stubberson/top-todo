@@ -1,10 +1,16 @@
-import { container as contentContainer, viewHeader, viewDescription, projectHeader, projectDescription } from "../layout/content.js";
+import { createSidebarLayout } from '../layout/sidebar.js'
+import { createContentLayout } from '../layout/content.js'
+// Define the content on the Today/Home view
 
-viewHeader.innerText = 'Today'
-viewDescription.innerText = "Today's tasks"
-projectHeader.innerText = 'Project Header'
-projectDescription.innerText = "Project's tasks"
+const sidebarContainerToday = createSidebarLayout()
+const contentContainerToday = createContentLayout()
 
-contentContainer.append(viewHeader, viewDescription, projectHeader, projectDescription)
+sidebarContainerToday.header.innerText = 'Projects'
+sidebarContainerToday.newProjectButton.innerText = 'New Project'
 
-export default contentContainer
+contentContainerToday.header.innerText = 'Today'
+contentContainerToday.description.innerText = "Today's tasks"
+contentContainerToday.project.innerText = 'Project Header'
+contentContainerToday.projectDescription.innerText = "Project's tasks"
+
+export { contentContainerToday, sidebarContainerToday }

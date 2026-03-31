@@ -1,5 +1,8 @@
 import './style.css'
-import contentToday from './views/today.js'
+import { contentContainerToday, sidebarContainerToday } from './views/today.js'
 
 const body = document.querySelector('body')
-body.appendChild(contentToday)
+const sidebarToday = sidebarContainerToday.sidebar
+const contentToday = contentContainerToday.root
+
+body.append(sidebarToday, contentToday)

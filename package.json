@@ -19,5 +19,10 @@
   "bugs": {
     "url": "https://github.com/Stubberson/top-todo/issues"
   },
-  "homepage": "https://github.com/Stubberson/top-todo#readme"
+  "homepage": "https://github.com/Stubberson/top-todo#readme",
+  "devDependencies": {
+    "webpack": "^5.105.4",
+    "webpack-cli": "^7.0.2",
+    "webpack-merge": "^6.0.1"
+  }
 }

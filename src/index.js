@@ -1,8 +1,16 @@
 import './style.css'
-import { contentContainerToday, sidebarContainerToday } from './views/today.js'
+import { currentDate } from './features/sidebar-funcs.js'
 
-const body = document.querySelector('body')
-const sidebarToday = sidebarContainerToday.sidebar
-const contentToday = contentContainerToday.root
+const projectDialog = document.querySelector('dialog.project-dialog')
+const dueDate = document.querySelector('input#due-date')
+dueDate.min = currentDate
+const newProjectButton = document.querySelector('button#new-project')
+newProjectButton.addEventListener('click', () => {
+    document.body.appendChild(projectDialog)
+    projectDialog.showModal()
+})
 
-body.append(sidebarToday, contentToday)
+const closeDialogButton = document.querySelector('button#close-project-dialog')
+closeDialogButton.addEventListener('click', () => {
+  projectDialog.close()
+})

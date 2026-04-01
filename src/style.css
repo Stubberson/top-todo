@@ -6,7 +6,7 @@ body {
     display: flex;
 }
 
-div.sidebar-container {
+div.sidebar {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -19,7 +19,7 @@ ul.projects-list {
     flex-grow: 1;
 }
 
-div.content-container {
+div.content {
     display: flex;
     flex-direction: column;
     flex-grow: 1;

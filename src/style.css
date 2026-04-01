@@ -24,3 +24,8 @@ div.content {
     flex-direction: column;
     flex-grow: 1;
 }
+
+dialog.project-dialog > form {
+    display: flex;
+    flex-direction: column;
+}

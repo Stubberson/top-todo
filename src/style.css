@@ -16,7 +16,56 @@ div.sidebar {
 }
 
 ul.projects-list {
+    padding: 0;
+
     flex-grow: 1;
+}
+
+ul.projects-list > li {
+    list-style: none;
+    
+    display: flex;
+
+    padding: 1em;
+}
+
+ul.projects-list > li > button {
+    border: none;
+    background-color: inherit;
+
+    text-align: left;
+}
+
+ul.projects-list > li:hover > button {
+    cursor: pointer;
+}
+
+ul.projects-list > li > button {
+    display: flex;
+    flex-direction: column;
+}
+
+ul.projects-list > li > button > span.li-title {
+    text-transform: capitalize;
+    font-weight: bold;
+}
+
+ul.projects-list > li > button > span.li-date {
+    font-size: small;
+    font-style: italic;
+    font-weight: lighter;
+}
+
+ul.projects-list > li > button#rm-li-btn {
+    margin-left: auto;
+    align-self: center;
+
+    width: 12px;
+    height: 12px;
+}
+
+ul.projects-list > li:hover > button#rm-li-btn {
+    background-color: red;
 }
 
 div.content {

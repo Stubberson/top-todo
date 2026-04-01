@@ -8,9 +8,7 @@
 <body>
     <div class="sidebar">
         <h2>Projects</h2>
-        <ul class="projects-list">
-
-        </ul>
+        <ul class="projects-list"></ul>
         <button id="new-project">New Project</button>
         <dialog class="project-dialog">
             <button id="close-project-dialog">Close</button>
@@ -22,11 +20,11 @@
                 <label for="description">Description</label>
                 <input type="text" id="description">
 
-                <label for="due-date">Due date</label>
-                <input type="date" id="due-date">
+                <label for="due-date-dialog">Due date</label>
+                <input type="date" name="due-date" class="due-date" id="due-date-dialog">
 
-                <label for="priority">Priority</label>
-                <select id="priority">
+                <label for="priority-selection-dialog">Priority</label>
+                <select name="priority-selection" class="priority-selection" id="priority-selection-dialog">
                     <option value="">Select</option>
                     <option value="high">Urgent</option>
                     <option value="medium">Upcoming</option>
@@ -37,9 +35,9 @@
             </form>
         </dialog>
     </div>
-    <div class="content">
+    <div class="project-content">
         <h1>Today</h1>
-        <p class="description">Today's tasks:</p>
+        <p class="project-description"></p>
     </div>
 </body>
 </html>

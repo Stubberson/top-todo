@@ -1,9 +1,10 @@
 // --- Utility for the sidebar ---
+import { openProject } from './content-funcs.js'
 
 const date = new Date()
-export let currentDate = date.toJSON().slice(0, 10)  // Set current date as min value for new due date
+let currentDate = date.toJSON().slice(0, 10)  // Set current date as min value for new due date
 
-export function listProject(project) {
+function listProject(project) {
     const projectsList = document.querySelector('ul.projects-list')
     
     const listItem = document.createElement('li')
@@ -12,6 +13,7 @@ export function listProject(project) {
     const listItemDate = document.createElement('span')
     const removeItemButton = document.createElement('button')
     
+    textContainer.classList.add('project-button')
     listItemTitle.classList.add('li-title')
     listItemDate.classList.add('li-date')
     removeItemButton.id = 'rm-li-btn'
@@ -23,4 +25,10 @@ export function listProject(project) {
     listItem.append(textContainer, removeItemButton)
 
     projectsList.appendChild(listItem)
-}
+
+    textContainer.addEventListener('click', () => {
+        openProject(project)
+    })
+};
+
+export { currentDate, listProject }

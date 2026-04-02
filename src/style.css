@@ -1,9 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:ital,wght@0,200..800;1,200..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 body {
+    font-family: "Atkinson Hyperlegible", sans-serif;
+
     margin: 0;
     padding: 0;
     height: 100vh;
 
     display: flex;
+}
+
+button {
+    border: none;
+    border-radius: 0.5em;
+    background-color: inherit;
+    text-align: left;
+
+    padding: 0.5em;
+    margin: 0;
+}
+
+button:hover {
+    cursor: pointer;
+
+    background-color: yellowgreen;
 }
 
 div.sidebar {
@@ -12,7 +32,13 @@ div.sidebar {
     flex-grow: 1;
 
     max-width: calc(100vh / 3);
+    min-width: calc(100vh / 3);
     background-color: whitesmoke;
+}
+
+div.sidebar > div.priority-classes {
+    display: flex;
+    flex-direction: column;
 }
 
 ul.projects-list {
@@ -30,23 +56,11 @@ ul.projects-list > li {
 }
 
 ul.projects-list > li > button {
-    border: none;
-    background-color: inherit;
-
-    text-align: left;
-}
-
-ul.projects-list > li:hover > button {
-    cursor: pointer;
-}
-
-ul.projects-list > li > button {
     display: flex;
     flex-direction: column;
 }
 
 ul.projects-list > li > button > span.li-title {
-    text-transform: capitalize;
     font-weight: bold;
 }
 
@@ -62,19 +76,43 @@ ul.projects-list > li > button#rm-li-btn {
 
     width: 12px;
     height: 12px;
+
+    border-radius: 50%;
 }
 
 ul.projects-list > li:hover > button#rm-li-btn {
     background-color: red;
 }
 
-div.project-content {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
 dialog.project-dialog > form {
     display: flex;
     flex-direction: column;
+
+    width: 280px;
+}
+
+dialog.project-dialog button {
+    padding-left: 0;
+}
+
+div.content-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    margin: 2em;
+}
+
+div.content-container > .cm-editor {
+    border: none;
+    border-radius: 0.5em;
+    background-color: whitesmoke;
+}
+
+div.content-container > .cm-editor:hover {
+    background-color: rgb(220, 220, 220);
+}
+
+.cm-editor .cm-content {
+  font-family: "Atkinson Hyperlegible Mono", sans-serif;
 }

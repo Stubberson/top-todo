@@ -1,51 +1,20 @@
+import { Project } from './project-class.js'
+import { currentDate, clearContent } from '../utilities/utility.js'
+import { editor } from '../utilities/cm.js'
+
 // --- Project DOM control ---
 
-const projectContainer = document.querySelector('div.project-content')
+const projectContainer = document.querySelector('div.content-container')
+const projectDialog = document.querySelector('dialog.project-dialog')
+const dueDate = document.querySelector('form > input.due-date')
+dueDate.min = currentDate
 
-function clearContent() {
-    while (projectContainer.firstChild) {
-        projectContainer.firstChild.remove()
-    }
-}
-
-function listProject(project) {
-    const projectsList = document.querySelector('ul.projects-list')
-    
-    const listItem = document.createElement('li')
-    const textContainer = document.createElement('button')
-    const listItemTitle = document.createElement('span')
-    const listItemDate = document.createElement('span')
-    const removeItemButton = document.createElement('button')
-    
-    textContainer.classList.add('project-button')
-    listItemTitle.classList.add('li-title')
-    listItemDate.classList.add('li-date')
-    removeItemButton.id = 'rm-li-btn'
-
-    listItemTitle.textContent = project.getTitle
-    listItemDate.textContent = project.getDate
-
-    textContainer.append(listItemTitle, listItemDate)
-    listItem.append(textContainer, removeItemButton)
-
-    projectsList.appendChild(listItem)
-
-    clearContent()  // Clear project content before opening new
-    openProject(project)  // Open project after creation
-    textContainer.addEventListener('click', () => {
-        clearContent()
-        openProject(project)  // Allow to open project from sidebar
-    })
-}
-
-function openProject(project) {
+function viewProject(project) {
     const projectHeader = document.createElement('h1')
-    const projectDescription = document.createElement('p')
 
     projectHeader.textContent = project.getTitle
 
-    projectDescription.className = 'project-description'
-    projectDescription.textContent = project.getDescription
+    editor.dispatch({ changes: {from: 0, insert: project.getDescription} })  // Add an editable description for the project
 
     const projectDueDate = document.createElement('input')
     const projectPriority = document.createElement('select')
@@ -72,7 +41,48 @@ function openProject(project) {
     projectDueDate.value = project.getDate
     projectPriority.value = project.getPriority
     
-    projectContainer.append(projectHeader, projectDescription, projectDueDate, projectPriority)
+    projectContainer.append(projectHeader, editor.dom, projectDueDate, projectPriority)
 };
 
-export { listProject, openProject }
+function listProject(project) {
+    const projectsList = document.querySelector('ul.projects-list')
+    
+    const listItem = document.createElement('li')
+    const textContainer = document.createElement('button')
+    const listItemTitle = document.createElement('span')
+    const listItemDate = document.createElement('span')
+    const removeItemButton = document.createElement('button')
+    
+    textContainer.classList.add('project-button')
+    listItemTitle.classList.add('li-title')
+    listItemDate.classList.add('li-date')
+    removeItemButton.id = 'rm-li-btn'
+
+    listItemTitle.textContent = project.getTitle
+    listItemDate.textContent = project.getDate
+
+    textContainer.append(listItemTitle, listItemDate)
+    listItem.append(textContainer, removeItemButton)
+
+    projectsList.appendChild(listItem)
+
+    clearContent(projectContainer)  // Clear project content before opening new
+    viewProject(project)  // Open project after creation
+    textContainer.addEventListener('click', () => {
+        clearContent(projectContainer)
+        viewProject(project)  // Allow to open project from sidebar
+    })
+}
+
+function createProject() {
+    const projectTitle = document.querySelector('form > input#title').value
+    const projectDescription = document.querySelector('form > input#description').value
+    const dueDate = document.querySelector('form > input.due-date').value
+    const projectPriority = document.querySelector('form > select').value
+    
+    const newProject = new Project(projectTitle, projectDescription, dueDate, projectPriority)
+
+    listProject(newProject)
+};
+
+export { projectDialog, createProject }

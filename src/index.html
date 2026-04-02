@@ -7,7 +7,11 @@
 </head>
 <body>
     <div class="sidebar">
-        <h2>Projects</h2>
+        <div class="priority-classes">
+            <button id="button-today">Today</button>
+            <button id="button-upcoming">Upcoming</button>
+            <button id="button-someday">Someday</button>
+        </div>
         <ul class="projects-list"></ul>
         <button id="new-project">New Project</button>
         <dialog class="project-dialog">
@@ -31,11 +35,11 @@
                     <option value="low">Someday</option>
                 </select>
 
-                <button formmethod="dialog" id="submit-dialog">Create project</button>
+                <button formmethod="dialog" id="submit-project-dialog">Create project</button>
             </form>
         </dialog>
     </div>
-    <div class="project-content">
+    <div class="content-container">
     </div>
 </body>
 </html>

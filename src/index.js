@@ -1,7 +1,7 @@
 import './style.css'
-import { currentDate, listProject } from './features/sidebar-funcs.js'
-import { viewProject } from './features/content-funcs.js'
-import { Project } from './tabs/project.js'
+import { Project } from './project/project-class.js'
+import { listProject } from './project/project-dom.js'
+import { currentDate } from './utilities/utility.js'
 
 (function toggleProjectDialog() {
     const projectDialog = document.querySelector('dialog.project-dialog')

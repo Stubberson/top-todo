@@ -1,4 +1,12 @@
-// --- Utility for the project ---
+// --- Project DOM control ---
+
+const projectContainer = document.querySelector('div.project-content')
+
+function clearContent() {
+    while (projectContainer.firstChild) {
+        projectContainer.firstChild.remove()
+    }
+}
 
 function listProject(project) {
     const projectsList = document.querySelector('ul.projects-list')
@@ -22,19 +30,21 @@ function listProject(project) {
 
     projectsList.appendChild(listItem)
 
+    clearContent()  // Clear project content before opening new
+    openProject(project)  // Open project after creation
     textContainer.addEventListener('click', () => {
-        openProject(project)
+        clearContent()
+        openProject(project)  // Allow to open project from sidebar
     })
-};
-
-
+}
 
 function openProject(project) {
-    const projectContainer = document.querySelector('div.project-content')
-    let projectHeader = document.querySelector('div.project-content > h1')
-    let projectDescription = document.querySelector('p.project-description')
+    const projectHeader = document.createElement('h1')
+    const projectDescription = document.createElement('p')
 
     projectHeader.textContent = project.getTitle
+
+    projectDescription.className = 'project-description'
     projectDescription.textContent = project.getDescription
 
     const projectDueDate = document.createElement('input')
@@ -53,16 +63,16 @@ function openProject(project) {
     })
 
     projectDueDate.type = 'date'
-    projectDueDate.classList.add('due-date')
+    projectDueDate.className = 'due-date'
     projectDueDate.name = 'project-due-date'
 
-    projectPriority.classList.add('priority-selection')
+    projectPriority.className = 'priority-selection'
     projectPriority.name = 'project-priority'
 
     projectDueDate.value = project.getDate
     projectPriority.value = project.getPriority
     
-    projectContainer.append(projectDueDate, projectPriority)
+    projectContainer.append(projectHeader, projectDescription, projectDueDate, projectPriority)
 };
 
 export { listProject, openProject }

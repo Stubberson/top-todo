@@ -68,7 +68,7 @@ ul.projects-list > li:hover > button#rm-li-btn {
     background-color: red;
 }
 
-div.content {
+div.project-content {
     display: flex;
     flex-direction: column;
     flex-grow: 1;

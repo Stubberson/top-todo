@@ -1,5 +1,4 @@
 import { currentDate, clearContent } from '../utilities/utility.js'
-import { editor } from '../utilities/cm.js'
 
 // --- Today's tasks DOM control ---
 
@@ -19,7 +18,7 @@ function viewToday() {
     todayTaskTwo.textContent = "Second task for today!"
     todayTaskList.append(todayTaskOne, todayTaskTwo)
 
-    todayContainer.append(todayHeader, todayTaskList, editor.dom)
+    todayContainer.append(todayHeader, todayTaskList)
 }
 
 

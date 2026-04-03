@@ -103,16 +103,16 @@ div.content-container {
     margin: 2em;
 }
 
-div.content-container > .cm-editor {
+div.content-container > textarea {
+    font-family: "Atkinson Hyperlegible Mono", sans-serif;
+    background-color: inherit;
+    
     border: none;
     border-radius: 0.5em;
+    
+    resize: vertical;
+}
+
+div.content-container > textarea:hover {
     background-color: whitesmoke;
-}
-
-div.content-container > .cm-editor:hover {
-    background-color: rgb(220, 220, 220);
-}
-
-.cm-editor .cm-content {
-  font-family: "Atkinson Hyperlegible Mono", sans-serif;
 }

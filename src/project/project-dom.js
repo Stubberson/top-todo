@@ -1,6 +1,5 @@
 import { Project } from './project-class.js'
 import { currentDate, clearContent } from '../utilities/utility.js'
-import { editor } from '../utilities/cm.js'
 
 // --- Project DOM control ---
 
@@ -11,15 +10,19 @@ dueDate.min = currentDate
 
 function viewProject(project) {
     const projectHeader = document.createElement('h1')
+    const projectDescription = document.createElement('textarea')
+    const projectDueDate = document.createElement('input')
+    const projectPriority = document.createElement('select')
 
     projectHeader.textContent = project.getTitle
 
-    editor.dispatch({ changes: {from: 0, insert: project.getDescription} })  // Add an editable description for the project
+    projectDescription.textContent = project.getDescription
+    projectDescription.name = 'description-area'
+    projectDescription.placeholder = 'Add a description for your project...'
+    projectDescription.rows = 3
 
-    const projectDueDate = document.createElement('input')
-    const projectPriority = document.createElement('select')
-    
     const priorityOptions = [
+        { value: "", text: "Priority" },
         { value: "high", text: "Urgent" },
         { value: "medium", text: "Upcoming" },
         { value: "low", text: "Someday" }
@@ -41,7 +44,7 @@ function viewProject(project) {
     projectDueDate.value = project.getDate
     projectPriority.value = project.getPriority
     
-    projectContainer.append(projectHeader, editor.dom, projectDueDate, projectPriority)
+    projectContainer.append(projectHeader, projectDescription, projectDueDate, projectPriority)
 };
 
 function listProject(project) {

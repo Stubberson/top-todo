@@ -24,7 +24,17 @@ import { projectDialog, createProject } from './project/project-dom.js'
         projectDialog.close()
     })
 
-    submitDialogButton.addEventListener('click', () => {
-        createProject()
+    submitDialogButton.addEventListener('click', (event) => {
+        const projectTitle = document.querySelector('form > .project-title')
+        if (projectTitle.value.length < 3) {
+            event.preventDefault()
+            projectTitle.style['outline'] = '1px auto red'
+            projectTitle.focus()
+        } else {
+            createProject()
+            projectTitle.value = ''
+            projectTitle.style.removeProperty('outline')
+        }
     })
+
 })();

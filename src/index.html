@@ -13,16 +13,23 @@
             <button id="button-someday">Someday</button>
         </div>
         <ul class="projects-list"></ul>
+    </div>
+    <div class="content-container">
+    </div>
+    <div class="footer">
         <button id="new-project">New Project</button>
+    </div>
+
+    <div id="project-dialog">
         <dialog class="project-dialog">
             <button id="close-project-dialog">Close</button>
             <form>
                 <h2>New Project</h2>
-                <label for="title">Title</label>
-                <input type="text" id="title" autocomplete="off" autofocus>
+                <label for="dialog-project-title">Title (min. 3 characters)</label>
+                <input type="text" id="dialog-project-title" class="project-title" placeholder="Required" autocomplete="off" autofocus>
 
-                <label for="description">Description</label>
-                <input type="text" id="description" autocomplete="off">
+                <label for="dialog-project-description">Description</label>
+                <input type="text" id="dialog-project-description" class="project-description" autocomplete="off">
 
                 <label for="due-date-dialog">Due date</label>
                 <input type="date" name="due-date" class="due-date" id="due-date-dialog">
@@ -38,8 +45,6 @@
                 <button formmethod="dialog" id="submit-project-dialog">Create project</button>
             </form>
         </dialog>
-    </div>
-    <div class="content-container">
     </div>
 </body>
 </html>

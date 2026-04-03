@@ -7,12 +7,12 @@ body {
     padding: 0;
     height: 100vh;
 
-    display: flex;
+    display: grid;
+    grid-template: 1fr 2em / 25% 1fr;
 }
 
 button {
     border: none;
-    border-radius: 0.5em;
     background-color: inherit;
     text-align: left;
 
@@ -29,10 +29,7 @@ button:hover {
 div.sidebar {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
 
-    max-width: calc(100vh / 3);
-    min-width: calc(100vh / 3);
     background-color: whitesmoke;
 }
 
@@ -43,8 +40,6 @@ div.sidebar > div.priority-classes {
 
 ul.projects-list {
     padding: 0;
-
-    flex-grow: 1;
 }
 
 ul.projects-list > li {
@@ -98,7 +93,6 @@ dialog.project-dialog button {
 div.content-container {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
 
     margin: 2em;
 }
@@ -115,4 +109,8 @@ div.content-container > textarea {
 
 div.content-container > textarea:hover {
     background-color: whitesmoke;
+}
+
+div.footer {
+    border-top: solid 1px whitesmoke;
 }

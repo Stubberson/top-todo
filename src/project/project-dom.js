@@ -6,17 +6,16 @@ import { currentDate, clearContent } from '../utilities/utility.js'
 const projectsList = document.querySelector('ul.projects-list')
 const projectContainer = document.querySelector('div.content-container')
 const projectForm = document.querySelector('form')
-const projectDialog = document.querySelector('dialog.project-dialog')
-const dueDate = document.querySelector('form > input.due-date')
-dueDate.min = currentDate
+const projectDialog = document.querySelector('dialog.dialog-project')
+const dueDate = document.querySelector('#dialog-due-date')
+dueDate.min = currentDate  // Do not allow setting due dates into the past
 
 function createProject() {
-    const projectTitle = document.querySelector('form > input.project-title').value
-    const projectDescription = document.querySelector('form > input.project-description').value
-    const dueDate = document.querySelector('form > input.due-date').value
-    const projectPriority = document.querySelector('form > select').value
+    const projectTitle = document.querySelector('form > input.project-title')
+    const projectDescription = document.querySelector('form > input.project-description')
+    const projectPriority = document.querySelector('form > select')
     
-    const newProject = new Project(projectTitle, projectDescription, dueDate, projectPriority)
+    const newProject = new Project(projectTitle.value, projectDescription.value, dueDate.value, projectPriority.value)
 
     listProject(newProject)
     
@@ -30,10 +29,10 @@ function listProject(project) {
     const listItemDate = document.createElement('span')
     const removeItemButton = document.createElement('button')
     
-    textContainer.classList.add('project-button')
-    listItemTitle.classList.add('li-title')
-    listItemDate.classList.add('li-date')
-    removeItemButton.id = 'rm-li-btn'
+    textContainer.id = 'li-button'
+    listItemTitle.id = 'li-title'
+    listItemDate.id = 'li-date'
+    removeItemButton.id = 'li-rm-button'
 
     listItemTitle.textContent = project.getTitle
     listItemDate.textContent = project.getDate
@@ -43,11 +42,12 @@ function listProject(project) {
 
     projectsList.appendChild(listItem)
 
-    clearContent(projectContainer)  // Clear project content before opening new
-    viewProject(project)  // Open project after creation
+    clearContent(projectContainer)      // Clear content view before opening new project
+    viewProject(project, listItemTitle, listItemDate)  // Open project after creation
+    
     textContainer.addEventListener('click', () => {
         clearContent(projectContainer)
-        viewProject(project)  // Allow to open project from sidebar
+        viewProject(project, listItemTitle, listItemDate)  // Allow to open project from sidebar
     })
 
     removeItemButton.addEventListener('click', () => {
@@ -59,25 +59,41 @@ function listProject(project) {
     })
 };
 
-function viewProject(project) {
-    const projectHeader = document.createElement('h1')
+function viewProject(project, listItemTitle, listItemDate) {
+    const projectHeader = document.createElement('input')
     const projectDescription = document.createElement('textarea')
     const projectDueDate = document.createElement('input')
     const projectPriority = document.createElement('select')
 
-    projectHeader.textContent = project.getTitle
+    projectHeader.id = 'content-project-title'
+    projectHeader.type = 'text'
+    projectHeader.className = 'project-title'
+    projectHeader.minLength = 3
+    projectHeader.value = project.getTitle
 
-    projectDescription.textContent = project.getDescription
-    projectDescription.name = 'description-area'
-    projectDescription.placeholder = 'Add a description for your project...'
+    // Update project header when header edited in content view
+    projectHeader.addEventListener('input', () => {
+        listItemTitle.textContent = projectHeader.value
+        project.setTitle = projectHeader.value
+    })
+
+    projectDescription.id = 'project-description-area'
+    projectDescription.placeholder = 'Add project description...'
     projectDescription.rows = 3
+    projectDescription.textContent = project.getDescription
 
+    projectDescription.addEventListener('input', () => {
+        project.setDescription = projectDescription.value
+    })
+
+    // Create priority options for project content view
     const priorityOptions = [
         { value: "", text: "Priority" },
         { value: "high", text: "Urgent" },
         { value: "medium", text: "Upcoming" },
         { value: "low", text: "Someday" }
     ]
+
     priorityOptions.forEach(opt => {
         const option = document.createElement('option')
         option.value = opt.value
@@ -85,20 +101,27 @@ function viewProject(project) {
         projectPriority.appendChild(option)
     })
 
+    projectDueDate.id = 'content-due-date'
     projectDueDate.type = 'date'
     projectDueDate.className = 'due-date'
-    projectDueDate.name = 'project-due-date'
+    projectDueDate.min = currentDate
+    projectDueDate.value = project.getDate
+
+    projectDueDate.addEventListener('input', () => {
+        listItemDate.textContent = projectDueDate.value
+        project.setDate = projectDueDate.value
+    })
 
     projectPriority.className = 'priority-selection'
     projectPriority.name = 'project-priority'
-
-    projectDueDate.value = project.getDate
     projectPriority.value = project.getPriority
+
+    projectPriority.addEventListener('input', () => {
+        project.setPriority = projectPriority.value
+    })
     
     projectContainer.append(projectHeader, projectDescription, projectDueDate, projectPriority)
 };
-
-
 
 function removeProject(listItem, project) {
     projectsList.removeChild(listItem)

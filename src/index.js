@@ -9,8 +9,8 @@ import { projectDialog, createProject } from './project/project-dom.js'
 (function listenIndexEvents() {
     const todayTasks = document.querySelector('button#button-today')
     const newProjectButton = document.querySelector('button#new-project')
-    const closeDialogButton = document.querySelector('button#close-project-dialog')
-    const submitDialogButton = document.querySelector('button#submit-project-dialog')
+    const closeDialogButton = document.querySelector('button#dialog-close')
+    const submitDialogButton = document.querySelector('button#dialog-submit')
 
     todayTasks.addEventListener('click', () => {
         viewToday()
@@ -26,6 +26,7 @@ import { projectDialog, createProject } from './project/project-dom.js'
 
     submitDialogButton.addEventListener('click', (event) => {
         const projectTitle = document.querySelector('form > .project-title')
+        // THIS IS STILL JANKY
         if (projectTitle.value.length < 3) {
             event.preventDefault()
             projectTitle.style['outline'] = '1px auto red'

@@ -51,7 +51,7 @@ ul.projects-list > li {
     padding: 1em;
 }
 
-ul.projects-list > li > button.project-button {
+ul.projects-list > li > button#li-button {
     display: flex;
     flex-direction: column;
 
@@ -68,7 +68,7 @@ ul.projects-list > li > button > span.li-date {
     font-weight: lighter;
 }
 
-ul.projects-list > li > button#rm-li-btn {
+ul.projects-list > li > button#li-rm-button {
     margin-left: auto;
     align-self: center;
 
@@ -78,18 +78,18 @@ ul.projects-list > li > button#rm-li-btn {
     border-radius: 50%;
 }
 
-ul.projects-list > li:hover > button#rm-li-btn {
+ul.projects-list > li:hover > button#li-rm-button {
     background-color: red;
 }
 
-dialog.project-dialog > form {
+dialog.dialog-project > form {
     display: flex;
     flex-direction: column;
 
     width: 280px;
 }
 
-dialog.project-dialog button {
+dialog.dialog-project button {
     padding-left: 0;
 }
 
@@ -98,6 +98,13 @@ div.content-container {
     flex-direction: column;
 
     margin: 2em;
+}
+
+div.content-container > input#content-project-title {
+    font-size: 2em;
+    font-weight: 700;
+
+    border: none;
 }
 
 div.content-container > textarea {

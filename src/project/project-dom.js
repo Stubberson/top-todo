@@ -5,26 +5,22 @@ import { currentDate, clearContent } from '../utilities/utility.js'
 
 const projectsList = document.querySelector('ul.projects-list')
 const projectContainer = document.querySelector('div.content-container')
+const projectForm = document.querySelector('form')
 const projectDialog = document.querySelector('dialog.project-dialog')
 const dueDate = document.querySelector('form > input.due-date')
 dueDate.min = currentDate
 
 function createProject() {
-    let projectTitle = document.querySelector('form > input.project-title').value
-    let projectDescription = document.querySelector('form > input.project-description').value
-    let dueDate = document.querySelector('form > input.due-date').value
-    let projectPriority = document.querySelector('form > select').value
+    const projectTitle = document.querySelector('form > input.project-title').value
+    const projectDescription = document.querySelector('form > input.project-description').value
+    const dueDate = document.querySelector('form > input.due-date').value
+    const projectPriority = document.querySelector('form > select').value
     
     const newProject = new Project(projectTitle, projectDescription, dueDate, projectPriority)
 
-    // DOESN'T WORK!
-    // Reset the dialog after the project has been created
-    projectTitle = ''
-    projectDescription = ''
-    dueDate = ''
-    projectPriority = ''
-
     listProject(newProject)
+    
+    projectForm.reset()  // Reset form after project created
 };
 
 function listProject(project) {    
@@ -55,7 +51,10 @@ function listProject(project) {
     })
 
     removeItemButton.addEventListener('click', () => {
-        clearContent(projectContainer)
+        // Only clear content if currently viewed project is removed
+        if (project.getTitle === projectContainer.firstChild.value) {
+            clearContent(projectContainer)
+        }
         removeProject(listItem, project)
     })
 };

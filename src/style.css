@@ -46,13 +46,16 @@ ul.projects-list > li {
     list-style: none;
     
     display: flex;
+    gap: 1em;
 
     padding: 1em;
 }
 
-ul.projects-list > li > button {
+ul.projects-list > li > button.project-button {
     display: flex;
     flex-direction: column;
+
+    flex-grow: 1;
 }
 
 ul.projects-list > li > button > span.li-title {

@@ -32,7 +32,6 @@ import { projectDialog, createProject } from './project/project-dom.js'
             projectTitle.focus()
         } else {
             createProject()
-            projectTitle.value = ''
             projectTitle.style.removeProperty('outline')
         }
     })

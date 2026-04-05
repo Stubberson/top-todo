@@ -127,12 +127,18 @@ div.content-container > textarea:hover {
     background-color: whitesmoke;
 }
 
-div.content-container > input#content-due-date {
+div.content-container input#content-due-date {
     width: 125px;
 }
 
-div.content-container > select#content-priority-selection {
+div.content-container select#content-priority-selection {
     width: 130px;
+}
+
+div.content-container > div > input.task-description {
+    font-family: "Atkinson Hyperlegible Mono", sans-serif;
+    border: none;
+    outline: none;
 }
 
 div.new-project-container {

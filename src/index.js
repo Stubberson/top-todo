@@ -24,17 +24,7 @@ import { projectDialog, createProject } from './project/project-dom.js'
         projectDialog.close()
     })
 
-    submitDialogButton.addEventListener('click', (event) => {
-        const projectTitle = document.querySelector('form > .project-title')
-        // THIS IS STILL JANKY
-        if (projectTitle.value.length < 3) {
-            event.preventDefault()
-            projectTitle.style['outline'] = '1px auto red'
-            projectTitle.focus()
-        } else {
-            createProject()
-            projectTitle.style.removeProperty('outline')
-        }
+    submitDialogButton.addEventListener('click', () => {
+        createProject()
     })
-
 })();

@@ -1,4 +1,5 @@
 import { Project } from './project-class.js'
+import { createTask } from '../tasks/create-task.js'
 import { currentDate, clearContent } from '../utilities/utility.js'
 
 // --- Project DOM control ---
@@ -42,7 +43,7 @@ function listProject(project) {
 
     projectsList.appendChild(listItem)
 
-    clearContent(projectContainer)      // Clear content view before opening new project
+    clearContent(projectContainer)                     // Clear content view before opening new project
     viewProject(project, listItemTitle, listItemDate)  // Open project after creation
     
     textContainer.addEventListener('click', () => {
@@ -64,68 +65,71 @@ function viewProject(project, listItemTitle, listItemDate) {
     const projectDescription = document.createElement('textarea')
     const projectDueDate = document.createElement('input')
     const projectPriority = document.createElement('select')
+    const addTaskButton = document.createElement('button')
 
-    projectHeader.id = 'content-project-title'
-    projectHeader.type = 'text'
-    projectHeader.className = 'project-title'
-    projectHeader.autocomplete = 'off'
-    projectHeader.value = project.getTitle
+    ;(function copyProjectInfo() {  // Without leading semicolon, parser throws an error
+        projectHeader.id = 'content-project-title'
+        projectHeader.type = 'text'
+        projectHeader.className = 'project-title'
+        projectHeader.autocomplete = 'off'
+        projectHeader.value = project.getTitle
+        projectHeader.addEventListener('input', () => {  // Update project header when header edited in content view
+            listItemTitle.textContent = projectHeader.value
+            project.setTitle = projectHeader.value
+        })
 
-    // Update project header when header edited in content view
-    projectHeader.addEventListener('input', () => {
-        listItemTitle.textContent = projectHeader.value
-        project.setTitle = projectHeader.value
-    })
+        projectDescription.id = 'project-description-area'
+        projectDescription.placeholder = 'Add project description...'
+        projectDescription.rows = 3
+        projectDescription.textContent = project.getDescription
+        projectDescription.addEventListener('input', () => {
+            project.setDescription = projectDescription.value
+        })
+        // Create priority options for project content view
+        const priorityOptions = [
+            { value: "", text: "Priority" },
+            { value: "high", text: "Urgent" },
+            { value: "medium", text: "Upcoming" },
+            { value: "low", text: "Someday" }
+        ]
+        priorityOptions.forEach(opt => {
+            const option = document.createElement('option')
+            option.value = opt.value
+            option.textContent = opt.text
+            projectPriority.appendChild(option)
+        })
 
-    projectDescription.id = 'project-description-area'
-    projectDescription.placeholder = 'Add project description...'
-    projectDescription.rows = 3
-    projectDescription.textContent = project.getDescription
+        projectDueDate.id = 'content-due-date'
+        projectDueDate.type = 'date'
+        projectDueDate.className = 'due-date'
+        projectDueDate.min = currentDate
+        projectDueDate.value = project.getDate
+        projectDueDate.addEventListener('input', () => {
+            listItemDate.textContent = projectDueDate.value
+            project.setDate = projectDueDate.value
+        })
+        
+        projectPriority.id = 'content-priority-selection'
+        projectPriority.className = 'priority-selection'
+        projectPriority.value = project.getPriority
+        projectPriority.addEventListener('input', () => {
+            project.setPriority = projectPriority.value
+        })
+    })()
 
-    projectDescription.addEventListener('input', () => {
-        project.setDescription = projectDescription.value
-    })
-
-    // Create priority options for project content view
-    const priorityOptions = [
-        { value: "", text: "Priority" },
-        { value: "high", text: "Urgent" },
-        { value: "medium", text: "Upcoming" },
-        { value: "low", text: "Someday" }
-    ]
-
-    priorityOptions.forEach(opt => {
-        const option = document.createElement('option')
-        option.value = opt.value
-        option.textContent = opt.text
-        projectPriority.appendChild(option)
-    })
-
-    projectDueDate.id = 'content-due-date'
-    projectDueDate.type = 'date'
-    projectDueDate.className = 'due-date'
-    projectDueDate.min = currentDate
-    projectDueDate.value = project.getDate
-
-    projectDueDate.addEventListener('input', () => {
-        listItemDate.textContent = projectDueDate.value
-        project.setDate = projectDueDate.value
-    })
-
-    projectPriority.id = 'content-priority-selection'
-    projectPriority.className = 'priority-selection'
-    projectPriority.value = project.getPriority
-
-    projectPriority.addEventListener('input', () => {
-        project.setPriority = projectPriority.value
-    })
+    ;(function createTaskControls() {
+        addTaskButton.textContent = 'New task'
+        addTaskButton.addEventListener('click', () => {
+            createTask(projectContainer)
+        })
+    })();
     
-    projectContainer.append(projectHeader, projectDescription, projectDueDate, projectPriority)
+    projectContainer.append(projectHeader, projectDescription, projectDueDate, projectPriority, addTaskButton)
 };
 
 function removeProject(listItem, project) {
-    projectsList.removeChild(listItem)
-    const index = Project.memory.indexOf(project);
+    projectsList.removeChild(listItem)             // Remove from DOM
+    const index = Project.memory.indexOf(project)  // Remove from mem
         if (index > -1) { // Only remove if project found
             Project.memory.splice(index, 1)
         }

@@ -58,11 +58,11 @@ ul.projects-list > li > button#li-button {
     flex-grow: 1;
 }
 
-ul.projects-list > li > button > span.li-title {
+ul.projects-list > li > button > span#li-title {
     font-weight: bold;
 }
 
-ul.projects-list > li > button > span.li-date {
+ul.projects-list > li > button > span#li-date {
     font-size: small;
     font-style: italic;
     font-weight: lighter;
@@ -96,6 +96,7 @@ dialog.dialog-project button {
 div.content-container {
     display: flex;
     flex-direction: column;
+    gap: 1em;
 
     margin: 2em;
 }
@@ -105,6 +106,11 @@ div.content-container > input#content-project-title {
     font-weight: 700;
 
     border: none;
+    outline: none;
+}
+
+div.content-container > input#content-project-title:hover {
+    background-color: whitesmoke;
 }
 
 div.content-container > textarea {
@@ -112,7 +118,7 @@ div.content-container > textarea {
     background-color: inherit;
     
     border: none;
-    border-radius: 0.5em;
+    outline: none;
     
     resize: vertical;
 }
@@ -121,6 +127,23 @@ div.content-container > textarea:hover {
     background-color: whitesmoke;
 }
 
+div.content-container > input#content-due-date {
+    width: 125px;
+}
+
+div.content-container > select#content-priority-selection {
+    width: 130px;
+}
+
+div.new-project-container {
+    background-color: whitesmoke;
+    border-top: solid 1px rgb(118, 118, 118);
+}
+
+div.new-project-container > button#new-project {
+    width: 100%;
+}
+
 div.footer {
-    border-top: solid 1px whitesmoke;
+    border-top: solid 1px rgb(118, 118, 118);
 }

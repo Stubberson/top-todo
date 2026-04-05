@@ -68,7 +68,7 @@ function viewProject(project, listItemTitle, listItemDate) {
     projectHeader.id = 'content-project-title'
     projectHeader.type = 'text'
     projectHeader.className = 'project-title'
-    projectHeader.minLength = 3
+    projectHeader.autocomplete = 'off'
     projectHeader.value = project.getTitle
 
     // Update project header when header edited in content view
@@ -112,8 +112,8 @@ function viewProject(project, listItemTitle, listItemDate) {
         project.setDate = projectDueDate.value
     })
 
+    projectPriority.id = 'content-priority-selection'
     projectPriority.className = 'priority-selection'
-    projectPriority.name = 'project-priority'
     projectPriority.value = project.getPriority
 
     projectPriority.addEventListener('input', () => {

@@ -26,6 +26,7 @@ button:hover {
     background-color: yellowgreen;
 }
 
+/* --- SIDEBAR --- */
 div.sidebar {
     display: flex;
     flex-direction: column;
@@ -93,6 +94,7 @@ dialog.dialog-project button {
     padding-left: 0;
 }
 
+/* --- CONTENT CONTAINER --- */
 div.content-container {
     display: flex;
     flex-direction: column;
@@ -135,12 +137,28 @@ div.content-container select#content-priority-selection {
     width: 130px;
 }
 
-div.content-container > div > input.task-description {
+/* --- TASKS --- */
+div.content-container > div.task-container {
+    display: flex;
+}
+
+div.content-container > div > input.task-complete {
+    border: none;
+}
+
+div.content-container > div.task-container > input.task-description {
     font-family: "Atkinson Hyperlegible Mono", sans-serif;
     border: none;
     outline: none;
+
+    width: 100%;
 }
 
+div.content-container > div.task-container > input.task-description:hover {
+    background-color: whitesmoke;
+}
+
+/* --- FOOTER --- */
 div.new-project-container {
     background-color: whitesmoke;
     border-top: solid 1px rgb(118, 118, 118);

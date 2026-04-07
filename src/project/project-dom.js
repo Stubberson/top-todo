@@ -1,5 +1,6 @@
 import { Project } from './project-class.js'
-import { createTask } from '../tasks/create-task.js'
+import { taskCreate } from '../tasks/create-task.js'
+import { viewToday } from '../today/today-dom.js'
 import { currentDate, clearContent } from '../utilities/utility.js'
 
 // --- Project DOM control ---
@@ -52,9 +53,12 @@ function listProject(project) {
     })
 
     removeItemButton.addEventListener('click', () => {
+        // WOULD BE A GOOD IDEA TO ADD A CONFIRMATION POPUP!
+
         // Only clear content if currently viewed project is removed
         if (project.getTitle === projectContainer.firstChild.value) {
             clearContent(projectContainer)
+            viewToday()  // If viewed project removed, default to today
         }
         removeProject(listItem, project)
     })
@@ -65,7 +69,8 @@ function viewProject(project, listItemTitle, listItemDate) {
     const projectDescription = document.createElement('textarea')
     const projectDueDate = document.createElement('input')
     const projectPriority = document.createElement('select')
-    const addTaskButton = document.createElement('button')
+
+    const taskControlsContainer = document.createElement('div')
 
     ;(function copyProjectInfo() {  // Without leading semicolon, parser throws an error
         projectHeader.id = 'content-project-title'
@@ -117,14 +122,40 @@ function viewProject(project, listItemTitle, listItemDate) {
         })
     })()
 
-    ;(function createTaskControls() {
-        addTaskButton.textContent = 'New task'
-        addTaskButton.addEventListener('click', () => {
-            createTask(projectContainer)
+    ;(function taskCreateControls() {
+        const taskAddButton = document.createElement('button')
+        const taskAllButton = document.createElement('button')
+        const taskImportantButton = document.createElement('button')
+
+        taskControlsContainer.className = 'task-controls-container'
+        taskControlsContainer.style.display = 'flex'
+
+        taskAddButton.id = 'task-new-button'
+        taskAddButton.className = 'task-control-button'
+        taskAddButton.textContent = 'New task'
+        taskAddButton.addEventListener('click', () => {
+            let task = taskCreate(projectContainer)
+            task.lastChild.focus()  // Focus task description after creation
         })
+
+        taskAllButton.id = 'task-control-all'
+        taskAllButton.className = 'task-control-button'
+        taskAllButton.textContent = 'All'
+        taskAllButton.addEventListener('click', () => {
+            taskViewAll(projectContainer)
+        })
+
+        taskImportantButton.id = 'task-control-important'
+        taskImportantButton.className = 'task-control-button'
+        taskImportantButton.textContent = 'Important'
+        taskImportantButton.addEventListener('click', () => {
+            taskViewImportant(projectContainer)
+        })
+
+        taskControlsContainer.append(taskAddButton, taskAllButton, taskImportantButton)
     })();
     
-    projectContainer.append(projectHeader, projectDescription, projectDueDate, projectPriority, addTaskButton)
+    projectContainer.append(projectHeader, projectDescription, projectDueDate, projectPriority, taskControlsContainer)
 };
 
 function removeProject(listItem, project) {
@@ -135,4 +166,4 @@ function removeProject(listItem, project) {
         }
 };
 
-export { projectDialog, createProject }
+export { projectContainer, projectDialog, createProject }

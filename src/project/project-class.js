@@ -6,6 +6,7 @@ export class Project {
         this.description = description
         this.dueDate = dueDate
         this.priority = priority
+        this.tasks = []
         Project.memory.push(this)
     }
 

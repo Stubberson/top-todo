@@ -1,6 +1,6 @@
 import './style.css'
 import { viewToday } from './today/today-dom.js'
-import { projectDialog, createProject } from './project/project-dom.js'
+import { projectContainer, projectDialog, createProject } from './project/project-dom.js'
 
 (() => {
     viewToday()
@@ -24,7 +24,10 @@ import { projectDialog, createProject } from './project/project-dom.js'
         projectDialog.close()
     })
 
-    submitDialogButton.addEventListener('click', () => {
+    submitDialogButton.addEventListener('click', (event) => {
+        event.preventDefault()  // Prevent form sending data to server
         createProject()
+        projectDialog.close()
+        projectContainer.querySelector('button#task-new-button').focus()  // Focus the new task button
     })
 })();

@@ -1,4 +1,4 @@
-function createTask(projectContainer) {
+function taskCreate(projectContainer) {
     const taskContainer = document.createElement('div')
     const taskCompleteCheckmark = document.createElement('input')
     const taskDescription = document.createElement('input')
@@ -16,6 +16,8 @@ function createTask(projectContainer) {
     taskContainer.append(taskCompleteCheckmark, taskDescription)
 
     projectContainer.append(taskContainer)
+
+    return taskContainer
 }
 
-export { createTask }
+export { taskCreate }

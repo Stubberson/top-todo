@@ -76,6 +76,7 @@ function viewProject(project, listItemTitle, listItemDate) {
         projectHeader.id = 'content-project-title'
         projectHeader.type = 'text'
         projectHeader.className = 'project-title'
+        projectHeader.placeholder = 'Add title...'
         projectHeader.autocomplete = 'off'
         projectHeader.value = project.getTitle
         projectHeader.addEventListener('input', () => {  // Update project header when header edited in content view

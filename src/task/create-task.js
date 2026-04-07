@@ -21,6 +21,7 @@ function taskCreate(projectContainer) {
     taskHeader.autocomplete = 'off'
 
     taskDescription.className = 'task-description'
+    taskDescription.placeholder = 'Add description...'
     taskDescription.name = 'task-description'
     taskDescription.rows = 3
     taskDescription.hidden = true

@@ -1,5 +1,5 @@
 import { Project } from './project-class.js'
-import { taskCreate } from '../tasks/create-task.js'
+import { taskCreate } from '../task/create-task.js'
 import { viewToday } from '../today/today-dom.js'
 import { currentDate, clearContent } from '../utilities/utility.js'
 
@@ -134,8 +134,8 @@ function viewProject(project, listItemTitle, listItemDate) {
         taskAddButton.className = 'task-control-button'
         taskAddButton.textContent = 'New task'
         taskAddButton.addEventListener('click', () => {
-            let task = taskCreate(projectContainer)
-            task.lastChild.focus()  // Focus task description after creation
+            let taskDescription = taskCreate(projectContainer)
+            taskDescription.focus()  // Focus task description after creation
         })
 
         taskAllButton.id = 'task-control-all'

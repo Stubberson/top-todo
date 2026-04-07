@@ -142,20 +142,44 @@ div.content-container > div.task-container {
     display: flex;
 }
 
-div.content-container > div > input.task-complete {
+div.task-container > input.task-complete {
     border: none;
 }
 
-div.content-container > div.task-container > input.task-description {
+div.task-container > input.task-description {
     font-family: "Atkinson Hyperlegible Mono", sans-serif;
     border: none;
     outline: none;
 
-    width: 100%;
+    flex: 1 1 auto;
 }
 
-div.content-container > div.task-container > input.task-description:hover {
+div.task-container > input.task-description:hover {
     background-color: whitesmoke;
+}
+
+div.task-container > input.task-important {
+    appearance: none;
+    width: 30px;
+    height: 30px;
+
+    background-image: url('./visuals/important-unchecked.svg');
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    cursor: pointer;
+
+    transition: transform 0.3s ease;
+}
+
+div.task-container > input.task-important:checked {
+    background-image: url('./visuals/important-checked.svg');
+    background-size: 90%;
+}
+
+div.task-container > input.task-important:hover {
+    transform: scale(1.2);
 }
 
 /* --- FOOTER --- */

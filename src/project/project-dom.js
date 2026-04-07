@@ -123,20 +123,11 @@ function viewProject(project, listItemTitle, listItemDate) {
     })()
 
     ;(function taskCreateControls() {
-        const taskAddButton = document.createElement('button')
         const taskAllButton = document.createElement('button')
         const taskImportantButton = document.createElement('button')
+        const taskNewButton = document.createElement('button')
 
         taskControlsContainer.className = 'task-controls-container'
-        taskControlsContainer.style.display = 'flex'
-
-        taskAddButton.id = 'task-new-button'
-        taskAddButton.className = 'task-control-button'
-        taskAddButton.textContent = 'New task'
-        taskAddButton.addEventListener('click', () => {
-            let taskDescription = taskCreate(projectContainer)
-            taskDescription.focus()  // Focus task description after creation
-        })
 
         taskAllButton.id = 'task-control-all'
         taskAllButton.className = 'task-control-button'
@@ -152,7 +143,14 @@ function viewProject(project, listItemTitle, listItemDate) {
             taskViewImportant(projectContainer)
         })
 
-        taskControlsContainer.append(taskAddButton, taskAllButton, taskImportantButton)
+        taskNewButton.id = 'task-new-button'
+        taskNewButton.className = 'task-control-button'
+        taskNewButton.addEventListener('click', () => {
+            let taskDescription = taskCreate(projectContainer)
+            taskDescription.focus()  // Focus task description after creation
+        })
+
+        taskControlsContainer.append(taskAllButton, taskImportantButton, taskNewButton)
     })();
     
     projectContainer.append(projectHeader, projectDescription, projectDueDate, projectPriority, taskControlsContainer)

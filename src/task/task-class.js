@@ -1,5 +1,3 @@
-import { Project } from "../project/project-class.js";
-
 export class Task {
     constructor(project, taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskImportantCheckbox) {
         let owningProject = project

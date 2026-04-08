@@ -177,8 +177,25 @@ div.content-container > div.task-container {
 }
 
 div.task-container > input.task-complete-checkbox {
-    margin-top: 4px;
+    margin-top: -4px;
     margin-bottom: auto;
+
+    width: 22px;
+    height: 22px;
+
+    appearance: none;
+
+    background-image: url('./visuals/task-incomplete.svg');
+    background-size: 100%;
+    transform: rotate(90deg);
+
+    cursor: pointer;
+}
+
+div.task-container > input.task-complete-checkbox:checked {
+    margin-top: 0px;
+    background-image: url('./visuals/task-complete.svg');
+    transform: rotate(180deg) translateX(-4px);
 }
 
 div.task-container > div.task-description-container {

@@ -33,6 +33,16 @@ function taskCreate(project) {
     taskImportantCheckbox.type = 'checkbox'
     taskImportantCheckbox.name = 'task-important-checkbox'
     taskImportantCheckbox.hidden = true
+
+    taskCompleteCheckbox.addEventListener('click', (event) => {
+        if (event.target.checked) {
+            taskHeader.style['text-decoration'] = '#767676 line-through solid 1px'
+            taskDescription.style['text-decoration'] = '#767676 line-through solid 0.5px'
+        } else {
+            taskHeader.style['text-decoration'] = 'revert'
+            taskDescription.style['text-decoration'] = 'revert'
+        }
+    })
     
     taskHeader.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
@@ -64,7 +74,7 @@ function taskCreate(project) {
     }))
 
     let newTask = new Task(project, taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskImportantCheckbox)
-    return newTask  // Return newly created task 
+    return newTask
 }
 
 function taskDescriptionExpand(taskDescription, taskImportantCheckbox) {

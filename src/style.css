@@ -115,17 +115,21 @@ div.content-container > input#content-project-title:hover {
     background-color: whitesmoke;
 }
 
-div.content-container > textarea {
+div.content-container textarea.description {
     font-family: "Atkinson Hyperlegible Mono", sans-serif;
-    background-color: inherit;
+    color: rgb(118, 118, 118);
     
     border: none;
     outline: none;
     
-    resize: vertical;
+    resize: none;
 }
 
-div.content-container > textarea:hover {
+textarea.project-description-area {
+    font-size: medium;
+}
+
+textarea:hover {
     background-color: whitesmoke;
 }
 
@@ -153,7 +157,7 @@ div.task-controls-container > button#task-new-button {
     background-repeat: no-repeat;
     background-position: center;
 
-    transition: transform 0.1s ease;
+    transition: transform 0.2s ease;
 }
 
 div.task-controls-container > button#task-new-button:hover {
@@ -189,10 +193,8 @@ div.task-description-container > input.task-header {
     font-family: "Atkinson Hyperlegible", sans-serif;
     font-size: medium;
 
-
     border: none;
     outline: none;
-
 
     flex-grow: 1;
 }
@@ -201,62 +203,89 @@ input.task-header:hover {
     background-color: whitesmoke
 }
 
-div.task-description-container > textarea.task-description {
-    font-family: "Atkinson Hyperlegible Mono", sans-serif;
-    color: rgb(118, 118, 118);
-
-    border: none;
-    outline: none;
-
-    flex-grow: 1;
-    z-index: 1;
-    position: relative;
-
-    resize: none;
-}
-
-textarea.task-description:hover {
-    background-color: whitesmoke;
-}
-
-div.task-description-container > input.task-important-checkbox {
+div.task-description-container > input#task-open-checkbox {
     width: 22px;
     height: 22px;
 
     z-index: 2;
     position: absolute;
-    right: 0px;
+    right: 0.5px;
+    top: -4px;
+
+    appearance: none;
+
+    background-image: url('./visuals/arrow-down.svg');
+    background-size: 100%;
+
+    cursor: pointer;
+
+    transition: transform 0.2s ease;
+}
+
+div.task-description-container > input#task-open-checkbox:checked {
+    transform: rotate(0.5turn) scale(1.5);
+}
+
+textarea.task-description-area {
+    flex-grow: 1;
+    z-index: 1;
+    position: relative;
+}
+
+input#task-important-checkbox {
+    width: 22px;
+    height: 22px;
+
+    z-index: 2;
+    position: absolute;
+    right: 0.5px;
     bottom: 0px;
 
     appearance: none;
 
     background-image: url('./visuals/important-unchecked.svg');
     background-size: 100%;
-    background-repeat: no-repeat;
-    background-position: center;
 
     cursor: pointer;
 
-    transition: transform 0.1s ease;
+    transition: transform 0.2s ease;
 }
 
-div.task-description-container > input.task-important-checkbox:checked {
+input#task-important-checkbox:checked {
     background-image: url('./visuals/important-checked.svg');
-    background-size: 110%;
+    transform: scale(1.5)
 }
 
-div.task-description-container > input.task-important-checkbox:hover {
-    transform: scale(1.2);
+input#task-important-checkbox:hover {
+    transform: scale(1.5);
 }
 
 /* --- FOOTER --- */
 div.new-project-container {
     background-color: whitesmoke;
     border-top: solid 1px rgb(118, 118, 118);
+
+    display: flex;
 }
 
 div.new-project-container > button#new-project {
     width: 100%;
+    position: relative;
+    padding-left: 3em;
+}
+
+button#new-project::before {
+    content: url('./visuals/new-default.svg');
+    position: absolute;
+    left: 0.5em;
+    top: 3px;
+
+    transition: transform 0.2s ease;
+}
+
+button#new-project:hover::before {
+    content: url('./visuals/new-hover.svg');
+    transform: scale(1.2);
 }
 
 div.footer {

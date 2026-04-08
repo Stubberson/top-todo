@@ -84,9 +84,10 @@ function viewProject(project, listItemTitle, listItemDate) {
             project.setTitle = projectHeader.value
         })
 
-        projectDescription.id = 'project-description-area'
+        projectDescription.classList.add('project-description-area', 'description')
         projectDescription.placeholder = 'Add project description...'
         projectDescription.rows = 3
+        projectDescription.name = 'project-description-area'
         projectDescription.textContent = project.getDescription
         projectDescription.addEventListener('input', () => {
             project.setDescription = projectDescription.value
@@ -147,8 +148,8 @@ function viewProject(project, listItemTitle, listItemDate) {
         taskNewButton.id = 'task-new-button'
         taskNewButton.className = 'task-control-button'
         taskNewButton.addEventListener('click', () => {
-            let taskDescription = taskCreate(projectContainer)
-            taskDescription.focus()  // Focus task description after creation
+            let taskHeader = taskCreate(projectContainer)
+            taskHeader.focus()  // Focus task description after creation
         })
 
         taskControlsContainer.append(taskAllButton, taskImportantButton, taskNewButton)

@@ -103,7 +103,7 @@ div.content-container {
     margin: 2em;
 }
 
-div.content-container > input#content-project-title {
+div.content-container > input#content-project-header {
     font-size: 2em;
     font-weight: 700;
 
@@ -111,7 +111,7 @@ div.content-container > input#content-project-title {
     outline: none;
 }
 
-div.content-container > input#content-project-title:hover {
+div.content-container > input#content-project-header:hover {
     background-color: whitesmoke;
 }
 

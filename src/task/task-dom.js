@@ -1,19 +1,15 @@
-function taskCreate(projectContainer) {
-    const taskContainer = document.createElement('div')
+import { Task } from "./task-class.js"
+
+function taskCreate(project) {
     const taskCompleteCheckbox = document.createElement('input')
-    const taskDescriptionContainer = document.createElement('div')
     const taskHeader = document.createElement('input')
     const taskDescriptionOpener = document.createElement('input')
     const taskDescription = document.createElement('textarea')
     const taskImportantCheckbox = document.createElement('input')
 
-    taskContainer.className = 'task-container'
-
     taskCompleteCheckbox.className = 'task-complete-checkbox'
     taskCompleteCheckbox.type = 'checkbox'
     taskCompleteCheckbox.name = 'task-complete-checkbox'
-
-    taskDescriptionContainer.className = 'task-description-container'
 
     taskHeader.className = 'task-header'
     taskHeader.type = 'text'
@@ -67,13 +63,8 @@ function taskCreate(projectContainer) {
         }
     }))
 
-    taskDescriptionContainer.append(taskHeader, taskDescriptionOpener, taskDescription, taskImportantCheckbox)
-
-    taskContainer.append(taskCompleteCheckbox, taskDescriptionContainer)
-
-    projectContainer.append(taskContainer)
-
-    return taskHeader
+    let newTask = new Task(project, taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskImportantCheckbox)
+    return newTask  // Return newly created task 
 }
 
 function taskDescriptionExpand(taskDescription, taskImportantCheckbox) {

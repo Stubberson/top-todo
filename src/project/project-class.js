@@ -1,8 +1,10 @@
+import { Task } from '../task/task-class.js'
+
 export class Project {
     static memory = []
 
-    constructor(title, description, dueDate, priority) {
-        this.title = title
+    constructor(header, description, dueDate, priority) {
+        this.header = header
         this.description = description
         this.dueDate = dueDate
         this.priority = priority
@@ -10,12 +12,12 @@ export class Project {
         Project.memory.push(this)
     }
 
-    get getTitle() {
-        return this.title
+    get getHeader() {
+        return this.header
     }
 
-    set setTitle(newTitle) {
-        this.title = newTitle
+    set setHeader(newHeader) {
+        this.header = newHeader
     }
 
     get getDescription() {
@@ -41,10 +43,12 @@ export class Project {
     set setPriority(newPriority) {
         this.priority = newPriority
     }
-}
 
-class Task {
-    constructor() {
-        
+    newTask(task) {
+        this.tasks.push(task)
+    }
+
+    get getTasks() {
+        return this.tasks
     }
 }

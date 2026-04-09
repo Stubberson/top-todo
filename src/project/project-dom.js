@@ -1,5 +1,5 @@
 import { Project } from './project-class.js'
-import { taskCreate } from '../task/task-dom.js'
+import { taskCreate, tasksFilter } from '../task/task-dom.js'
 import { viewToday } from '../today/today-dom.js'
 import { currentDate, clearContent } from '../utilities/utility.js'
 
@@ -59,7 +59,7 @@ function listProject(project) {
             clearContent(projectContainer)
             viewToday()  // If viewed project removed, default to today
         }
-        removeProject(projectListing, project)
+        removeProjectListing(projectListing, project)
     })
 };
 
@@ -68,8 +68,15 @@ function viewProject(project, projectButtonHeader, projectButtonDate) {
     const projectDescription = document.createElement('textarea')
     const projectDueDate = document.createElement('input')
     const projectPriority = document.createElement('select')
-
+    
     const taskControlsContainer = document.createElement('div')
+    const tasksContainer = document.createElement('div')
+
+    taskControlsContainer.className = 'task-controls-container'
+    
+    tasksContainer.className = 'tasks-container'
+    // Populate container with existing tasks (if any)
+    project.getTasks.forEach(task => tasksContainer.append(task.getContainer))
 
     ;(function copyProjectInfo() {  // Without leading semicolon, parser throws an error
         projectHeader.id = 'content-project-header'
@@ -123,49 +130,48 @@ function viewProject(project, projectButtonHeader, projectButtonDate) {
         })
     })()
 
-    ;(function taskCreateControls() {
+    ;(function createTaskControls() {
+        const tabsAllImportant = document.createElement('div')
         const taskAllButton = document.createElement('button')
         const taskImportantButton = document.createElement('button')
         const taskNewButton = document.createElement('button')
 
-        taskControlsContainer.className = 'task-controls-container'
+        tabsAllImportant.className = 'task-tabs-container'
+
+        taskNewButton.id = 'task-new-button'
+        taskNewButton.className = 'task-control-button'
+        taskNewButton.addEventListener('click', () => {
+            let newTask = taskCreate(project)
+            tasksContainer.append(newTask.getContainer)
+            newTask.getHeader.focus()  // Focus task description after creation
+        })
 
         taskAllButton.id = 'task-control-all'
         taskAllButton.className = 'task-control-button'
         taskAllButton.textContent = 'All'
         taskAllButton.addEventListener('click', () => {
-            taskViewAll(projectContainer)
+            tasksFilter('all', project, tasksContainer)
         })
 
         taskImportantButton.id = 'task-control-important'
         taskImportantButton.className = 'task-control-button'
         taskImportantButton.textContent = 'Important'
         taskImportantButton.addEventListener('click', () => {
-            taskViewImportant(projectContainer)
+            tasksFilter('important', project, tasksContainer)
         })
 
-        taskNewButton.id = 'task-new-button'
-        taskNewButton.className = 'task-control-button'
-        taskNewButton.addEventListener('click', () => {
-            let newTask = taskCreate(project)
-            projectContainer.append(newTask.getContainer)
-            newTask.getHeader.focus()  // Focus task description after creation
-        })
-
-        taskControlsContainer.append(taskAllButton, taskImportantButton, taskNewButton)
+        tabsAllImportant.append(taskAllButton, taskImportantButton)
+        taskControlsContainer.append(taskNewButton, tabsAllImportant)
     })();
     
-    // Add a project with its tasks to the DOM
-    projectContainer.append(projectHeader, projectDescription, projectDueDate, projectPriority, taskControlsContainer)
-
-    let projectTasks = project.getTasks
-    projectTasks.forEach(task => projectContainer.append(task))
+    // Add project with tasks to DOM
+    projectContainer.append(projectHeader, projectDescription, projectDueDate, projectPriority, taskControlsContainer, tasksContainer)
 };
 
-function removeProject(projectListing, project) {
-    projectsList.removeChild(projectListing)             // Remove from DOM
+function removeProjectListing(projectListing, project) {
+    projectsList.removeChild(projectListing)       // Remove from DOM
     const index = Project.memory.indexOf(project)  // Remove from mem
-        if (index > -1) { // Only remove if project found
+        if (index > -1) {                          // Only remove if project found
             Project.memory.splice(index, 1)
         }
 };

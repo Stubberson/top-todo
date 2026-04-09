@@ -17,7 +17,7 @@ export class Task {
         this.descriptionContainer.append(this.header, this.opener, this.description, this.important)
         this.container.append(this.completed, this.descriptionContainer)
 
-        owningProject.newTask(this.container)  // Save the tasks associated with a project to the project's memory
+        owningProject.newTask(this)  // Save tasks associated with unique project to project's memory
     }
 
     get getHeader() {
@@ -26,5 +26,11 @@ export class Task {
 
     get getContainer() {
         return this.container
+    }
+
+    get getImportant() {
+        if (this.important.className.includes('task-important')) {
+            return true
+        }        
     }
 }

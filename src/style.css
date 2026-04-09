@@ -143,14 +143,55 @@ div.content-container select#content-priority-selection {
 
 div.content-container > div.task-controls-container {
     display: flex;
+    align-items: center;
+    
+    width: 100%;
+    height: 2em;
+}
 
-    gap: 1em;
+div.task-controls-container > div.task-tabs-container {
+    position: relative;
+    left: 50%;  /* Moves left border to middle of container */
+    transform: translateX(-50%);   /* Translates itself backwards for half of own width */
+    display: flex;
+
+    align-items: center;
+}
+
+button#task-control-all,
+button#task-control-important {
+    font-weight: 500;
+    text-align: center;
+    width: 70px;
+
+    position: absolute;
+    z-index: 2;
+
+    box-shadow: 0px 0px 6px 0px #eaeaea;
+}
+
+button#task-control-all {
+    left: 6px;
+}
+
+button#task-control-important {
+    left: 76px;
+}
+
+div.task-controls-container > div.task-tabs-container::after {
+    content: '';
+    width: 152px;
+    height: 40px;
+    
+    z-index: 1;
+
+    background-color: whitesmoke;
 }
 
 div.task-controls-container > button#task-new-button {
     appearance: none;
-    aspect-ratio: 1 / 1;
-    margin-left: auto;
+    width: 32px;
+    height: 32px;
 
     background-image: url('./visuals/new-default.svg');
     background-size: 120%;
@@ -167,8 +208,15 @@ div.task-controls-container > button#task-new-button:hover {
     transform: scale(1.1);
 }
 
+div.content-container > div.tasks-container {
+    display: flex;
+    flex-direction: column;
+
+    gap: 1em;
+}
+
 /* --- TASKS --- */
-div.content-container > div.task-container {
+div.tasks-container > div.task-container {
     display: flex;
 
     box-shadow: 

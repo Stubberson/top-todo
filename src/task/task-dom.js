@@ -37,9 +37,11 @@ function taskCreate(project) {
 
     taskCompleteCheckbox.addEventListener('click', (event) => {
         if (event.target.checked) {
+            taskHeader.style['color'] = '#767676'
             taskHeader.style['text-decoration'] = '#767676 line-through solid 1px'
             taskDescription.style['text-decoration'] = '#767676 line-through solid 0.5px'
         } else {
+            taskHeader.style['color'] = 'revert'
             taskHeader.style['text-decoration'] = 'revert'
             taskDescription.style['text-decoration'] = 'revert'
         }

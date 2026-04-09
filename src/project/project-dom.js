@@ -149,15 +149,20 @@ function viewProject(project, projectButtonHeader, projectButtonDate) {
         taskAllButton.id = 'task-control-all'
         taskAllButton.className = 'task-control-button'
         taskAllButton.textContent = 'All'
-        taskAllButton.addEventListener('click', () => {
+        taskAllButton.disabled = true
+        taskAllButton.addEventListener('click', (event) => {
             tasksFilter('all', project, tasksContainer)
+            event.target.disabled = true
+            taskImportantButton.disabled = false
         })
 
         taskImportantButton.id = 'task-control-important'
         taskImportantButton.className = 'task-control-button'
         taskImportantButton.textContent = 'Important'
-        taskImportantButton.addEventListener('click', () => {
+        taskImportantButton.addEventListener('click', (event) => {
             tasksFilter('important', project, tasksContainer)
+            event.target.disabled = true
+            taskAllButton.disabled = false
         })
 
         tabsAllImportant.append(taskAllButton, taskImportantButton)

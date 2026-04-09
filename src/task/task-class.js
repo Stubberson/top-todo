@@ -1,6 +1,6 @@
 export class Task {
     constructor(project, taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskImportantCheckbox) {
-        let owningProject = project
+        this.owningProject = project
 
         this.container = document.createElement('div')
         this.container.className = 'task-container'
@@ -17,7 +17,7 @@ export class Task {
         this.descriptionContainer.append(this.header, this.opener, this.description, this.important)
         this.container.append(this.completed, this.descriptionContainer)
 
-        owningProject.newTask(this)  // Save tasks associated with unique project to project's memory
+        this.owningProject.newTask(this)  // Save tasks associated with unique project to project's memory
     }
 
     get getHeader() {

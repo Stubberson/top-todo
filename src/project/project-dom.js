@@ -36,7 +36,11 @@ function listProject(project) {
     projectButtonDate.id = 'li-date'
     projectRemoveButton.id = 'li-rm-button'
 
-    projectButtonHeader.textContent = project.getHeader
+    if (project.getHeader.length > 30) {
+        projectButtonHeader.textContent = project.getHeader.slice(0, 30) + '...'
+    } else {
+        projectButtonHeader.textContent = project.getHeader
+    } 
     projectButtonDate.textContent = project.getDate
 
     projectButton.append(projectButtonHeader, projectButtonDate)
@@ -74,8 +78,8 @@ function viewProject(project, projectButtonHeader, projectButtonDate) {
 
     taskControlsContainer.className = 'task-controls-container'
     
-    tasksContainer.className = 'tasks-container'
     // Populate container with existing tasks (if any)
+    tasksContainer.className = 'tasks-container'
     project.getTasks.forEach(task => tasksContainer.append(task.getContainer))
 
     ;(function copyProjectInfo() {  // Without leading semicolon, parser throws an error
@@ -86,7 +90,11 @@ function viewProject(project, projectButtonHeader, projectButtonDate) {
         projectHeader.autocomplete = 'off'
         projectHeader.value = project.getHeader
         projectHeader.addEventListener('input', () => {  // Update project header when header edited in content view
-            projectButtonHeader.textContent = projectHeader.value
+            if (projectHeader.value.length > 30) {
+                projectButtonHeader.textContent = projectHeader.value.slice(0, 30) + '...'
+            } else {
+                projectButtonHeader.textContent = projectHeader.value
+            }
             project.setHeader = projectHeader.value
         })
 

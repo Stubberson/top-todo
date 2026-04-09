@@ -50,29 +50,33 @@ function taskCreate(project) {
     taskHeader.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             event.preventDefault()  // Prevent adding new line in description
-            taskDescriptionOpener.checked = true
-            taskDescriptionExpand(taskDescription, taskImportantCheckbox)
-            taskDescription.focus()
+            taskDescriptionExpand(taskDescription, taskImportantCheckbox, taskDescriptionOpener)
         }
     })
 
-    const taskOpenerEvents = ['mouseenter', 'mouseleave', 'click', 'keydown']
-    taskOpenerEvents.forEach(event => taskDescriptionOpener.addEventListener(event, (e) => {
-        if (event === 'mouseenter') {
-            taskHeader.style['background-color'] = 'whitesmoke'
+    const taskOpenerEvents = ['mouseenter', 'mouseleave', 'click']
+    taskOpenerEvents.forEach(event => taskDescriptionOpener.addEventListener(event, () => {
+        switch (event) {
+            case 'mouseenter':
+                taskHeader.style['background-color'] = 'whitesmoke'
+                break
+            case 'mouseleave':
+                taskHeader.style['background-color'] = 'revert-layer'
+                break
+            case 'click':
+                if (taskDescription.hidden) {
+                    taskDescriptionExpand(taskDescription, taskImportantCheckbox, taskDescriptionOpener)
+                } else {
+                    taskDescriptionMinimize(taskDescription, taskImportantCheckbox, taskDescriptionOpener)
+                }
         }
-        if (event === 'mouseleave') {
-            taskHeader.style['background-color'] = 'revert-layer'
-        }
-        if (event === 'click' || e.key === 'Enter') {
-            if (taskDescription.hidden) {
-                taskDescriptionOpener.checked = true
-                taskDescriptionExpand(taskDescription, taskImportantCheckbox)
-            } else {
-                taskDescription.hidden = true
-                taskImportantCheckbox.hidden = true
-                taskDescriptionOpener.checked = false
-            }
+    }))
+
+    // Eases minimizing task
+    const taskCloserEvents = ['blur', 'keydown']
+    taskCloserEvents.forEach(event => taskDescription.addEventListener(event, (e) => {
+        if (e.relatedTarget === null || e.key === 'Escape') {
+            taskDescriptionMinimize(taskDescription, taskImportantCheckbox, taskDescriptionOpener)
         }
     }))
 
@@ -96,15 +100,23 @@ function tasksFilter(mode, project, tasksContainer) {
     }
 }
 
-function taskDescriptionExpand(taskDescription, taskImportantCheckbox) {
+function taskDescriptionExpand(taskDescription, taskImportantCheckbox, taskDescriptionOpener) {
     taskDescription.hidden = false
     taskImportantCheckbox.hidden = false
+    taskDescriptionOpener.checked = true
+    taskDescription.focus()
 
     // Indicate important task
     taskImportantCheckbox.addEventListener('click', (event) => {
         event.target.classList.remove('task-important')
         if (event.target.checked) event.target.classList.add('task-important')
     })
+}
+
+function taskDescriptionMinimize(taskDescription, taskImportantCheckbox, taskDescriptionOpener) {
+    taskDescription.hidden = true
+    taskImportantCheckbox.hidden = true
+    taskDescriptionOpener.checked = false
 }
 
 export { taskCreate, tasksFilter }

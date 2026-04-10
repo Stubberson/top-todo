@@ -1,4 +1,6 @@
 export class Task {
+    static memory = []  // Memory for all tasks
+
     constructor(project, taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskImportantCheckbox) {
         this.owningProject = project
 
@@ -18,14 +20,8 @@ export class Task {
         this.container.append(this.completed, this.descriptionContainer)
 
         this.owningProject.newTask(this)  // Save tasks associated with unique project to project's memory
-    }
 
-    get getHeader() {
-        return this.header
-    }
-
-    get getContainer() {
-        return this.container
+        Task.memory.push(this)
     }
 
     get getImportant() {

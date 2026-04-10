@@ -1,7 +1,10 @@
+import { viewCurrent } from '../index.js'
 import { Project } from './project-class.js'
+import { Task } from '../task/task-class.js'
 import { taskCreate, tasksFilter } from '../task/task-dom.js'
-import { viewToday } from '../today/today-dom.js'
+import { viewToday } from '../sidebar/today-dom.js'
 import { currentDate, clearContent } from '../utilities/utility.js'
+import { viewImportant } from '../sidebar/important-dom.js'
 
 // --- Project DOM control ---
 
@@ -36,38 +39,46 @@ function listProject(project) {
     projectButtonDate.id = 'li-date'
     projectRemoveButton.id = 'li-rm-button'
 
-    if (project.getHeader.length > 30) {
-        projectButtonHeader.textContent = project.getHeader.slice(0, 30) + '...'
+    if (project.header.length > 30) {
+        projectButtonHeader.textContent = project.header.slice(0, 30) + '...'
     } else {
-        projectButtonHeader.textContent = project.getHeader
+        projectButtonHeader.textContent = project.header
     } 
-    projectButtonDate.textContent = project.getDate
+    projectButtonDate.textContent = project.date
 
     projectButton.append(projectButtonHeader, projectButtonDate)
+    project.projectButton = projectButton
     projectListing.append(projectButton, projectRemoveButton)
 
     projectsList.appendChild(projectListing)
 
     clearContent(projectContainer)  // Clear content view before opening new project
-    viewProject(project, projectButtonHeader, projectButtonDate)  // Open project after creation
+    viewProject(project)            // Open project after creation
     
     projectButton.addEventListener('click', () => {
         clearContent(projectContainer)
-        viewProject(project, projectButtonHeader, projectButtonDate)  // Allow to open project from sidebar
+        viewProject(project)  // Allow to open project from sidebar
     })
 
     projectRemoveButton.addEventListener('click', () => {
         // WOULD BE A GOOD IDEA TO ADD A CONFIRMATION POPUP!
         // Only clear content if currently viewed project is removed
-        if (project.getHeader === projectContainer.firstChild.value) {
+        if (project.header === projectContainer.firstChild.value) {
             clearContent(projectContainer)
-            viewToday()  // If viewed project removed, default to today
+            let previousProject = Project.memory[Project.memory.indexOf(project) - 1]
+            //let followingProject = Project.memory[Project.memory.indexOf(project) + 1]
+            if (Project.memory.length > 1) {  // Default to immediate sibling project, otherwise Today
+                viewProject(previousProject)
+            } else {
+                viewToday()
+            }
         }
         removeProjectListing(projectListing, project)
     })
 };
 
-function viewProject(project, projectButtonHeader, projectButtonDate) {
+function viewProject(project) {
+    const [projectButtonHeader, projectButtonDate] = project.projectButton.children
     const projectHeader = document.createElement('input')
     const projectDescription = document.createElement('textarea')
     const projectDueDate = document.createElement('input')
@@ -80,7 +91,7 @@ function viewProject(project, projectButtonHeader, projectButtonDate) {
     
     // Populate container with existing tasks (if any)
     tasksContainer.className = 'tasks-container'
-    project.getTasks.forEach(task => tasksContainer.append(task.getContainer))
+    project.tasks.forEach(task => tasksContainer.append(task.container))
 
     ;(function copyProjectInfo() {  // Without leading semicolon, parser throws an error
         projectHeader.id = 'content-project-header'
@@ -88,23 +99,23 @@ function viewProject(project, projectButtonHeader, projectButtonDate) {
         projectHeader.className = 'project-header'
         projectHeader.placeholder = 'Add header...'
         projectHeader.autocomplete = 'off'
-        projectHeader.value = project.getHeader
+        projectHeader.value = project.header
         projectHeader.addEventListener('input', () => {  // Update project header when header edited in content view
             if (projectHeader.value.length > 30) {
                 projectButtonHeader.textContent = projectHeader.value.slice(0, 30) + '...'
             } else {
                 projectButtonHeader.textContent = projectHeader.value
             }
-            project.setHeader = projectHeader.value
+            project.header = projectHeader.value
         })
 
         projectDescription.classList.add('project-description-area', 'description')
         projectDescription.placeholder = 'Add project description...'
         projectDescription.rows = 3
         projectDescription.name = 'project-description-area'
-        projectDescription.textContent = project.getDescription
+        projectDescription.textContent = project.description
         projectDescription.addEventListener('input', () => {
-            project.setDescription = projectDescription.value
+            project.description = projectDescription.value
         })
         // Create priority options for project content view
         const priorityOptions = [
@@ -124,17 +135,17 @@ function viewProject(project, projectButtonHeader, projectButtonDate) {
         projectDueDate.type = 'date'
         projectDueDate.className = 'due-date'
         projectDueDate.min = currentDate
-        projectDueDate.value = project.getDate
+        projectDueDate.value = project.date
         projectDueDate.addEventListener('input', () => {
             projectButtonDate.textContent = projectDueDate.value
-            project.setDate = projectDueDate.value
+            project.date = projectDueDate.value
         })
         
         projectPriority.id = 'content-priority-selection'
         projectPriority.className = 'priority-selection'
-        projectPriority.value = project.getPriority
+        projectPriority.value = project.priority
         projectPriority.addEventListener('input', () => {
-            project.setPriority = projectPriority.value
+            project.priority = projectPriority.value
         })
     })()
 
@@ -150,8 +161,8 @@ function viewProject(project, projectButtonHeader, projectButtonDate) {
         taskNewButton.className = 'task-control-button'
         taskNewButton.addEventListener('click', () => {
             let newTask = taskCreate(project)
-            tasksContainer.append(newTask.getContainer)
-            newTask.getHeader.focus()  // Focus task description after creation
+            tasksContainer.append(newTask.container)
+            newTask.header.focus()  // Focus task description after creation
         })
 
         taskAllButton.id = 'task-control-all'
@@ -182,11 +193,26 @@ function viewProject(project, projectButtonHeader, projectButtonDate) {
 };
 
 function removeProjectListing(projectListing, project) {
-    projectsList.removeChild(projectListing)       // Remove from DOM
-    const index = Project.memory.indexOf(project)  // Remove from mem
-        if (index > -1) {                          // Only remove if project found
-            Project.memory.splice(index, 1)
-        }
+    // Remove project from sidebar
+    projectsList.removeChild(projectListing)
+
+    // Remove project related tasks
+    const projectTasks = project.tasks
+    projectTasks.forEach(task => Task.memory.splice(Task.memory.indexOf(task), 1))
+    
+    // Remove project from mem
+    const projectIndex = Project.memory.indexOf(project)
+    Project.memory.splice(projectIndex, 1)
+
+    // Update content after removal
+    switch (viewCurrent) {
+        case 'today':
+            viewToday()
+            break
+        case 'important':
+            viewImportant()
+            break
+    }
 };
 
 export { projectContainer, projectDialog, createProject }

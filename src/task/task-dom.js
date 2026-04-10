@@ -87,14 +87,15 @@ function taskCreate(project) {
 function tasksFilter(mode, project, tasksContainer) {
     clearContent(tasksContainer)
 
-    let allProjectTasks = project.getTasks
+    let allProjectTasks = project.tasks
+    console.log(allProjectTasks)
     if (mode === 'all') {
-        allProjectTasks.forEach(task => tasksContainer.append(task.getContainer))
+        allProjectTasks.forEach(task => tasksContainer.append(task.container))
     }
     if (mode === 'important') {
         allProjectTasks.forEach(task => {
             if (task.getImportant) {
-                tasksContainer.append(task.getContainer)
+                tasksContainer.append(task.container)
             }
         })
     }

@@ -57,23 +57,44 @@ function listProject(project) {
     
     projectButton.addEventListener('click', () => {
         clearContent(projectContainer)
-        viewProject(project)  // Allow to open project from sidebar
+        viewProject(project)        // Allow to open project from sidebar
     })
 
     projectRemoveButton.addEventListener('click', () => {
-        // WOULD BE A GOOD IDEA TO ADD A CONFIRMATION POPUP!
-        // Only clear content if currently viewed project is removed
-        if (project.header === projectContainer.firstChild.value) {
-            clearContent(projectContainer)
-            let previousProject = Project.memory[Project.memory.indexOf(project) - 1]
-            //let followingProject = Project.memory[Project.memory.indexOf(project) + 1]
-            if (Project.memory.length > 1) {  // Default to immediate sibling project, otherwise Today
-                viewProject(previousProject)
-            } else {
-                viewToday()
+        // Confirm project removal
+        projectRemoveButton.hidden = true
+        
+        const confirmRemove = document.createElement('button')
+        confirmRemove.id = 'project-remove-confirm'
+        
+        projectListing.append(confirmRemove)
+        confirmRemove.focus()
+        
+        confirmRemove.addEventListener('click', () => {
+            // Only clear view if currently viewed project removed
+            if (project.header === projectContainer.firstChild.value) {
+                clearContent(projectContainer)
+
+                // Default to immediate sibling project, finally Today
+                const projectIndex = Project.memory.indexOf(project)
+                if (Project.memory.length > 1 && projectIndex < Project.memory.length - 1) {
+                    const followingProject = Project.memory[projectIndex + 1]
+                    viewProject(followingProject)
+                } else if (Project.memory.length > 1 && projectIndex === Project.memory.length - 1) {
+                    const previousProject = Project.memory[projectIndex - 1]
+                    viewProject(previousProject)
+                } else {
+                    viewToday()
+                }
             }
-        }
-        removeProjectListing(projectListing, project)
+            removeProjectListing(projectListing, project)
+        })
+
+        // If user doesn't confirm removal, cancel
+        confirmRemove.addEventListener('blur', () => {
+            confirmRemove.remove()
+            projectRemoveButton.hidden = false
+        })
     })
 };
 

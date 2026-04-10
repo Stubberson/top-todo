@@ -88,7 +88,6 @@ function tasksFilter(mode, project, tasksContainer) {
     clearContent(tasksContainer)
 
     let allProjectTasks = project.tasks
-    console.log(allProjectTasks)
     if (mode === 'all') {
         allProjectTasks.forEach(task => tasksContainer.append(task.container))
     }

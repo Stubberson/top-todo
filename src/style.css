@@ -84,7 +84,7 @@ button#li-rm-button {
     background-repeat: no-repeat;
     background-size: 90%;
 
-    transition: transform 0.1s ease;
+    transition: transform 0.2s ease;
 }
 
 button#li-button:hover + button#li-rm-button,
@@ -93,12 +93,28 @@ button#li-rm-button:hover {
 }
 
 button#li-rm-button:hover {
-    transform: scale(1.1);
-    background-color: whitesmoke;
+    transform: scale(1.4);
 }
 
 button#li-button:has(+ button#li-rm-button:hover) {
     background-color: yellowgreen;
+}
+
+button#project-remove-confirm {
+    width: 20px;
+    padding-right: 50px;
+
+    background-image: url('./visuals/delete-line-black.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+
+    transition: flex-grow 0.2s ease;
+}
+
+button#project-remove-confirm:hover{
+    background-image: url('./visuals/delete-fill.svg');
+    background-color: red;
+    flex-grow: 1;
 }
 
 dialog.dialog-project > form {

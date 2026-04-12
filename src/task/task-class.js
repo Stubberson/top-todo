@@ -1,23 +1,21 @@
 export class Task {
     static memory = []  // Memory for all tasks
 
-    constructor(project, taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskImportantCheckbox) {
+    constructor(project, taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveButton, taskDescription, taskImportantCheckbox) {
         this.owningProject = project
 
+        // Envelop each task into a div element
         this.container = document.createElement('div')
         this.container.className = 'task-container'
-
-        this.descriptionContainer = document.createElement('div')
-        this.descriptionContainer.className = 'task-description-container'
         
         this.completed = taskCompleteCheckbox
         this.header = taskHeader
         this.opener = taskDescriptionOpener
+        this.remove = taskRemoveButton
         this.description = taskDescription
         this.important = taskImportantCheckbox
 
-        this.descriptionContainer.append(this.header, this.opener, this.description, this.important)
-        this.container.append(this.completed, this.descriptionContainer)
+        this.container.append(this.completed, this.header, this.opener, this.remove, this.description, this.important)
 
         this.owningProject.newTask(this)  // Save tasks associated with unique project to project's memory
 
@@ -25,7 +23,7 @@ export class Task {
     }
 
     get getImportant() {
-        if (this.important.className.includes('task-important')) {
+        if (this.important.classList.contains('task-important-tag')) {
             return true
         }        
     }

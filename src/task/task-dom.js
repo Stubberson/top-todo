@@ -1,10 +1,12 @@
 import { Task } from "./task-class.js"
 import { clearContent } from "../utilities/utility.js"
+import { Project } from "../project/project-class.js"
 
 function taskCreate(project) {
     const taskCompleteCheckbox = document.createElement('input')
     const taskHeader = document.createElement('input')
     const taskDescriptionOpener = document.createElement('input')
+    const taskRemoveButton = document.createElement('button')
     const taskDescription = document.createElement('textarea')
     const taskImportantCheckbox = document.createElement('input')
 
@@ -18,10 +20,12 @@ function taskCreate(project) {
     taskHeader.placeholder = 'Add task...'
     taskHeader.autocomplete = 'off'
 
-    taskDescriptionOpener.className = 'task-tag'
-    taskDescriptionOpener.id = 'task-open-checkbox'
+    taskDescriptionOpener.className = 'task-open-checkbox'
     taskDescriptionOpener.type = 'checkbox'
     taskDescriptionOpener.name = 'task-open-checkbox'
+
+    taskRemoveButton.className = 'task-remove-button'
+    taskRemoveButton.hidden = true
 
     taskDescription.classList.add('task-description-area', 'description')
     taskDescription.placeholder = 'Add description...'
@@ -29,8 +33,7 @@ function taskCreate(project) {
     taskDescription.rows = 3
     taskDescription.hidden = true
 
-    taskImportantCheckbox.className = 'task-tag'
-    taskImportantCheckbox.id = 'task-important-checkbox'
+    taskImportantCheckbox.className = 'task-important-checkbox'
     taskImportantCheckbox.type = 'checkbox'
     taskImportantCheckbox.name = 'task-important-checkbox'
     taskImportantCheckbox.hidden = true
@@ -51,7 +54,7 @@ function taskCreate(project) {
     taskHeader.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             event.preventDefault()  // Prevent adding new line in description
-            taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDescriptionOpener)
+            taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDescriptionOpener, taskRemoveButton)
         }
     })
 
@@ -66,9 +69,9 @@ function taskCreate(project) {
                 break
             case 'click':
                 if (taskDescription.hidden) {
-                    taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDescriptionOpener)
+                    taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDescriptionOpener, taskRemoveButton)
                 } else {
-                    taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheckbox, taskDescriptionOpener)
+                    taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheckbox, taskDescriptionOpener, taskRemoveButton)
                 }
         }
     }))
@@ -77,17 +80,21 @@ function taskCreate(project) {
     const taskCloserEvents = ['blur', 'keydown']
     taskCloserEvents.forEach(event => taskDescription.addEventListener(event, (e) => {
         if (e.relatedTarget === null || e.key === 'Escape') {
-            taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheckbox, taskDescriptionOpener)
+            taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheckbox, taskDescriptionOpener, taskRemoveButton)
         }
     }))
+
+    taskRemoveButton.addEventListener('click', () => {
+        taskRemove(newTask, project)
+    })
 
     // Indicate important task
     taskImportantCheckbox.addEventListener('click', (event) => {
         event.target.classList.remove('task-important')
-        if (event.target.checked) event.target.classList.add('task-important')
+        if (event.target.checked) event.target.classList.add('task-important-tag')
     })
 
-    let newTask = new Task(project, taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskImportantCheckbox)
+    let newTask = new Task(project, taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveButton, taskDescription, taskImportantCheckbox)
     return newTask
 }
 
@@ -107,10 +114,12 @@ function tasksFilter(mode, project, tasksContainer) {
     }
 }
 
-function taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDescriptionOpener) {
+function taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDescriptionOpener, taskRemoveButton) {
     taskDescription.hidden = false
     taskImportantCheckbox.hidden = false
     taskDescriptionOpener.checked = true
+    taskRemoveButton.hidden = false
+    
     taskDescription.focus()
 
     taskImportantCheckbox.style['top'] = 'revert-layer'
@@ -118,18 +127,31 @@ function taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDes
     taskImportantCheckbox.style['transform'] = 'revert-layer'
 }
 
-function taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheckbox, taskDescriptionOpener) {
+function taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheckbox, taskDescriptionOpener, taskRemoveButton) {
     taskDescription.hidden = true
     taskDescriptionOpener.checked = false
+    taskRemoveButton.hidden = true
+
     taskHeader.focus()
 
     if (taskImportantCheckbox.checked) {  // Indicate task importance even if description minimized
         taskImportantCheckbox.style['right'] = '40px'
-        taskImportantCheckbox.style['top'] = '-3px'
+        taskImportantCheckbox.style['top'] = '-2px'
         taskImportantCheckbox.style['transform'] = 'scale(1.0)'
     } else {
         taskImportantCheckbox.hidden = true
     }
+}
+
+function taskRemove(task, project) {
+    // Remove task from DOM
+    task.container.remove()
+
+    // Remove task from project mem
+    project.tasks.splice(project.tasks.indexOf(task), 1)
+
+    // Remove task from tasks mem
+    Task.memory.splice(Task.memory.indexOf(task), 1)
 }
 
 export { taskCreate, tasksFilter }

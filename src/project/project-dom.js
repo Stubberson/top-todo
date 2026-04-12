@@ -65,7 +65,7 @@ function listProject(project) {
         projectRemoveButton.hidden = true
         
         const confirmRemove = document.createElement('button')
-        confirmRemove.id = 'project-remove-confirm'
+        confirmRemove.className = 'project-remove-confirm'
         
         projectListing.append(confirmRemove)
         confirmRemove.focus()

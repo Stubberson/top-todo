@@ -40,6 +40,7 @@ function taskCreate(project) {
             taskHeader.style['color'] = '#767676'
             taskHeader.style['text-decoration'] = '#767676 line-through solid 1px'
             taskDescription.style['text-decoration'] = '#767676 line-through solid 0.5px'
+            taskImportantCheckbox.checked = false  // Task not important anymore, if completed
         } else {
             taskHeader.style['color'] = 'revert'
             taskHeader.style['text-decoration'] = 'revert'
@@ -50,7 +51,7 @@ function taskCreate(project) {
     taskHeader.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             event.preventDefault()  // Prevent adding new line in description
-            taskDescriptionExpand(taskDescription, taskImportantCheckbox, taskDescriptionOpener)
+            taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDescriptionOpener)
         }
     })
 
@@ -65,20 +66,26 @@ function taskCreate(project) {
                 break
             case 'click':
                 if (taskDescription.hidden) {
-                    taskDescriptionExpand(taskDescription, taskImportantCheckbox, taskDescriptionOpener)
+                    taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDescriptionOpener)
                 } else {
-                    taskDescriptionMinimize(taskDescription, taskImportantCheckbox, taskDescriptionOpener)
+                    taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheckbox, taskDescriptionOpener)
                 }
         }
     }))
 
-    // Eases minimizing task
+    // Eases minimizing task description
     const taskCloserEvents = ['blur', 'keydown']
     taskCloserEvents.forEach(event => taskDescription.addEventListener(event, (e) => {
         if (e.relatedTarget === null || e.key === 'Escape') {
-            taskDescriptionMinimize(taskDescription, taskImportantCheckbox, taskDescriptionOpener)
+            taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheckbox, taskDescriptionOpener)
         }
     }))
+
+    // Indicate important task
+    taskImportantCheckbox.addEventListener('click', (event) => {
+        event.target.classList.remove('task-important')
+        if (event.target.checked) event.target.classList.add('task-important')
+    })
 
     let newTask = new Task(project, taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskImportantCheckbox)
     return newTask
@@ -100,23 +107,29 @@ function tasksFilter(mode, project, tasksContainer) {
     }
 }
 
-function taskDescriptionExpand(taskDescription, taskImportantCheckbox, taskDescriptionOpener) {
+function taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDescriptionOpener) {
     taskDescription.hidden = false
     taskImportantCheckbox.hidden = false
     taskDescriptionOpener.checked = true
     taskDescription.focus()
 
-    // Indicate important task
-    taskImportantCheckbox.addEventListener('click', (event) => {
-        event.target.classList.remove('task-important')
-        if (event.target.checked) event.target.classList.add('task-important')
-    })
+    taskImportantCheckbox.style['top'] = 'revert-layer'
+    taskImportantCheckbox.style['right'] = 'revert-layer'
+    taskImportantCheckbox.style['transform'] = 'revert-layer'
 }
 
-function taskDescriptionMinimize(taskDescription, taskImportantCheckbox, taskDescriptionOpener) {
+function taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheckbox, taskDescriptionOpener) {
     taskDescription.hidden = true
-    taskImportantCheckbox.hidden = true
     taskDescriptionOpener.checked = false
+    taskHeader.focus()
+
+    if (taskImportantCheckbox.checked) {  // Indicate task importance even if description minimized
+        taskImportantCheckbox.style['right'] = '40px'
+        taskImportantCheckbox.style['top'] = '-3px'
+        taskImportantCheckbox.style['transform'] = 'scale(1.0)'
+    } else {
+        taskImportantCheckbox.hidden = true
+    }
 }
 
 export { taskCreate, tasksFilter }

@@ -44,7 +44,7 @@ function listProject(project) {
     } else {
         projectButtonHeader.textContent = project.header
     } 
-    projectButtonDate.textContent = project.date
+    projectButtonDate.textContent = project.dueDate
 
     projectButton.append(projectButtonHeader, projectButtonDate)
     project.projectButton = projectButton
@@ -156,10 +156,10 @@ function viewProject(project) {
         projectDueDate.type = 'date'
         projectDueDate.className = 'due-date'
         projectDueDate.min = currentDate
-        projectDueDate.value = project.date
+        projectDueDate.value = project.dueDate
         projectDueDate.addEventListener('input', () => {
             projectButtonDate.textContent = projectDueDate.value
-            project.date = projectDueDate.value
+            project.dueDate = projectDueDate.value
         })
         
         projectPriority.id = 'content-priority-selection'

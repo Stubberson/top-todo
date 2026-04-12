@@ -277,7 +277,7 @@ div.tasks-container > div.task-container {
         0 -9px 0 0 rgb(118, 118, 118);
 }
 
-div.task-container > input.task-complete-checkbox {
+div.task-container input.task-complete-checkbox {
     margin-top: 0px;
     padding-left: 6px;
     margin-bottom: auto;
@@ -295,13 +295,13 @@ div.task-container > input.task-complete-checkbox {
     transition: transform 0.2s ease-in-out;
 }
 
-div.task-container > input.task-complete-checkbox:checked {
+div.task-container input.task-complete-checkbox:checked {
     background-image: url('./visuals/task-complete.svg');
     transform: scale(0.5) rotate(90deg);
     opacity: 0.5;
 }
 
-div.task-container > div.task-description-container {
+div.task-container div.task-description-container {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -360,7 +360,7 @@ input#task-important-checkbox {
     z-index: 2;
     position: absolute;
     right: 0.5px;
-    bottom: 0px;
+    bottom: -2px;
 
     appearance: none;
 
@@ -374,11 +374,11 @@ input#task-important-checkbox {
 
 input#task-important-checkbox:checked {
     background-image: url('./visuals/important-checked.svg');
-    transform: scale(1.5)
+    transform: scale(1.3);
 }
 
 input#task-important-checkbox:hover {
-    transform: scale(1.5);
+    transform: scale(1.3);
 }
 
 /* --- FOOTER --- */

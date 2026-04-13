@@ -65,25 +65,20 @@ ul.projects-list > li {
     padding: 0.5em;
 }
 
-button#li-button {
+button#listing-button {
     display: flex;
     flex-direction: column;
 
     flex-grow: 1;
-    min-height: 30px;
+    min-height: 35px;
 }
 
-li > button > span#li-title {
-    font-weight: bold;
+li span#listing-header,
+li span#listing-date {
+    font-family: "Atkinson Hyperlegible Mono", sans-serif;
 }
 
-li > button > span#li-date {
-    font-size: small;
-    font-style: italic;
-    font-weight: lighter;
-}
-
-button#li-rm-button {
+button#listing-rm-button {
     position: absolute;
     right: 2em;
     align-self: center;
@@ -100,17 +95,8 @@ button#li-rm-button {
     transition: transform 0.2s ease;
 }
 
-button#li-button:hover + button#li-rm-button,
-button#li-rm-button:hover {
-    background-color: yellowgreen;
-}
-
-button#li-rm-button:hover {
+button#listing-rm-button:hover {
     transform: scale(1.4);
-}
-
-button#li-button:has(+ button#li-rm-button:hover) {
-    background-color: yellowgreen;
 }
 
 button.project-remove-confirm {
@@ -198,12 +184,15 @@ button.priority-low {
 
     appearance: none;
     background-position: center;
-    background-size: 100%;
+    background-repeat: no-repeat;
+
+    transition: 
+        transform 0.2s ease,
+        flex-grow 0.2s ease;
 }
 
 button.priority-none {
-    outline: solid 1px black;
-    outline-offset: -6px;
+    background-image: url('./visuals/task-incomplete.svg');
 }
 
 button.priority-high {
@@ -218,11 +207,37 @@ button.priority-low {
     background-image: url('./visuals/priority/priority-3.svg');
 }
 
-button.priority-none:disabled,
+button.priority-none:disabled {
+    transform: scale(1.3);
+}
+
 button.priority-high:disabled,
 button.priority-medium:disabled,
 button.priority-low:disabled {
-    transform: scale(1.5);
+    flex-grow: 1;
+    background-position: left;
+}
+
+button.priority-high:disabled,
+button.priority-high:hover {
+    background-image: url('./visuals/priority/priority-1-line.svg');
+    background-color: #b7094c;
+}
+
+button.priority-medium:disabled,
+button.priority-medium:hover {
+    background-image: url('./visuals/priority/priority-2-line.svg');
+    background-color: #723c70;
+}
+
+button.priority-low:disabled,
+button.priority-low:hover {
+    background-image: url('./visuals/priority/priority-3-line.svg');
+    background-color: #2e6f95;
+}
+
+button.priority-none:hover {
+    background-color: unset;
 }
 
 input.project-date-content {

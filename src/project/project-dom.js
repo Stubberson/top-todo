@@ -20,7 +20,7 @@ function createProject() {
     const projectDescription = document.querySelector('form > input.project-description')
     const projectPriority = document.querySelector('form > div.priority-selection')
     
-    const newProject = new Project(projectHeader, projectDescription, dueDate, projectPriority.cloneNode(true))
+    const newProject = new Project(projectHeader, projectDescription, dueDate, projectPriority.cloneNode(true))  // If no clone, all projects would point to same element
 
     listProject(newProject)
     
@@ -33,11 +33,11 @@ function listProject(project) {
     const projectButtonHeader = document.createElement('span')
     const projectButtonDate = document.createElement('span')
     const projectRemoveButton = document.createElement('button')
-    
-    projectButton.id = 'li-button'
-    projectButtonHeader.id = 'li-title'
-    projectButtonDate.id = 'li-date'
-    projectRemoveButton.id = 'li-rm-button'
+
+    projectButton.id = 'listing-button'
+    projectButtonHeader.id = 'listing-header'
+    projectButtonDate.id = 'listing-date'
+    projectRemoveButton.id = 'listing-rm-button'
 
     if (project.header.length > 30) {
         projectButtonHeader.textContent = project.header.slice(0, 30) + '...'
@@ -152,10 +152,27 @@ function viewProject(project) {
         });
     })();
 
+    // Indicate project priority
     const projectPriorityButtons = Array.from(project.priority.children)
     projectPriorityButtons.forEach(button => button.addEventListener('click', (event) => {
         projectPriorityButtons.forEach(btn => btn.disabled = false)
         event.target.disabled = true
+
+        // Switch project listing color according to priority
+        switch (event.target.value) {
+            case 'priority-none':
+                project.projectButton.style.setProperty('box-shadow', 'none')
+                break
+            case 'priority-high':
+                project.projectButton.style.setProperty('box-shadow', '-2px 0 0 0 whitesmoke, -8px 0 0 0 #b7094c')
+                break
+            case 'priority-medium':
+                project.projectButton.style.setProperty('box-shadow', '-2px 0 0 0 whitesmoke, -8px 0 0 0 #723c70')
+                break
+            case 'priority-low':
+                project.projectButton.style.setProperty('box-shadow', '-2px 0 0 0 whitesmoke, -8px 0 0 0 #2e6f95')
+                break
+        }        
     }))
 
     datePriorityContainer.append(projectDueDate, project.priority);

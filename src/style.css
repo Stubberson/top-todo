@@ -22,9 +22,22 @@ body {
 
     display: grid;
     grid-template: 1fr 2em / 25% 1fr;
+
+    --light-gray-highlight: #e5e5e5;
+    --cherry-rose: #b7094c;
+    --dark-raspberry: #a01a58;
+    --royal-plum: #892b64;
+    --velvet-purple: #723c70;
+    --dusty-grape: #5c4d7d;
+    --dusk-blue: #455e89;
+    --rich-cerulean: #2e6f95;
+    --cerulean: #1780a1;
+    --pacific-cyan: #0091ad;
 }
 
 button {
+    font-family: "Atkinson Hyperlegible Mono", sans-serif;;
+
     border: none;
     background-color: inherit;
     text-align: left;
@@ -73,9 +86,17 @@ button#listing-button {
     min-height: 35px;
 }
 
+button#listing-button:hover {
+    background-color: var(--light-gray-highlight);
+}
+
 li span#listing-header,
 li span#listing-date {
     font-family: "Atkinson Hyperlegible Mono", sans-serif;
+}
+
+li span#listing-header {
+    font-weight: bold;
 }
 
 button#listing-rm-button {
@@ -97,6 +118,7 @@ button#listing-rm-button {
 
 button#listing-rm-button:hover {
     transform: scale(1.4);
+    background-color: #dadada;
 }
 
 button.project-remove-confirm {
@@ -168,11 +190,11 @@ textarea:hover {
 
 div.date-priority-container {
     display: flex;
-    flex-direction: column;
 }
 
 div.priority-selection {
     display: flex;
+    flex-grow: 1;
 }
 
 button.priority-none,

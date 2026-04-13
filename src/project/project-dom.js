@@ -39,8 +39,8 @@ function listProject(project) {
     projectButtonDate.id = 'listing-date'
     projectRemoveButton.id = 'listing-rm-button'
 
-    if (project.header.length > 30) {
-        projectButtonHeader.textContent = project.header.slice(0, 30) + '...'
+    if (project.header.length > 22) {
+        projectButtonHeader.textContent = project.header.slice(0, 22) + '...'
     } else {
         projectButtonHeader.textContent = project.header
     } 
@@ -52,8 +52,9 @@ function listProject(project) {
 
     projectsList.appendChild(projectListing)
 
-    clearContent(projectContainer)  // Clear content view before opening new project
-    viewProject(project)            // Open project after creation
+    clearContent(projectContainer)    // Clear content view before opening new project
+    viewProject(project)              // Open project after creation
+    indicateProjectPriority(project)  // Only indicate priority when the project is in DOM
     
     projectButton.addEventListener('click', () => {
         clearContent(projectContainer)
@@ -122,8 +123,8 @@ function viewProject(project) {
         projectHeader.autocomplete = 'off'
         projectHeader.value = project.header
         projectHeader.addEventListener('input', () => {  // Update project header when header edited in content view
-            if (projectHeader.value.length > 30) {
-                projectButtonHeader.textContent = projectHeader.value.slice(0, 30) + '...'
+            if (projectHeader.value.length > 22) {
+                projectButtonHeader.textContent = projectHeader.value.slice(0, 22) + '...'
             } else {
                 projectButtonHeader.textContent = projectHeader.value
             }
@@ -152,28 +153,7 @@ function viewProject(project) {
         });
     })();
 
-    // Indicate project priority
-    const projectPriorityButtons = Array.from(project.priority.children)
-    projectPriorityButtons.forEach(button => button.addEventListener('click', (event) => {
-        projectPriorityButtons.forEach(btn => btn.disabled = false)
-        event.target.disabled = true
-
-        // Switch project listing color according to priority
-        switch (event.target.value) {
-            case 'priority-none':
-                project.projectButton.style.setProperty('box-shadow', 'none')
-                break
-            case 'priority-high':
-                project.projectButton.style.setProperty('box-shadow', '-2px 0 0 0 whitesmoke, -8px 0 0 0 #b7094c')
-                break
-            case 'priority-medium':
-                project.projectButton.style.setProperty('box-shadow', '-2px 0 0 0 whitesmoke, -8px 0 0 0 #723c70')
-                break
-            case 'priority-low':
-                project.projectButton.style.setProperty('box-shadow', '-2px 0 0 0 whitesmoke, -8px 0 0 0 #2e6f95')
-                break
-        }        
-    }))
+    indicateProjectPriority(project, 'content')
 
     datePriorityContainer.append(projectDueDate, project.priority);
 
@@ -219,6 +199,39 @@ function viewProject(project) {
     // Add project with tasks to DOM
     projectContainer.append(projectHeader, projectDescription, datePriorityContainer, taskControlsContainer, tasksContainer)
 };
+
+function indicateProjectPriority(project, mode) {
+    const projectPriorityButtons = Array.from(project.priority.children)
+
+    if (mode === 'content') {
+        projectPriorityButtons.forEach(button => button.addEventListener('click', (event) => {
+            projectPriorityButtons.forEach(btn => btn.disabled = false)
+            event.target.disabled = true
+
+            // Switch project listing color according to priority
+            switch (event.target.value) {
+                case 'priority-none':
+                    project.projectButton.style.setProperty('box-shadow', 'none')
+                    break
+                case 'priority-high':
+                    project.projectButton.style.setProperty('box-shadow', '2px 0 0 0 whitesmoke, 8px 0 0 0 #b7094c')
+                    break
+                case 'priority-medium':
+                    project.projectButton.style.setProperty('box-shadow', '2px 0 0 0 whitesmoke, 8px 0 0 0 #723c70')
+                    break
+                case 'priority-low':
+                    project.projectButton.style.setProperty('box-shadow', '2px 0 0 0 whitesmoke, 8px 0 0 0 #2e6f95')
+                    break
+            }
+        }))
+    } else {
+        projectPriorityButtons.forEach(button => {
+            if (button.disabled) {
+                project.projectButton.style.setProperty('box-shadow', `2px 0 0 0 whitesmoke, 8px 0 0 0 ${getComputedStyle(button).backgroundColor}`)
+            }
+        })
+    }
+}
 
 function removeProjectListing(projectListing, project) {
     // Remove project from sidebar

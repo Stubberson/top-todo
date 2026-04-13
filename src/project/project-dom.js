@@ -18,9 +18,9 @@ dueDate.min = currentDate  // Do not allow setting due dates into the past
 function createProject() {
     const projectHeader = document.querySelector('form input.project-header')
     const projectDescription = document.querySelector('form > input.project-description')
-    const projectPriority = document.querySelector('form > select')
+    const projectPriority = document.querySelector('form > div.priority-selection')
     
-    const newProject = new Project(projectHeader.value, projectDescription.value, dueDate.value, projectPriority.value)
+    const newProject = new Project(projectHeader, projectDescription, dueDate, projectPriority.cloneNode(true))
 
     listProject(newProject)
     
@@ -102,8 +102,8 @@ function viewProject(project) {
     const [projectButtonHeader, projectButtonDate] = project.projectButton.children
     const projectHeader = document.createElement('input')
     const projectDescription = document.createElement('textarea')
+    const datePriorityContainer = document.createElement('div')
     const projectDueDate = document.createElement('input')
-    const projectPriority = document.createElement('select')
     
     const taskControlsContainer = document.createElement('div')
     const tasksContainer = document.createElement('div')
@@ -112,12 +112,12 @@ function viewProject(project) {
     
     // Populate container with existing tasks (if any)
     tasksContainer.className = 'tasks-container'
-    project.tasks.forEach(task => tasksContainer.append(task.container))
+    project.tasks.forEach(task => tasksContainer.append(task.container));
 
-    ;(function copyProjectInfo() {  // Without leading semicolon, parser throws an error
-        projectHeader.id = 'content-project-header'
+    (function copyProjectInfo() {
         projectHeader.type = 'text'
-        projectHeader.className = 'project-header'
+        projectHeader.className = 'project-header-content'
+        projectHeader.name = 'project-header-content'
         projectHeader.placeholder = 'Add header...'
         projectHeader.autocomplete = 'off'
         projectHeader.value = project.header
@@ -138,39 +138,29 @@ function viewProject(project) {
         projectDescription.addEventListener('input', () => {
             project.description = projectDescription.value
         })
-        // Create priority options for project content view
-        const priorityOptions = [
-            { value: "", text: "Priority" },
-            { value: "high", text: "Urgent" },
-            { value: "medium", text: "Upcoming" },
-            { value: "low", text: "Someday" }
-        ]
-        priorityOptions.forEach(opt => {
-            const option = document.createElement('option')
-            option.value = opt.value
-            option.textContent = opt.text
-            projectPriority.appendChild(option)
-        })
 
-        projectDueDate.id = 'content-due-date'
+        datePriorityContainer.className = 'date-priority-container'
+
         projectDueDate.type = 'date'
-        projectDueDate.className = 'due-date'
+        projectDueDate.className = 'project-date-content'
+        projectDueDate.name = 'project-date-content'
         projectDueDate.min = currentDate
         projectDueDate.value = project.dueDate
         projectDueDate.addEventListener('input', () => {
             projectButtonDate.textContent = projectDueDate.value
             project.dueDate = projectDueDate.value
-        })
-        
-        projectPriority.id = 'content-priority-selection'
-        projectPriority.className = 'priority-selection'
-        projectPriority.value = project.priority
-        projectPriority.addEventListener('input', () => {
-            project.priority = projectPriority.value
-        })
-    })()
+        });
+    })();
 
-    ;(function createTaskControls() {
+    const projectPriorityButtons = Array.from(project.priority.children)
+    projectPriorityButtons.forEach(button => button.addEventListener('click', (event) => {
+        projectPriorityButtons.forEach(btn => btn.disabled = false)
+        event.target.disabled = true
+    }))
+
+    datePriorityContainer.append(projectDueDate, project.priority);
+
+    (function createTaskControls() {
         const tabsAllImportant = document.createElement('div')
         const taskAllButton = document.createElement('button')
         const taskImportantButton = document.createElement('button')
@@ -210,7 +200,7 @@ function viewProject(project) {
     })();
     
     // Add project with tasks to DOM
-    projectContainer.append(projectHeader, projectDescription, projectDueDate, projectPriority, taskControlsContainer, tasksContainer)
+    projectContainer.append(projectHeader, projectDescription, datePriorityContainer, taskControlsContainer, tasksContainer)
 };
 
 function removeProjectListing(projectListing, project) {

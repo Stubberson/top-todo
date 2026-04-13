@@ -13,8 +13,9 @@ let viewCurrent = undefined;  // Track currently open view
     const todayTasks = document.querySelector('button#button-today-all')
     const importantTasks = document.querySelector('button#button-important-all')
     const newProjectButton = document.querySelector('button#new-project')
-    const closeDialogButton = document.querySelector('button#dialog-close')
-    const submitDialogButton = document.querySelector('button#dialog-submit')
+    const dialogCloseButton = document.querySelector('button#dialog-close')
+    const dialogPriorityButtons = document.querySelectorAll('div.priority-selection button')
+    const dialogSubmitButton = document.querySelector('button#dialog-submit')
 
     todayTasks.addEventListener('click', () => {
         viewToday()
@@ -28,13 +29,19 @@ let viewCurrent = undefined;  // Track currently open view
 
     newProjectButton.addEventListener('click', () => {
         projectDialog.showModal()
+        dialogPriorityButtons.forEach(btn => btn.disabled = false)  // Reset priority selection
     })
 
-    closeDialogButton.addEventListener('click', () => {
+    dialogCloseButton.addEventListener('click', () => {
         projectDialog.close()
     })
 
-    submitDialogButton.addEventListener('click', (event) => {
+    dialogPriorityButtons.forEach(button => button.addEventListener('click', (event) => {
+        dialogPriorityButtons.forEach(btn => btn.disabled = false)
+        event.target.disabled = true
+    }))
+
+    dialogSubmitButton.addEventListener('click', (event) => {
         event.preventDefault()  // Prevent form sending data to server
         createProject()
         projectDialog.close()

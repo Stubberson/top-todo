@@ -2,9 +2,9 @@ export class Project {
     static memory = []  // Memory for all projects
 
     constructor(header, description, dueDate, priority) {
-        this.header = header
-        this.description = description
-        this.dueDate = dueDate
+        this.header = header.value
+        this.description = description.value
+        this.dueDate = dueDate.value
         this.priority = priority
         this.projectButton = null
         this.tasks = []

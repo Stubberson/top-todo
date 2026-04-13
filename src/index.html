@@ -34,15 +34,15 @@
                 <label for="dialog-due-date">Due date</label>
                 <input type="date" id="dialog-due-date" class="due-date">
 
-                <label for="dialog-priority-selection">Priority</label>
-                <select id="dialog-priority-selection" class="priority-selection">
-                    <option value="">Select</option>
-                    <option value="high">Urgent</option>
-                    <option value="medium">Upcoming</option>
-                    <option value="low">Someday</option>
-                </select>
+                <span>Priority</span>
+                <div class="priority-selection">
+                    <button value="priority-none" class="priority-none" type="button"></button>
+                    <button value="priority-high" class="priority-high" type="button"></button>
+                    <button value="priority-medium" class="priority-medium" type="button"></button>
+                    <button value="priority-low" class="priority-low" type="button"></button>
+                </div>
 
-                <button formmethod="dialog" id="dialog-submit">Create project</button>
+                <button formmethod="dialog" id="dialog-submit" type="submit">Create project</button>
             </form>
         </dialog>
     </div>

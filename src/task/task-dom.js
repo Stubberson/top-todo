@@ -2,7 +2,7 @@ import { Task } from "./task-class.js"
 import { clearContent } from "../utilities/utility.js"
 import { Project } from "../project/project-class.js"
 
-function taskCreate(project) {
+function taskCreate(project = undefined) {
     const taskContainer = document.createElement('div')
     const taskCompleteCheckbox = document.createElement('input')
     const taskHeader = document.createElement('input')
@@ -150,10 +150,12 @@ function taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheck
     }
 }
 
-function taskRemove(task, project) {
-    task.container.remove()                               // Remove task from DOM
-    project.tasks.splice(project.tasks.indexOf(task), 1)  // Remove task from project mem
-    Task.memory.splice(Task.memory.indexOf(task), 1)      // Remove task from tasks mem
+function taskRemove(task, project = undefined) {
+    task.container.remove()                                  // Remove task from DOM
+    if (project) {
+        project.tasks.splice(project.tasks.indexOf(task), 1) // Remove task from project mem
+    }    
+    Task.memory.splice(Task.memory.indexOf(task), 1)         // Remove task from tasks mem
 }
 
-export { taskCreate, tasksFilter }
+export { taskCreate, tasksFilter, taskRemove }

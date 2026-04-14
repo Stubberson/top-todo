@@ -1,9 +1,7 @@
 export class Task {
     static memory = []  // Memory for all tasks
 
-    constructor(project, container) {
-        this.owningProject = project
-
+    constructor(project = undefined, container) {
         const taskElements = Array.from(container.children)
 
         this.container = container
@@ -14,7 +12,10 @@ export class Task {
         this.description = taskElements[4]
         this.important = taskElements[5]
 
-        this.owningProject.newTask(this)  // Save tasks associated with unique project to project's memory
+        if (project) {
+            this.owningProject = project
+            this.owningProject.newTask(this)  // Save tasks associated with unique project to project's memory
+        }
 
         Task.memory.push(this)
     }

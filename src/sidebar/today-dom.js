@@ -1,5 +1,6 @@
 import { currentDate, clearContent } from '../utilities/utility.js'
 import { Task } from '../task/task-class.js'
+import { taskCreate, taskRemove } from '../task/task-dom.js'
 
 // --- Today's tasks DOM control ---
 
@@ -9,18 +10,19 @@ function viewToday() {
     clearContent(contentContainer)  // Clear the content container
 
     const todayHeader = document.createElement('h1')
-    const todayTaskList = document.createElement('ul')
+    const tasksContainer = document.querySelector('tasks-container')
 
     todayHeader.textContent = 'Today'
 
-    let todayTaskOne = document.createElement('li')
-    let todayTaskTwo = document.createElement('li')
+    const taskNewButton = document.createElement('button')
+    taskNewButton.className = 'task-new-button'
+    taskNewButton.addEventListener('click', () => {
+        let task = taskCreate()
+        tasksContainer.append(task.container)
+        task.header.focus()  // Focus task description after creation
+    })
 
-    todayTaskOne.textContent = "Today's important task one!"
-    todayTaskTwo.textContent = "Second task for today!"
-    todayTaskList.append(todayTaskOne, todayTaskTwo)
-
-    contentContainer.append(todayHeader, todayTaskList)
+    contentContainer.append(todayHeader, taskNewButton)
 }
 
 

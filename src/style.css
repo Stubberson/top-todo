@@ -48,12 +48,12 @@ div.sidebar {
     background-color: whitesmoke;
 }
 
-div.sidebar > div.priority-classes {
+div.sidebar > div.navigation {
     display: flex;
     flex-direction: column;
 }
 
-div.priority-classes button {
+div.navigation button {
     position: relative;
     height: 40px;
     padding-left: 3em;
@@ -298,7 +298,7 @@ div.tasks-controls-container > div.task-tabs-container::after {
     background-color: whitesmoke;
 }
 
-div.tasks-controls-container > button#task-new-button {
+div.tasks-controls-container > button.task-new-button {
     appearance: none;
     width: 32px;
     height: 32px;
@@ -311,7 +311,7 @@ div.tasks-controls-container > button#task-new-button {
     transition: transform 0.2s ease-in-out;
 }
 
-div.tasks-controls-container > button#task-new-button:hover {
+div.tasks-controls-container > button.task-new-button:hover {
     background-image: url('./visuals/new-hover.svg');
     background-color: yellowgreen;
 

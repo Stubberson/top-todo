@@ -10,21 +10,21 @@ let viewCurrent = undefined;  // Track currently open view
 })();
 
 (function listenIndexEvents() {
-    const todayTasks = document.querySelector('button#today-all')
-    const importantTasks = document.querySelector('button#important-all')
-    const newProjectButton = document.querySelector('button#new-project')
+    const tasksToday = document.querySelector('button#today-all')
+    const tasksImportant = document.querySelector('button#important-all')
+    const projectNew = document.querySelector('button#new-project')
 
-    todayTasks.addEventListener('click', () => {
+    tasksToday.addEventListener('click', () => {
         viewToday()
         viewCurrent = 'today'
     })
 
-    importantTasks.addEventListener('click', () => {
+    tasksImportant.addEventListener('click', () => {
         viewImportant()
         viewCurrent = 'important'
     })
 
-    newProjectButton.addEventListener('click', () => {
+    projectNew.addEventListener('click', () => {
         createProject()
         document.querySelector('.project-header-content').focus()
         viewCurrent = 'project'

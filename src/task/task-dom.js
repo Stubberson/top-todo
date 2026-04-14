@@ -43,7 +43,7 @@ function taskCreate(project) {
             taskHeader.style['color'] = '#767676'
             taskHeader.style['text-decoration'] = '#767676 line-through solid 1px'
             taskDescription.style['text-decoration'] = '#767676 line-through solid 0.5px'
-            taskImportantCheckbox.checked = false  // Task not important anymore, if completed
+            taskImportantCheckbox.checked = false  // If completed, task not important anymore
         } else {
             taskHeader.style['color'] = 'revert'
             taskHeader.style['text-decoration'] = 'revert'
@@ -144,14 +144,9 @@ function taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheck
 }
 
 function taskRemove(task, project) {
-    // Remove task from DOM
-    task.container.remove()
-
-    // Remove task from project mem
-    project.tasks.splice(project.tasks.indexOf(task), 1)
-
-    // Remove task from tasks mem
-    Task.memory.splice(Task.memory.indexOf(task), 1)
+    task.container.remove()                               // Remove task from DOM
+    project.tasks.splice(project.tasks.indexOf(task), 1)  // Remove task from project mem
+    Task.memory.splice(Task.memory.indexOf(task), 1)      // Remove task from tasks mem
 }
 
 export { taskCreate, tasksFilter }

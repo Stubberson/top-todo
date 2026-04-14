@@ -10,8 +10,8 @@ let viewCurrent = undefined;  // Track currently open view
 })();
 
 (function listenIndexEvents() {
-    const todayTasks = document.querySelector('button#button-today-all')
-    const importantTasks = document.querySelector('button#button-important-all')
+    const todayTasks = document.querySelector('button#today-all')
+    const importantTasks = document.querySelector('button#important-all')
     const newProjectButton = document.querySelector('button#new-project')
 
     todayTasks.addEventListener('click', () => {

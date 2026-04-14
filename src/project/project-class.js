@@ -8,7 +8,7 @@ export class Project {
         this.dueDate = date
         this.tasks = []
 
-        // Containers
+        // Containers for DOM
         this.infoContainer = undefined
         this.tabsContainer = undefined
         this.controlsContainer = undefined

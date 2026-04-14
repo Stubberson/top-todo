@@ -136,9 +136,10 @@ function listProject(project) {
 
     projectsList.appendChild(projectListing)
 
-    clearContent(projectContainer)    // Clear content view before opening new project
+    clearContent(projectContainer)  // Clear content view before opening new project
     projectButton.addEventListener('click', () => {
-        viewProject(project)  // Allow to open project from sidebar
+        viewProject(project)        // Open project from sidebar
+        project.header.focus()
     })
 
     projectRemoveButton.addEventListener('click', () => {
@@ -146,13 +147,13 @@ function listProject(project) {
         
         const confirmRemove = document.createElement('button')
         confirmRemove.className = 'project-remove-confirm'
-        
         projectListing.append(confirmRemove)
         confirmRemove.focus()
+        
         // Confirm project removal
         confirmRemove.addEventListener('click', () => {
             // Only clear view if currently viewed project removed
-            if (project.header.value === projectContainer.firstChild.value) {
+            if (project.header.value === document.querySelector('.project-header-content').value) {
                 // Default to immediate sibling project, finally Today
                 const projectIndex = Project.memory.indexOf(project)
                 if (Project.memory.length > 1 && projectIndex < Project.memory.length - 1) {

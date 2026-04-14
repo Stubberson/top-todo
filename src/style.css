@@ -53,6 +53,40 @@ div.sidebar > div.priority-classes {
     flex-direction: column;
 }
 
+div.priority-classes button {
+    position: relative;
+    height: 40px;
+    padding-left: 3em;
+}
+
+button#today-all::before {
+    position: absolute;
+    content: url('./visuals/calendar/calendar-add-line.svg');
+    left: 0.5em;
+    top: 0.6em;
+
+    transition: transform 0.1s ease-in-out;
+}
+
+button#today-all:hover::before {
+    content: url('./visuals/calendar/calendar-add-fill.svg');
+    transform: scale(1.1);
+}
+
+button#important-all::before {
+    position: absolute;
+    content: url('./visuals/important-unchecked.svg');
+    left: 0.5em;
+    top: 0.6em;
+
+    transition: transform 0.1s ease-in-out;
+}
+
+button#important-all:hover::before {
+    content: url('./visuals/important-checked-black.svg');
+    transform: scale(1.2);
+}
+
 ul.projects-list {
     margin: 0px;
     padding: 0px;
@@ -101,7 +135,7 @@ button#listing-rm-button {
     background-repeat: no-repeat;
     background-size: 90%;
 
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease-in-out;
 }
 
 button#listing-rm-button:hover {
@@ -274,7 +308,7 @@ div.tasks-controls-container > button#task-new-button {
     background-repeat: no-repeat;
     background-position: center;
 
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease-in-out;
 }
 
 div.tasks-controls-container > button#task-new-button:hover {
@@ -418,7 +452,7 @@ input.task-important-checkbox {
 }
 
 input.task-important-checkbox:checked {
-    background-image: url('./visuals/important-checked.svg');
+    background-image: url('./visuals/important-checked-black.svg');
 }
 
 input.task-important-checkbox:hover {
@@ -445,12 +479,11 @@ button#new-project::before {
     left: 0.5em;
     top: 3px;
 
-    transition: transform 0.2s ease;
+    transition: transform 0.1s ease-in-out;
 }
 
 button#new-project:hover::before {
-    content: url('./visuals/new-hover.svg');
-    transform: scale(1.2);
+    transform: scale(1.1);
 }
 
 div.footer {

@@ -166,6 +166,7 @@ input.project-header-content:hover {
 
 div.content-container div.project-info-container {
     display: flex;
+    flex-direction: column;
 }
 
 textarea.description {

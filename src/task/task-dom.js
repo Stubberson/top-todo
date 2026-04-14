@@ -3,12 +3,16 @@ import { clearContent } from "../utilities/utility.js"
 import { Project } from "../project/project-class.js"
 
 function taskCreate(project) {
+    const taskContainer = document.createElement('div')
     const taskCompleteCheckbox = document.createElement('input')
     const taskHeader = document.createElement('input')
     const taskDescriptionOpener = document.createElement('input')
     const taskRemoveButton = document.createElement('button')
     const taskDescription = document.createElement('textarea')
     const taskImportantCheckbox = document.createElement('input')
+
+    // Envelop each task into a div element
+    taskContainer.className = 'task-container'
 
     taskCompleteCheckbox.className = 'task-complete-checkbox'
     taskCompleteCheckbox.type = 'checkbox'
@@ -85,7 +89,7 @@ function taskCreate(project) {
     }))
 
     taskRemoveButton.addEventListener('click', () => {
-        taskRemove(newTask, project)
+        taskRemove(task, project)
     })
 
     // Indicate important task
@@ -94,8 +98,11 @@ function taskCreate(project) {
         if (event.target.checked) event.target.classList.add('task-important-tag')
     })
 
-    let newTask = new Task(project, taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveButton, taskDescription, taskImportantCheckbox)
-    return newTask
+    taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveButton, taskDescription, taskImportantCheckbox)
+    
+    let task = new Task(project, taskContainer)
+    
+    return task
 }
 
 function tasksFilter(mode, project, tasksContainer) {

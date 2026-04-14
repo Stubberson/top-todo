@@ -26,6 +26,7 @@ let viewCurrent = undefined;  // Track currently open view
 
     newProjectButton.addEventListener('click', () => {
         createProject()
+        document.querySelector('.project-header-content').focus()
         viewCurrent = 'project'
     })
 })();

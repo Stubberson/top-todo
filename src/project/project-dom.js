@@ -24,12 +24,10 @@ function createProject() {
     })();
 
     (function projectDetails() {
-        const projectInfoContainer = document.createElement('div')
+        project.infoContainer = document.createElement('div')
         const [projectButtonHeader, projectButtonDate] = project.projectButton.children
 
-        projectInfoContainer.className = 'project-info-container'
-        
-        project.tasks.forEach(task => tasksContainer.append(task.container));  // Populate container with existing tasks (if any)
+        project.infoContainer.className = 'project-info-container'
 
         project.header.type = 'text'
         project.header.className = 'project-header-content'
@@ -62,28 +60,28 @@ function createProject() {
             project.dueDate.value = project.dueDate.value
         });
 
-        projectInfoContainer.append(project.description, project.dueDate);
-        projectContainer.append(project.header, projectInfoContainer)
+        project.infoContainer.append(project.header, project.description, project.dueDate);
+        projectContainer.append(project.infoContainer)
     })();
 
     (function createTaskControls() {
-        const tasksControlsContainer = document.createElement('div')
-        const tasksContainer = document.createElement('div')
-        const tabsContainer = document.createElement('div')
+        project.tabsContainer = document.createElement('div')
+        project.controlsContainer = document.createElement('div')
+        project.tasksContainer = document.createElement('div')
         
         const taskNewButton = document.createElement('button')
         const taskAllButton = document.createElement('button')
         const taskImportantButton = document.createElement('button')
 
-        tasksControlsContainer.className = 'tasks-controls-container'
-        tasksContainer.className = 'tasks-container'
-        tabsContainer.className = 'task-tabs-container'
+        project.tabsContainer.className = 'task-tabs-container'
+        project.controlsContainer.className = 'tasks-controls-container'
+        project.tasksContainer.className = 'tasks-container'
 
         taskNewButton.id = 'task-new-button'
         taskNewButton.className = 'task-control-button'
         taskNewButton.addEventListener('click', () => {
             let task = taskCreate(project)
-            tasksContainer.append(task.container)
+            project.tasksContainer.append(task.container)
             task.header.focus()  // Focus task description after creation
         })
 
@@ -92,7 +90,7 @@ function createProject() {
         taskAllButton.textContent = 'All'
         taskAllButton.disabled = true
         taskAllButton.addEventListener('click', (event) => {
-            tasksFilter('all', project, tasksContainer)
+            tasksFilter('all', project, project.tasksContainer)
             event.target.disabled = true
             taskImportantButton.disabled = false
         })
@@ -101,15 +99,15 @@ function createProject() {
         taskImportantButton.className = 'task-control-button'
         taskImportantButton.textContent = 'Important'
         taskImportantButton.addEventListener('click', (event) => {
-            tasksFilter('important', project, tasksContainer)
+            tasksFilter('important', project, project.tasksContainer)
             event.target.disabled = true
             taskAllButton.disabled = false
         })
 
-        tabsContainer.append(taskAllButton, taskImportantButton)
-        tasksControlsContainer.append(taskNewButton, tabsContainer)
+        project.tabsContainer.append(taskAllButton, taskImportantButton)
+        project.controlsContainer.append(taskNewButton, project.tabsContainer)
         
-        projectContainer.append(tasksControlsContainer, tasksContainer)
+        projectContainer.append(project.controlsContainer, project.tasksContainer)
     })();
 };
 
@@ -140,8 +138,7 @@ function listProject(project) {
 
     clearContent(projectContainer)    // Clear content view before opening new project
     projectButton.addEventListener('click', () => {
-        clearContent(projectContainer)
-        viewProject(project)        // Allow to open project from sidebar
+        viewProject(project)  // Allow to open project from sidebar
     })
 
     projectRemoveButton.addEventListener('click', () => {
@@ -156,8 +153,6 @@ function listProject(project) {
         confirmRemove.addEventListener('click', () => {
             // Only clear view if currently viewed project removed
             if (project.header.value === projectContainer.firstChild.value) {
-                clearContent(projectContainer)
-
                 // Default to immediate sibling project, finally Today
                 const projectIndex = Project.memory.indexOf(project)
                 if (Project.memory.length > 1 && projectIndex < Project.memory.length - 1) {
@@ -205,7 +200,10 @@ function removeProjectListing(projectListing, project) {
 };
 
 function viewProject(project) {
-    
+    clearContent(projectContainer)  // Clear previous content
+
+    project.tasks.forEach(task => project.tasksContainer.append(task.container))
+    projectContainer.append(project.infoContainer, project.controlsContainer, project.tasksContainer)
 }
 
 export { projectContainer, createProject }

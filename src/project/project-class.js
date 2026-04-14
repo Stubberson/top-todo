@@ -1,12 +1,21 @@
 export class Project {
     static memory = []  // Memory for all projects
 
-    constructor(header, description, dueDate) {
+    constructor(header, description, date) {
+        // Content
         this.header = header
         this.description = description
-        this.dueDate = dueDate
-        this.projectButton = null
+        this.dueDate = date
         this.tasks = []
+
+        // Containers
+        this.infoContainer = undefined
+        this.tabsContainer = undefined
+        this.controlsContainer = undefined
+        this.tasksContainer = undefined
+
+        // Sidebar and utility
+        this.projectButton = null
         this.viewStatus = undefined  // viewStatus remembers the view a user left the project at
         Project.memory.push(this)
     }

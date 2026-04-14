@@ -10,9 +10,10 @@ function viewToday() {
     clearContent(contentContainer)  // Clear the content container
 
     const todayHeader = document.createElement('h1')
-    const tasksContainer = document.querySelector('tasks-container')
+    const tasksContainer = document.createElement('div')
 
     todayHeader.textContent = 'Today'
+    tasksContainer.className = 'tasks-container'
 
     const taskNewButton = document.createElement('button')
     taskNewButton.className = 'task-new-button'
@@ -22,7 +23,7 @@ function viewToday() {
         task.header.focus()  // Focus task description after creation
     })
 
-    contentContainer.append(todayHeader, taskNewButton)
+    contentContainer.append(todayHeader, taskNewButton, tasksContainer)
 }
 
 

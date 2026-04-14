@@ -12,6 +12,7 @@ export class Project {
         this.infoContainer = undefined
         this.tabsContainer = undefined
         this.controlsContainer = undefined
+        this.tasksContainer = undefined
 
         // Sidebar and utility
         this.projectButton = null

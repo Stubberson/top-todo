@@ -3,6 +3,7 @@ import { clearContent } from "../utilities/utility.js"
 import { Project } from "../project/project-class.js"
 
 function taskCreate(project = undefined) {
+    console.log(project)
     const taskContainer = document.createElement('div')
     const taskCompleteCheckbox = document.createElement('input')
     const taskHeader = document.createElement('input')
@@ -100,7 +101,7 @@ function taskCreate(project = undefined) {
 
     taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveButton, taskDescription, taskImportantCheckbox)
     
-    let task = new Task(project, taskContainer)
+    let task = new Task(taskContainer, project)
     
     return task
 }
@@ -108,12 +109,12 @@ function taskCreate(project = undefined) {
 function tasksFilter(mode, project, tasksContainer) {
     clearContent(tasksContainer)
 
-    let allProjectTasks = project.tasks
     if (mode === 'all') {
-        allProjectTasks.forEach(task => tasksContainer.append(task.container))
+        project.tasks.forEach(task => tasksContainer.append(task.container))
     }
+    
     if (mode === 'important') {
-        allProjectTasks.forEach(task => {
+        project.tasks.forEach(task => {
             if (task.getImportant) {
                 tasksContainer.append(task.container)
             }

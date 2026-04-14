@@ -287,7 +287,7 @@ button#task-control-important {
     left: 86px;
 }
 
-div.tasks-controls-container > div.task-tabs-container::after {
+div.task-tabs-container::after {
     /* Tabs background */
     content: '';
     width: 172px;
@@ -298,7 +298,7 @@ div.tasks-controls-container > div.task-tabs-container::after {
     background-color: whitesmoke;
 }
 
-div.tasks-controls-container > button.task-new-button {
+button.task-new-button {
     appearance: none;
     width: 32px;
     height: 32px;
@@ -311,7 +311,7 @@ div.tasks-controls-container > button.task-new-button {
     transition: transform 0.2s ease-in-out;
 }
 
-div.tasks-controls-container > button.task-new-button:hover {
+button.task-new-button:hover {
     background-image: url('./visuals/new-hover.svg');
     background-color: yellowgreen;
 

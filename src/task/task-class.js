@@ -1,7 +1,7 @@
 export class Task {
     static memory = []  // Memory for all tasks
 
-    constructor(project = undefined, container) {
+    constructor(container, project = undefined) {
         const taskElements = Array.from(container.children)
 
         this.container = container

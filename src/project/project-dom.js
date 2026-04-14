@@ -67,7 +67,7 @@ function createProject() {
     (function createTaskControls() {
         project.tabsContainer = document.createElement('div')
         project.controlsContainer = document.createElement('div')
-        const tasksContainer = document.querySelector('div.tasks-container')
+        project.tasksContainer = document.createElement('div')
         
         const taskNewButton = document.createElement('button')
         const taskAllButton = document.createElement('button')
@@ -75,11 +75,12 @@ function createProject() {
 
         project.tabsContainer.className = 'task-tabs-container'
         project.controlsContainer.className = 'tasks-controls-container'
+        project.tasksContainer.className = 'tasks-container'
 
         taskNewButton.className = 'task-new-button'
         taskNewButton.addEventListener('click', () => {
             let task = taskCreate(project)
-            tasksContainer.append(task.container)
+            project.tasksContainer.append(task.container)
             task.header.focus()  // Focus task description after creation
         })
 
@@ -88,7 +89,7 @@ function createProject() {
         taskAllButton.textContent = 'All'
         taskAllButton.disabled = true
         taskAllButton.addEventListener('click', (event) => {
-            tasksFilter('all', project, tasksContainer)
+            tasksFilter('all', project, project.tasksContainer)
             event.target.disabled = true
             taskImportantButton.disabled = false
         })
@@ -97,7 +98,7 @@ function createProject() {
         taskImportantButton.className = 'task-control-button'
         taskImportantButton.textContent = 'Important'
         taskImportantButton.addEventListener('click', (event) => {
-            tasksFilter('important', project, tasksContainer)
+            tasksFilter('important', project, project.tasksContainer)
             event.target.disabled = true
             taskAllButton.disabled = false
         })
@@ -105,7 +106,7 @@ function createProject() {
         project.tabsContainer.append(taskAllButton, taskImportantButton)
         project.controlsContainer.append(taskNewButton, project.tabsContainer)
         
-        projectContainer.append(project.controlsContainer)
+        projectContainer.append(project.controlsContainer, project.tasksContainer)
     })();
 };
 
@@ -201,8 +202,8 @@ function removeProjectListing(projectListing, project) {
 function viewProject(project) {
     clearContent(projectContainer)  // Clear previous content
 
-    project.tasks.forEach(task => tasksContainer.append(task.container))
-    projectContainer.append(project.infoContainer, project.controlsContainer, tasksContainer)
+    project.tasks.forEach(task => project.tasksContainer.append(task.container))
+    projectContainer.append(project.infoContainer, project.controlsContainer, project.tasksContainer)
 }
 
 export { projectContainer, createProject }

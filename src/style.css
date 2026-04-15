@@ -1,15 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:ital,wght@0,200..800;1,200..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 body {
-    font-family: "Atkinson Hyperlegible", sans-serif;
-
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-
-    display: grid;
-    grid-template: 1fr 2em / 25% 1fr;
-
+    /* COLORS */
     --light-gray-highlight: #e5e5e5;
     --medium-gray-highlight: #767676;
     --cherry-rose: #b7094c;
@@ -21,6 +13,32 @@ body {
     --rich-cerulean: #2e6f95;
     --cerulean: #1780a1;
     --pacific-cyan: #0091ad;
+
+    /* ICONS */
+    --calendar-today-line: url('./visuals/calendar/today-line.svg');
+    --calendar-today-fill: url('./visuals/calendar/today-fill.svg');
+    --calendar-add-line: url('./visuals/calendar/calendar-add-line.svg');
+    --calendar-add-fill: url('./visuals/calendar/calendar-add-fill.svg');
+    --important-line: url('./visuals/important/important-line.svg');
+    --important-fill-black: url('./visuals/important/important-fill-black.svg');
+    --close-line: url('./visuals/close-line.svg');
+    --delete-line-black: url('./visuals/delete/delete-line-black.svg');
+    --delete-fill-white: url('./visuals/delete/delete-fill.svg');
+    --new-line-black: url('./visuals/new-default.svg');
+    --new-line-white: url('./visuals/new-hover.svg');
+    --task-checkbox-line: url('./visuals/task-incomplete.svg');
+    --task-checkbox-fill: url('./visuals/task-complete.svg');
+    --arrow-down: url('./visuals/arrow-down.svg');
+    --arrow-up: url('./visuals/arrow-up.svg');
+
+    font-family: "Atkinson Hyperlegible", sans-serif;
+
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+
+    display: grid;
+    grid-template: 1fr 2em / 25% 1fr;
 }
 
 button {
@@ -61,7 +79,7 @@ div.navigation button {
 
 button#today-all::before {
     position: absolute;
-    content: url('./visuals/calendar/calendar-add-line.svg');
+    content: var(--calendar-today-line);
     left: 0.5em;
     top: 0.6em;
 
@@ -69,13 +87,13 @@ button#today-all::before {
 }
 
 button#today-all:hover::before {
-    content: url('./visuals/calendar/calendar-add-fill.svg');
+    content: var(--calendar-today-fill);
     transform: scale(1.1);
 }
 
 button#important-all::before {
     position: absolute;
-    content: url('./visuals/important-unchecked.svg');
+    content: var(--important-line);
     left: 0.5em;
     top: 0.6em;
 
@@ -83,7 +101,7 @@ button#important-all::before {
 }
 
 button#important-all:hover::before {
-    content: url('./visuals/important-checked-black.svg');
+    content: var(--important-fill-black);
     transform: scale(1.2);
 }
 
@@ -130,7 +148,7 @@ button#listing-rm-button {
     height: 20px;
 
     appearance: none;
-    background-image: url('./visuals/close.svg');
+    background-image: var(--close-line);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 90%;
@@ -139,7 +157,7 @@ button#listing-rm-button {
 }
 
 button#listing-rm-button:hover {
-    transform: scale(1.4);
+    transform: scale(1.3);
     background-color: var(--light-gray-highlight);
 }
 
@@ -147,7 +165,7 @@ button.project-remove-confirm {
     width: 20px;
     padding-right: 50px;
 
-    background-image: url('./visuals/delete-line-black.svg');
+    background-image: var(--delete-line-black);
     background-position: center;
     background-repeat: no-repeat;
 
@@ -155,7 +173,7 @@ button.project-remove-confirm {
 }
 
 button.project-remove-confirm:hover{
-    background-image: url('./visuals/delete-fill.svg');
+    background-image: var(--delete-fill-white);
     background-color: red;
     flex-grow: 1;
 }
@@ -303,7 +321,7 @@ button.task-new-button {
     width: 32px;
     height: 32px;
 
-    background-image: url('./visuals/new-default.svg');
+    background-image: var(--new-line-black);
     background-size: 120%;
     background-repeat: no-repeat;
     background-position: center;
@@ -312,7 +330,7 @@ button.task-new-button {
 }
 
 button.task-new-button:hover {
-    background-image: url('./visuals/new-hover.svg');
+    background-image: var(--new-line-white);
     background-color: yellowgreen;
 
     transform: scale(1.1);
@@ -346,7 +364,7 @@ div.task-container textarea {
 input.task-complete-checkbox {
     appearance: none;
 
-    background-image: url('./visuals/task-incomplete.svg');
+    background-image: var(--task-checkbox-line);
     background-size: 100%;
     background-position: center;
 
@@ -356,36 +374,9 @@ input.task-complete-checkbox {
 }
 
 input.task-complete-checkbox:checked {
-    background-image: url('./visuals/task-complete.svg');
+    background-image: var(--task-checkbox-fill);
     transform: scale(0.5) rotate(90deg);
     opacity: 0.5;
-}
-
-button.task-remove-button {
-    margin-top: 25px;
-
-    appearance: none;
-
-    background-image: url('./visuals/close.svg');
-    background-repeat: no-repeat;
-    background-position: bottom;
-
-    cursor: pointer;
-
-    transition: 
-        margin-top 0.2s ease-in-out,
-        background-position 0.2s ease;
-}
-
-button.task-remove-button:hover {
-    background-image: url('./visuals/delete-fill.svg');
-    background-repeat: no-repeat;
-    background-position: top;
-    background-color: red;
-
-    min-height: 25px;
-    bottom: 0px;
-    margin-top: 0px;
 }
 
 input.task-header {
@@ -414,7 +405,7 @@ input.task-open-checkbox {
 
     appearance: none;
 
-    background-image: url('./visuals/arrow-down.svg');
+    background-image: var(--arrow-down);
     background-size: 100%;
 
     cursor: pointer;
@@ -426,37 +417,130 @@ input.task-open-checkbox:checked {
     transform: rotate(180deg) scale(1.5);
 }
 
+button.task-remove-button {
+    margin-top: 25px;
+
+    appearance: none;
+
+    background-image: var(--close-line);
+    background-repeat: no-repeat;
+    background-position: bottom;
+
+    cursor: pointer;
+
+    transition: 
+        margin-top 0.2s ease-in-out,
+        background-position 0.2s ease;
+}
+
+button.task-remove-button:hover {
+    background-image: var(--delete-fill-white);
+    background-repeat: no-repeat;
+    background-position: top;
+    background-color: red;
+
+    min-height: 25px;
+    bottom: 0px;
+    margin-top: 0px;
+}
+
 textarea.task-description-area {
     flex-grow: 1;
     z-index: 1;
     position: relative;
 }
 
-input.task-important-checkbox {
+div.task-tags-container {
+    display: flex;
+    justify-content: end;
+
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    width: 150px;
+    height: fit-content;
+}
+
+button.task-important-button {
     width: 22px;
     height: 22px;
 
     z-index: 2;
-    position: absolute;
-    right: 0.5px;
-    bottom: -2px;
 
     appearance: none;
 
-    background-image: url('./visuals/important-unchecked.svg');
-    background-size: 100%;
+    background-image: var(--important-line);
+    background-position: left;
+    background-repeat: no-repeat;
 
     cursor: pointer;
 
-    transition: transform 0.2s ease;
+    transition: flex-grow 0.2s ease-in-out;
 }
 
-input.task-important-checkbox:checked {
-    background-image: url('./visuals/important-checked-black.svg');
+button.task-important-button:hover,
+button.task-important-button:focus-visible {
+    outline: unset;
+
+    flex-grow: 1;
+    background-color: whitesmoke;
 }
 
-input.task-important-checkbox:hover {
-    transform: scale(1.3);
+button.task-important-button::after {
+    content: 'Important';
+    visibility: hidden;
+    color: var(--medium-gray-highlight);
+    margin-top: 2px;
+    margin-left: 30px;
+
+    transition: visibility 0s 0.1s;
+}
+
+button.task-important-button:hover::after,
+button.task-important-button:focus-visible::after {
+    visibility: visible;
+}
+
+button.task-date-button {
+    width: 22px;
+    height: 22px;
+
+    z-index: 2;
+
+    appearance: none;
+
+    background-image: var(--calendar-add-line);
+    background-position: left;
+    background-position-y: 1.5px;
+    background-position-x: 1.5px;
+    background-repeat: no-repeat;
+
+    cursor: pointer;
+
+    transition: flex-grow 0.2s ease-in-out;
+}
+
+button.task-date-button:hover,
+button.task-date-button:focus-visible {
+    outline: unset;
+
+    flex-grow: 1;
+    background-color: whitesmoke;
+    background-image: var(--calendar-add-fill);
+}
+
+button.task-date-button::after {
+    content: 'Date';
+    visibility: hidden;
+    color: var(--medium-gray-highlight);
+    margin-top: 2px;
+    margin-left: 30px;
+}
+
+button.task-date-button:hover::after,
+button.task-date-button:focus-visible::after {
+    visibility: visible;
 }
 
 /* --- FOOTER --- */
@@ -474,7 +558,7 @@ div.new-project-container > button#new-project {
 }
 
 button#new-project::before {
-    content: url('./visuals/new-default.svg');
+    content: var(--new-line-black);
     position: absolute;
     left: 0.5em;
     top: 3px;

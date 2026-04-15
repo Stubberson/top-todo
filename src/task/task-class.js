@@ -10,7 +10,10 @@ export class Task {
         this.opener = taskElements[2]
         this.remove = taskElements[3]
         this.description = taskElements[4]
-        this.important = taskElements[5]
+        
+        const taskTags = Array.from(taskElements[5].children)
+        this.important = taskTags[0]
+        this.date = taskTags[1]
 
         if (project) {
             this.owningProject = project
@@ -21,8 +24,9 @@ export class Task {
     }
 
     get getImportant() {
-        if (this.important.classList.contains('task-important-tag')) {
+        console.log(this.important)
+        if (this.important.classList.contains('task-important-flag')) {
             return true
-        }        
+        }
     }
 }

@@ -28,10 +28,5 @@
     "webpack-cli": "^7.0.2",
     "webpack-dev-server": "^5.2.3",
     "webpack-merge": "^6.0.1"
-  },
-  "dependencies": {
-    "@codemirror/lang-markdown": "^6.5.0",
-    "@codemirror/language-data": "^6.5.2",
-    "codemirror": "^6.0.2"
   }
 }

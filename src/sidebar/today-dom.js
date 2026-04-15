@@ -15,6 +15,9 @@ function viewToday() {
     todayHeader.textContent = 'Today'
     tasksContainer.className = 'tasks-container'
 
+    // const tasksToday = collectTodayTasks()
+    // tasksToday.forEach(task => tasksContainer.append(task))
+
     const taskNewButton = document.createElement('button')
     taskNewButton.className = 'task-new-button'
     taskNewButton.addEventListener('click', () => {
@@ -25,6 +28,14 @@ function viewToday() {
 
     contentContainer.append(todayHeader, taskNewButton, tasksContainer)
 }
+
+// function collectTodayTasks() {
+//     const tasksToday = []
+//     Task.memory.forEach(task => {
+//         if (task.getToday) tasksToday.push(task)
+//     })
+//     return tasksToday
+// }
 
 
 export { viewToday }

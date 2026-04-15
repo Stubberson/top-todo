@@ -12,8 +12,8 @@ function viewImportant() {
     importantHeader.textContent = 'Important'
     tasksContainer.className = 'tasks-container'
 
-    let tasksImportantAll = Task.memory
-    tasksImportantAll.forEach(task => {
+    const tasksAll = Task.memory
+    tasksAll.forEach(task => {
         if (task.getImportant) {
             tasksContainer.append(task.container)
         }

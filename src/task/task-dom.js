@@ -3,14 +3,15 @@ import { clearContent } from "../utilities/utility.js"
 import { Project } from "../project/project-class.js"
 
 function taskCreate(project = undefined) {
-    console.log(project)
     const taskContainer = document.createElement('div')
     const taskCompleteCheckbox = document.createElement('input')
     const taskHeader = document.createElement('input')
     const taskDescriptionOpener = document.createElement('input')
     const taskRemoveButton = document.createElement('button')
     const taskDescription = document.createElement('textarea')
-    const taskImportantCheckbox = document.createElement('input')
+    const taskTagsContainer = document.createElement('div')
+    const taskImportant = document.createElement('button')
+    const taskDate = document.createElement('button')
 
     // Envelop each task into a div element
     taskContainer.className = 'task-container'
@@ -38,17 +39,21 @@ function taskCreate(project = undefined) {
     taskDescription.rows = 3
     taskDescription.hidden = true
 
-    taskImportantCheckbox.className = 'task-important-checkbox'
-    taskImportantCheckbox.type = 'checkbox'
-    taskImportantCheckbox.name = 'task-important-checkbox'
-    taskImportantCheckbox.hidden = true
+    taskTagsContainer.className = 'task-tags-container'
+
+    taskImportant.classList.add('task-important-button', 'task-tag')
+    taskImportant.name = 'task-important-checkbox'
+    taskImportant.hidden = true
+
+    taskDate.classList.add('task-date-button', 'task-tag')
+    taskDate.hidden = true
 
     taskCompleteCheckbox.addEventListener('click', (event) => {
         if (event.target.checked) {
             taskHeader.style['color'] = '#767676'
             taskHeader.style['text-decoration'] = '#767676 line-through solid 1px'
             taskDescription.style['text-decoration'] = '#767676 line-through solid 0.5px'
-            taskImportantCheckbox.checked = false  // If completed, task not important anymore
+            taskImportant.checked = false  // If completed, task not important anymore
         } else {
             taskHeader.style['color'] = 'revert'
             taskHeader.style['text-decoration'] = 'revert'
@@ -59,7 +64,7 @@ function taskCreate(project = undefined) {
     taskHeader.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             event.preventDefault()  // Prevent adding new line in description
-            taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDescriptionOpener, taskRemoveButton)
+            taskDescriptionMaximize(taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
         }
     })
 
@@ -74,9 +79,9 @@ function taskCreate(project = undefined) {
                 break
             case 'click':
                 if (taskDescription.hidden) {
-                    taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDescriptionOpener, taskRemoveButton)
+                    taskDescriptionMaximize(taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
                 } else {
-                    taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheckbox, taskDescriptionOpener, taskRemoveButton)
+                    taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
                 }
         }
     }))
@@ -85,7 +90,7 @@ function taskCreate(project = undefined) {
     const taskCloserEvents = ['blur', 'keydown']
     taskCloserEvents.forEach(event => taskDescription.addEventListener(event, (e) => {
         if (e.relatedTarget === null || e.key === 'Escape') {
-            taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheckbox, taskDescriptionOpener, taskRemoveButton)
+            taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
         }
     }))
 
@@ -94,12 +99,20 @@ function taskCreate(project = undefined) {
     })
 
     // Indicate important task
-    taskImportantCheckbox.addEventListener('click', (event) => {
-        event.target.classList.remove('task-important')
-        if (event.target.checked) event.target.classList.add('task-important-tag')
+    let toggle = 0
+    taskImportant.addEventListener('click', (event) => {
+        event.target.classList.add('task-important-flag')
+        if (!toggle) {
+            event.target.style.setProperty('background-image', 'var(--important-fill-black)')
+            toggle = 1
+        } else {
+            event.target.style['background-image'] = 'revert-layer'
+            toggle = 0
+        }
     })
 
-    taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveButton, taskDescription, taskImportantCheckbox)
+    taskTagsContainer.append(taskImportant, taskDate)
+    taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveButton, taskDescription, taskTagsContainer)
     
     let task = new Task(taskContainer, project)
     
@@ -122,33 +135,22 @@ function tasksFilter(mode, project, tasksContainer) {
     }
 }
 
-function taskDescriptionMaximize(taskDescription, taskImportantCheckbox, taskDescriptionOpener, taskRemoveButton) {
+function taskDescriptionMaximize(taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton) {
     taskDescription.hidden = false
-    taskImportantCheckbox.hidden = false
+    Array.from(taskTagsContainer.children).forEach(tag => tag.hidden = false)
     taskDescriptionOpener.checked = true
     taskRemoveButton.hidden = false
     
     taskDescription.focus()
-
-    taskImportantCheckbox.style['top'] = 'revert-layer'
-    taskImportantCheckbox.style['right'] = 'revert-layer'
-    taskImportantCheckbox.style['transform'] = 'revert-layer'
 }
 
-function taskDescriptionMinimize(taskHeader, taskDescription, taskImportantCheckbox, taskDescriptionOpener, taskRemoveButton) {
+function taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton) {
     taskDescription.hidden = true
+    Array.from(taskTagsContainer.children).forEach(tag => tag.hidden = true)
     taskDescriptionOpener.checked = false
     taskRemoveButton.hidden = true
 
     taskHeader.focus()
-
-    if (taskImportantCheckbox.checked) {  // Indicate task importance even if description minimized
-        taskImportantCheckbox.style['right'] = '40px'
-        taskImportantCheckbox.style['top'] = '-2px'
-        taskImportantCheckbox.style['transform'] = 'scale(1.0)'
-    } else {
-        taskImportantCheckbox.hidden = true
-    }
 }
 
 function taskRemove(task, project = undefined) {

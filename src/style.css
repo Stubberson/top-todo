@@ -42,7 +42,7 @@ body {
 }
 
 button {
-    font-family: "Atkinson Hyperlegible Mono", sans-serif;;
+    font-family: "Atkinson Hyperlegible Mono", sans-serif;
 
     border: none;
     background-color: inherit;
@@ -363,6 +363,8 @@ div.task-container textarea {
 
 input.task-complete-checkbox {
     appearance: none;
+    margin: 0;
+    outline-offset: -2px;
 
     background-image: var(--task-checkbox-line);
     background-size: 100%;
@@ -397,6 +399,7 @@ input.task-header:hover {
 input.task-open-checkbox {
     width: 22px;
     height: 22px;
+    outline-offset: -3px;
 
     z-index: 2;
     position: absolute;
@@ -410,38 +413,40 @@ input.task-open-checkbox {
 
     cursor: pointer;
 
-    transition: transform 0.2s ease;
+    transition: transform 0.2s;
 }
 
 input.task-open-checkbox:checked {
     transform: rotate(180deg) scale(1.5);
 }
 
-button.task-remove-button {
-    margin-top: 25px;
-
-    appearance: none;
-
-    background-image: var(--close-line);
-    background-repeat: no-repeat;
-    background-position: bottom;
-
-    cursor: pointer;
-
-    transition: 
-        margin-top 0.2s ease-in-out,
-        background-position 0.2s ease;
+div.task-remove-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-button.task-remove-button:hover {
-    background-image: var(--delete-fill-white);
+button.task-remove-button {
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    margin-top: 2.5px;
+
+    width: 16px;
+    height: 16px;
+    
+    border: dashed 1px red;
     background-repeat: no-repeat;
     background-position: top;
-    background-color: red;
+    transition: flex-grow 0.2s;
+}
 
-    min-height: 25px;
-    bottom: 0px;
-    margin-top: 0px;
+button.task-remove-button:hover,
+button.task-remove-button:focus-visible {
+    flex-grow: 1;
+    background-image: var(--delete-fill-white);
+    background-size: 120%;
+    background-color: red;
 }
 
 textarea.task-description-area {
@@ -455,92 +460,49 @@ div.task-tags-container {
     justify-content: end;
 
     position: absolute;
-    right: 0;
+    right: 3px;
     bottom: 0;
 
-    width: 150px;
+    width: 135px;
     height: fit-content;
 }
 
-button.task-important-button {
-    width: 22px;
-    height: 22px;
-
+button.task-important-button,
+button.task-date-button {
     z-index: 2;
 
+    width: 22px;
+    height: 22px;
+    color: var(--medium-gray-highlight);
     appearance: none;
+    outline: unset;
+    overflow: hidden;
+    text-indent: 28px;
 
-    background-image: var(--important-line);
     background-position: left;
     background-repeat: no-repeat;
 
     cursor: pointer;
 
-    transition: flex-grow 0.2s ease-in-out;
+    transition: flex-grow 0.25s ease-in-out;
 }
 
-button.task-important-button:hover,
-button.task-important-button:focus-visible {
-    outline: unset;
-
-    flex-grow: 1;
-    background-color: whitesmoke;
-}
-
-button.task-important-button::after {
-    content: 'Important';
-    visibility: hidden;
-    color: var(--medium-gray-highlight);
-    margin-top: 2px;
-    margin-left: 30px;
-
-    transition: visibility 0s 0.1s;
-}
-
-button.task-important-button:hover::after,
-button.task-important-button:focus-visible::after {
-    visibility: visible;
+button.task-important-button {
+    background-image: var(--important-line);
 }
 
 button.task-date-button {
-    width: 22px;
-    height: 22px;
-
-    z-index: 2;
-
-    appearance: none;
-
     background-image: var(--calendar-add-line);
-    background-position: left;
     background-position-y: 1.5px;
     background-position-x: 1.5px;
-    background-repeat: no-repeat;
-
-    cursor: pointer;
-
-    transition: flex-grow 0.2s ease-in-out;
 }
 
+button.task-important-button:hover,
+button.task-important-button:focus-visible,
 button.task-date-button:hover,
 button.task-date-button:focus-visible {
-    outline: unset;
-
     flex-grow: 1;
     background-color: whitesmoke;
-    background-image: var(--calendar-add-fill);
-}
-
-button.task-date-button::after {
-    content: 'Date';
-    visibility: hidden;
-    color: var(--medium-gray-highlight);
-    margin-top: 2px;
-    margin-left: 30px;
-}
-
-button.task-date-button:hover::after,
-button.task-date-button:focus-visible::after {
-    visibility: visible;
 }
 
 /* --- FOOTER --- */
@@ -551,7 +513,7 @@ div.new-project-container {
     display: flex;
 }
 
-div.new-project-container > button#new-project {
+button#new-project {
     width: 100%;
     position: relative;
     padding-left: 3em;

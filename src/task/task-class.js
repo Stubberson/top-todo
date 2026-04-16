@@ -24,7 +24,6 @@ export class Task {
     }
 
     get getImportant() {
-        console.log(this.important)
         if (this.important.classList.contains('task-important-flag')) {
             return true
         }

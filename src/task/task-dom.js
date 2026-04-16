@@ -8,6 +8,7 @@ function taskCreate(project = undefined) {
     const taskHeader = document.createElement('input')
     const taskDescriptionOpener = document.createElement('input')
     const taskRemoveButton = document.createElement('button')
+    const taskRemoveContainer = document.createElement('div')
     const taskDescription = document.createElement('textarea')
     const taskTagsContainer = document.createElement('div')
     const taskImportant = document.createElement('button')
@@ -33,6 +34,8 @@ function taskCreate(project = undefined) {
     taskRemoveButton.className = 'task-remove-button'
     taskRemoveButton.hidden = true
 
+    taskRemoveContainer.className = 'task-remove-container'
+
     taskDescription.classList.add('task-description-area', 'description')
     taskDescription.placeholder = 'Add description...'
     taskDescription.name = 'task-description-area'
@@ -44,9 +47,11 @@ function taskCreate(project = undefined) {
     taskImportant.classList.add('task-important-button', 'task-tag')
     taskImportant.name = 'task-important-checkbox'
     taskImportant.hidden = true
+    taskImportant.textContent = 'Important'
 
     taskDate.classList.add('task-date-button', 'task-tag')
     taskDate.hidden = true
+    taskDate.textContent = 'Date'
 
     taskCompleteCheckbox.addEventListener('click', (event) => {
         if (event.target.checked) {
@@ -87,12 +92,11 @@ function taskCreate(project = undefined) {
     }))
 
     // Eases minimizing task description
-    const taskCloserEvents = ['blur', 'keydown']
-    taskCloserEvents.forEach(event => taskDescription.addEventListener(event, (e) => {
-        if (e.relatedTarget === null || e.key === 'Escape') {
+    taskDescription.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
             taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
         }
-    }))
+    })
 
     taskRemoveButton.addEventListener('click', () => {
         taskRemove(task, project)
@@ -101,18 +105,20 @@ function taskCreate(project = undefined) {
     // Indicate important task
     let toggle = 0
     taskImportant.addEventListener('click', (event) => {
-        event.target.classList.add('task-important-flag')
         if (!toggle) {
+            event.target.classList.add('task-important-flag')
             event.target.style.setProperty('background-image', 'var(--important-fill-black)')
             toggle = 1
         } else {
-            event.target.style['background-image'] = 'revert-layer'
+            event.target.classList.remove('task-important-flag')
+            event.target.style.setProperty('background-image', 'revert-layer')
             toggle = 0
         }
     })
 
+    taskRemoveContainer.append(taskRemoveButton)
     taskTagsContainer.append(taskImportant, taskDate)
-    taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveButton, taskDescription, taskTagsContainer)
+    taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveContainer, taskDescription, taskTagsContainer)
     
     let task = new Task(taskContainer, project)
     

@@ -45,7 +45,6 @@ function taskCreate(project = undefined) {
     taskTagsContainer.className = 'task-tags-container'
 
     taskImportant.classList.add('task-important-button', 'task-tag')
-    taskImportant.name = 'task-important-checkbox'
     taskImportant.hidden = true
     taskImportant.textContent = 'Important'
 
@@ -58,7 +57,6 @@ function taskCreate(project = undefined) {
             taskHeader.style['color'] = '#767676'
             taskHeader.style['text-decoration'] = '#767676 line-through solid 1px'
             taskDescription.style['text-decoration'] = '#767676 line-through solid 0.5px'
-            taskImportant.checked = false  // If completed, task not important anymore
         } else {
             taskHeader.style['color'] = 'revert'
             taskHeader.style['text-decoration'] = 'revert'
@@ -69,7 +67,7 @@ function taskCreate(project = undefined) {
     taskHeader.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             event.preventDefault()  // Prevent adding new line in description
-            taskDescriptionMaximize(taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
+            taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
         }
     })
 
@@ -84,7 +82,7 @@ function taskCreate(project = undefined) {
                 break
             case 'click':
                 if (taskDescription.hidden) {
-                    taskDescriptionMaximize(taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
+                    taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
                 } else {
                     taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
                 }
@@ -141,7 +139,8 @@ function tasksFilter(mode, project, tasksContainer) {
     }
 }
 
-function taskDescriptionMaximize(taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton) {
+function taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton) {
+    taskHeader.style.setProperty('background-image', 'unset')
     taskDescription.hidden = false
     Array.from(taskTagsContainer.children).forEach(tag => tag.hidden = false)
     taskDescriptionOpener.checked = true
@@ -152,7 +151,13 @@ function taskDescriptionMaximize(taskDescription, taskTagsContainer, taskDescrip
 
 function taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton) {
     taskDescription.hidden = true
-    Array.from(taskTagsContainer.children).forEach(tag => tag.hidden = true)
+    const taskTags = Array.from(taskTagsContainer.children)
+    taskTags.forEach(tag => {  // Indicate importance even if task minimized
+        tag.hidden = true
+        if (tag.classList.contains('task-important-flag')) {
+            taskHeader.style.setProperty('background-image', 'var(--important-fill-gray)')
+        }
+    })
     taskDescriptionOpener.checked = false
     taskRemoveButton.hidden = true
 

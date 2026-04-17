@@ -11,33 +11,10 @@
 //     return days[0].weekday(0);
 // }
 
-// function getMonth(displayedMonth, ..._args) {
-//     const locale = window.moment().locale();
-//     const month = [];
-//     let week;
-//     const startOfMonth = displayedMonth.clone().locale(locale).date(1);
-//     const startOffset = startOfMonth.weekday();
-//     let date = startOfMonth.clone().subtract(startOffset, "days");
-//     for (let _day = 0; _day < 42; _day++) {
-//         if (_day % 7 === 0) {
-//             week = {
-//                 days: [],
-//                 weekNum: date.week(),
-//             };
-//             month.push(week);
-//         }
-//         week.days.push(date);
-//         date = date.clone().add(1, "days");
-//     }
-//     return month;
-// }
-
 function createCalendar() {
+    const currentDate = getZonedDateTime()
     const calendarColumns = 8  // Week number + 7 days
     const daysNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    
-    // Get the current day
-    const date = getDate()
 
     const calendarContainer = document.createElement('div')
     calendarContainer.className = 'calendar-container'
@@ -56,10 +33,10 @@ function createCalendar() {
     titleContainer.className = 'calendar-title-container'
     
     titleMonth.className = 'calendar-month'
-    titleMonth.textContent = date.toLocaleString('en', {month: 'short'})
+    titleMonth.textContent = currentDate.toLocaleString('en', {month: 'short'})
     
     titleYear.className = 'calendar-year'
-    titleYear.textContent = date.toLocaleString('en', {year: 'numeric'})
+    titleYear.textContent = currentDate.toLocaleString('en', {year: 'numeric'})
 
     navMonthContainer.className = 'calendar-month-nav'
     prevMonth.className = 'calendar-arrow-left'
@@ -78,7 +55,7 @@ function createCalendar() {
 
 
     // TODO: THE IMPLEMENTATION HAS TO BE A BIT MORE SOPHISTICATED
-    // Calendar
+    // Calendar view
     const calendar = document.createElement('table')
     calendar.className = 'calendar'
 
@@ -109,18 +86,21 @@ function createCalendar() {
     calendarHead.append(calendarHeadRow)
     
     // Body
+    // TODO: WEEK STARTS AT SUN NOW > PROBLEM
+    const currentMonth = getCalendarMonth(currentDate)
+    console.log(currentMonth)
     const calendarBody = document.createElement('tbody')
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 6; i++) {  // Loop through 6 weeks: 4 of current month plus prev and next
         let bodyRow = document.createElement('tr')
         for (let j = 0; j < calendarColumns; j++) {
             let bodyData = document.createElement('td')
             let bodyDataContent = document.createElement('div')
             if (j === 0) {  // Week number
                 bodyDataContent.className = 'week-num'
-                bodyDataContent.textContent = date.weekOfYear + i
+                bodyDataContent.textContent = currentMonth[i].weekNum
              } else {       // Days
                 bodyDataContent.className = 'day'
-                bodyDataContent.textContent = date.day + (j + i)
+                bodyDataContent.textContent = currentMonth[i].days[j - 1].day
              }
              bodyData.append(bodyDataContent)
              bodyRow.append(bodyData)
@@ -135,10 +115,30 @@ function createCalendar() {
     return calendarContainer
 };
 
-function getDate() {
-    const now = Temporal.Now.zonedDateTimeISO()
-    const dateObject = Temporal.PlainDate.from(now)
-    return dateObject
+function getZonedDateTime() {
+    return Temporal.Now.zonedDateTimeISO()
 };
+
+// Credit: Liam Cain, creator of Obsidian plugin 'Calendar'
+function getCalendarMonth(displayedMonth) {
+    const today = displayedMonth.day
+    const month = []
+    let week
+    const monthStartDate = displayedMonth.subtract({ days: today })
+    const startOffset = monthStartDate.dayOfWeek
+    let date = monthStartDate.subtract({ days: startOffset })
+    for (let _day = 0; _day < 42; _day++) {
+        if (_day % 7 === 0) {
+            week = {
+                days: [],
+                weekNum: date.weekOfYear
+            }
+            month.push(week)
+        }
+        week.days.push(date)
+        date = date.add({ days: 1 })
+    }
+    return month
+}
 
 export { createCalendar }

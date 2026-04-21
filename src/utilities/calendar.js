@@ -86,11 +86,9 @@ function createCalendar() {
     calendarHead.append(calendarHeadRow)
     
     // Body
-    // TODO: WEEK STARTS AT SUN NOW > PROBLEM
     const currentMonth = getCalendarMonth(currentDate)
-    console.log(currentMonth)
     const calendarBody = document.createElement('tbody')
-    for (let i = 0; i < 6; i++) {  // Loop through 6 weeks: 4 of current month plus prev and next
+    for (let i = 0; i < 5; i++) {  // Loop through 5 weeks: 4 of current month plus prev/next
         let bodyRow = document.createElement('tr')
         for (let j = 0; j < calendarColumns; j++) {
             let bodyData = document.createElement('td')
@@ -119,15 +117,15 @@ function getZonedDateTime() {
     return Temporal.Now.zonedDateTimeISO()
 };
 
-// Credit: Liam Cain, creator of Obsidian plugin 'Calendar'
+// Credit (edited to fit the new 'Temporal' API): Liam Cain, creator of Obsidian plugin 'Calendar'
 function getCalendarMonth(displayedMonth) {
     const today = displayedMonth.day
     const month = []
     let week
-    const monthStartDate = displayedMonth.subtract({ days: today })
-    const startOffset = monthStartDate.dayOfWeek
+    const monthStartDate = displayedMonth.subtract({ days: today - 1 })
+    const startOffset = monthStartDate.dayOfWeek - 1  // -1 bc otherwise goes to the prev month
     let date = monthStartDate.subtract({ days: startOffset })
-    for (let _day = 0; _day < 42; _day++) {
+    for (let _day = 0; _day < 35; _day++) {
         if (_day % 7 === 0) {
             week = {
                 days: [],

@@ -9,8 +9,4 @@ function clearContent(container) {
     }
 }
 
-function createCalendar() {
-    
-}
-
 export { currentDate, clearContent }

@@ -19,6 +19,7 @@ body {
     --calendar-today-fill: url('./visuals/calendar/today-fill.svg');
     --calendar-add-line: url('./visuals/calendar/calendar-add-line.svg');
     --calendar-add-fill: url('./visuals/calendar/calendar-add-fill.svg');
+    --calendar-arrow: url('./visuals/calendar/calendar-arrow.svg');
     --important-line: url('./visuals/important/important-line.svg');
     --important-fill-black: url('./visuals/important/important-fill-black.svg');
     --important-fill-gray: url('./visuals/important/important-fill-gray.svg');
@@ -205,6 +206,45 @@ div.content-container {
     margin: 2em;
 }
 
+/* TODAY CONTENT */
+div.calendar-month-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    flex-grow: 0;
+}
+
+div.calendar-today-reset {
+    padding: 3px;
+}
+
+div.calendar-arrow-left,
+div.calendar-arrow-right {
+    height: 5px;
+    width: 5px;
+    padding: 10px;
+    background-position: center;
+    background-size: 80%;
+    background-repeat: no-repeat;
+}
+
+div.calendar-today-reset:hover,
+div.calendar-arrow-left:hover,
+div.calendar-arrow-right:hover {
+    cursor: pointer;
+    background-color: yellowgreen;
+}
+
+div.calendar-arrow-left {
+    background-image: var(--calendar-arrow);
+}
+
+div.calendar-arrow-right {
+    background-image: var(--calendar-arrow);
+    transform: rotate(180deg);
+}
+
+/* PROJECT CONTENT */
 input.project-header-content {
     font-size: 2em;
     font-weight: 700;

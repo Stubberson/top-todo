@@ -1,20 +1,9 @@
-// ORIGINAL: Obsidian plugin 'Calendar' by Liam Cain
-// Uses 'Moment.js' which is available as npm package, I would like to implement it as vanilla
+import { clearContent } from './utility.js'
 
-// function getDaysOfWeek(..._args) {
-//     return window.moment.weekdaysShort(true);
-// }
-// function isWeekend(date) {
-//     return date.isoWeekday() === 6 || date.isoWeekday() === 7;
-// }
-// function getStartOfWeek(days) {
-//     return days[0].weekday(0);
-// }
+const daysNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 function createCalendar() {
-    const currentDate = getZonedDateTime()
-    const calendarColumns = 8  // Week number + 7 days
-    const daysNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    let displayedMonth = Temporal.Now.zonedDateTimeISO()  // Default to current date
 
     const calendarContainer = document.createElement('div')
     calendarContainer.className = 'calendar-container'
@@ -33,37 +22,85 @@ function createCalendar() {
     titleContainer.className = 'calendar-title-container'
     
     titleMonth.className = 'calendar-month'
-    titleMonth.textContent = currentDate.toLocaleString('en', {month: 'short'})
+    titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'long'}) + ' '
     
     titleYear.className = 'calendar-year'
-    titleYear.textContent = currentDate.toLocaleString('en', {year: 'numeric'})
+    titleYear.textContent = displayedMonth.toLocaleString('en', {year: 'numeric'})
 
     navMonthContainer.className = 'calendar-month-nav'
     prevMonth.className = 'calendar-arrow-left'
+
+    prevMonth.addEventListener('click', () => {
+        clearContent(calendar)
+        displayMonth(calendarContainer, calendar, createMonth(displayedMonth.subtract({ months: 1 })))
+        // Update displayed month and year
+        displayedMonth = displayedMonth.subtract({ months: 1 })
+        titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'long'}) + ' '
+        titleYear.textContent = displayedMonth.toLocaleString('en', {year: 'numeric'})
+    })
+
     nextMonth.className = 'calendar-arrow-right'
-    titleToday.className = 'calendar-today'
+    nextMonth.addEventListener('click', () => {
+        clearContent(calendar)
+        displayMonth(calendarContainer, calendar, createMonth(displayedMonth.add({ months: 1 })))
+        displayedMonth = displayedMonth.add({ months: 1 })
+        titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'long'}) + ' '
+        titleYear.textContent = displayedMonth.toLocaleString('en', {year: 'numeric'})
+    })
+
+    titleToday.className = 'calendar-today-reset'
     titleToday.textContent = 'Today'
-    // TODO: titletoday.addEventListener('click', () => {
-    //       resetCalendarView()
-    // })
+    titleToday.addEventListener('click', () => {
+        clearContent(calendar)
+        displayMonth(calendarContainer, calendar, createMonth(Temporal.Now.zonedDateTimeISO()))
+        displayedMonth = Temporal.Now.zonedDateTimeISO()
+        titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'long'}) + ' '
+        titleYear.textContent = displayedMonth.toLocaleString('en', {year: 'numeric'})
+    })
 
     // Fill container with nav
     navMonthContainer.append(prevMonth, titleToday, nextMonth)
     titleContainer.append(titleMonth, titleYear, navMonthContainer)
     calendarNavContainer.append(titleContainer)
     calendarContainer.append(calendarNavContainer)
-
-
-    // TODO: THE IMPLEMENTATION HAS TO BE A BIT MORE SOPHISTICATED
-    // Calendar view
+    
+    // Calendar body
     const calendar = document.createElement('table')
     calendar.className = 'calendar'
 
-    // Columns, Head, and Body
+    const currentCalendarMonth = createMonth(displayedMonth)  // Default to current date 
+    displayMonth(calendarContainer, calendar, currentCalendarMonth)
+    
+    return calendarContainer
+};
+
+// Credit (edited to fit the new 'Temporal' API): Liam Cain, creator of Obsidian plugin 'Calendar'
+function createMonth(selectedMonth) {
+    const today = selectedMonth.day
+    const month = []
+    let week
+    const monthStartDate = selectedMonth.subtract({ days: today - 1 })
+    const startOffset = monthStartDate.dayOfWeek - 1  // -1 bc otherwise goes to the prev month
+    let date = monthStartDate.subtract({ days: startOffset })
+    for (let _day = 0; _day < 42; _day++) {
+        if (_day % 7 === 0) {
+            week = {
+                days: [],
+                weekNum: date.weekOfYear
+            }
+            month.push(week)
+        }
+        week.days.push(date)
+        date = date.add({ days: 1 })
+    }
+    return month
+}
+
+function displayMonth(calendarContainer, calendar, createdMonth) {
     const columnGroup = document.createElement('colgroup')
     const calendarHead = document.createElement('thead')
     const calendarHeadRow = document.createElement('tr')
-    for (let i = 0; i < calendarColumns; i++) {
+    for (let i = 0; i < 8; i++) {
         // Cols create
         let column = document.createElement('col')
         if (i > 0 && i < 6) {
@@ -84,21 +121,19 @@ function createCalendar() {
         calendarHeadRow.append(columnTitle)
     }
     calendarHead.append(calendarHeadRow)
-    
-    // Body
-    const currentMonth = getCalendarMonth(currentDate)
+
     const calendarBody = document.createElement('tbody')
-    for (let i = 0; i < 5; i++) {  // Loop through 5 weeks: 4 of current month plus prev/next
+    for (let i = 0; i < 6; i++) {  // Loop through 6 weeks: 4 of current month + end/beginning of prev/past
         let bodyRow = document.createElement('tr')
-        for (let j = 0; j < calendarColumns; j++) {
+        for (let j = 0; j < 8; j++) {
             let bodyData = document.createElement('td')
             let bodyDataContent = document.createElement('div')
             if (j === 0) {  // Week number
                 bodyDataContent.className = 'week-num'
-                bodyDataContent.textContent = currentMonth[i].weekNum
+                bodyDataContent.textContent = createdMonth[i].weekNum
              } else {       // Days
                 bodyDataContent.className = 'day'
-                bodyDataContent.textContent = currentMonth[i].days[j - 1].day
+                bodyDataContent.textContent = createdMonth[i].days[j - 1].day
              }
              bodyData.append(bodyDataContent)
              bodyRow.append(bodyData)
@@ -106,37 +141,8 @@ function createCalendar() {
         calendarBody.append(bodyRow)
     }
 
-    // Fill calendar with body
     calendar.append(columnGroup, calendarHead, calendarBody)
     calendarContainer.append(calendar)
-    
-    return calendarContainer
-};
-
-function getZonedDateTime() {
-    return Temporal.Now.zonedDateTimeISO()
-};
-
-// Credit (edited to fit the new 'Temporal' API): Liam Cain, creator of Obsidian plugin 'Calendar'
-function getCalendarMonth(displayedMonth) {
-    const today = displayedMonth.day
-    const month = []
-    let week
-    const monthStartDate = displayedMonth.subtract({ days: today - 1 })
-    const startOffset = monthStartDate.dayOfWeek - 1  // -1 bc otherwise goes to the prev month
-    let date = monthStartDate.subtract({ days: startOffset })
-    for (let _day = 0; _day < 35; _day++) {
-        if (_day % 7 === 0) {
-            week = {
-                days: [],
-                weekNum: date.weekOfYear
-            }
-            month.push(week)
-        }
-        week.days.push(date)
-        date = date.add({ days: 1 })
-    }
-    return month
 }
 
 export { createCalendar }

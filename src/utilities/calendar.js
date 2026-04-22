@@ -1,7 +1,6 @@
 import { clearContent } from './utility.js'
 
 const daysNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-
 function createCalendar() {
     let displayedMonth = Temporal.Now.zonedDateTimeISO()  // Default to current date
 
@@ -11,8 +10,8 @@ function createCalendar() {
     // Navigation
     const calendarNavContainer = document.createElement('div')
     const titleContainer = document.createElement('div')
-    const titleMonth = document.createElement('span')
     const titleYear = document.createElement('span')
+    const titleMonth = document.createElement('span')
     const navMonthContainer = document.createElement('div')
     const prevMonth = document.createElement('div')
     const nextMonth = document.createElement('div')
@@ -21,11 +20,11 @@ function createCalendar() {
     calendarNavContainer.className = 'calendar-nav-container'
     titleContainer.className = 'calendar-title-container'
     
-    titleMonth.className = 'calendar-month'
-    titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'long'}) + ' '
-    
     titleYear.className = 'calendar-year'
     titleYear.textContent = displayedMonth.toLocaleString('en', {year: 'numeric'})
+
+    titleMonth.className = 'calendar-month'
+    titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'short'})
 
     navMonthContainer.className = 'calendar-month-nav'
     prevMonth.className = 'calendar-arrow-left'
@@ -35,8 +34,8 @@ function createCalendar() {
         displayMonth(calendarContainer, calendar, createMonth(displayedMonth.subtract({ months: 1 })))
         // Update displayed month and year
         displayedMonth = displayedMonth.subtract({ months: 1 })
-        titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'long'}) + ' '
         titleYear.textContent = displayedMonth.toLocaleString('en', {year: 'numeric'})
+        titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'short'})
     })
 
     nextMonth.className = 'calendar-arrow-right'
@@ -44,8 +43,8 @@ function createCalendar() {
         clearContent(calendar)
         displayMonth(calendarContainer, calendar, createMonth(displayedMonth.add({ months: 1 })))
         displayedMonth = displayedMonth.add({ months: 1 })
-        titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'long'}) + ' '
         titleYear.textContent = displayedMonth.toLocaleString('en', {year: 'numeric'})
+        titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'short'})
     })
 
     titleToday.className = 'calendar-today-reset'
@@ -54,13 +53,13 @@ function createCalendar() {
         clearContent(calendar)
         displayMonth(calendarContainer, calendar, createMonth(Temporal.Now.zonedDateTimeISO()))
         displayedMonth = Temporal.Now.zonedDateTimeISO()
-        titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'long'}) + ' '
         titleYear.textContent = displayedMonth.toLocaleString('en', {year: 'numeric'})
+        titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'short'})
     })
 
     // Fill container with nav
     navMonthContainer.append(prevMonth, titleToday, nextMonth)
-    titleContainer.append(titleMonth, titleYear, navMonthContainer)
+    titleContainer.append(titleYear, titleMonth, navMonthContainer)
     calendarNavContainer.append(titleContainer)
     calendarContainer.append(calendarNavContainer)
     
@@ -86,12 +85,14 @@ function createMonth(selectedMonth) {
         if (_day % 7 === 0) {
             week = {
                 days: [],
-                weekNum: date.weekOfYear
+                weekNum: date.weekOfYear,
+                monthNum: monthStartDate.month  // selectedMonth's month number
             }
             month.push(week)
         }
         week.days.push(date)
         date = date.add({ days: 1 })
+        
     }
     return month
 }
@@ -133,6 +134,14 @@ function displayMonth(calendarContainer, calendar, createdMonth) {
                 bodyDataContent.textContent = createdMonth[i].weekNum
              } else {       // Days
                 bodyDataContent.className = 'day'
+                // Today class for styling
+                if (createdMonth[i].days[j - 1].dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear && createdMonth[i].days[j - 1].year === Temporal.Now.zonedDateTimeISO().year) {
+                    bodyDataContent.classList.add('day-today')
+                }
+                // Adjacent months days class for styling
+                if (createdMonth[i].days[j - 1].month < createdMonth[i].monthNum || createdMonth[i].days[j - 1].month > createdMonth[i].monthNum) {
+                    bodyDataContent.classList.add('day-adjacent-month')
+                }
                 bodyDataContent.textContent = createdMonth[i].days[j - 1].day
              }
              bodyData.append(bodyDataContent)

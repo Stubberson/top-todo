@@ -1,18 +1,27 @@
 import './style.css'
 import { viewToday } from './sidebar/today-dom.js'
 import { viewImportant } from './sidebar/important-dom.js'
+import { createCalendar } from './utilities/calendar.js'
 import { createProject } from './project/project-dom.js'
 
 let viewCurrent = undefined;  // Track currently open view
 
-(() => {
+const body = document.querySelector('body')
+const leftSidebar = document.querySelector('div.left-sidebar');
+const rightSidebar = document.querySelector('div.right-sidebar');
+
+(() => {  // Default view
     viewToday()
+
+    const newCalendar = createCalendar()
+    rightSidebar.append(newCalendar)
 })();
 
 (function listenIndexEvents() {
     const tasksToday = document.querySelector('button#today-all')
     const tasksImportant = document.querySelector('button#important-all')
     const projectNew = document.querySelector('button#new-project')
+    const toggleLeft = document.querySelector('button#toggle-left')
 
     tasksToday.addEventListener('click', () => {
         viewToday()
@@ -28,6 +37,13 @@ let viewCurrent = undefined;  // Track currently open view
         createProject()
         document.querySelector('.project-header-content').focus()
         viewCurrent = 'project'
+    })
+
+    let toggleCount = 1
+    toggleLeft.addEventListener('click', () => {
+        // TODO: CANNOT remove() THE WHOLE THING, ONLY MINIMIZE. OTHERWISE CONTENT IS FUCKED.
+        toggleCount % 2 === 0 ? body.prepend(leftSidebar) : leftSidebar.remove()
+        toggleCount++
     })
 })();
 

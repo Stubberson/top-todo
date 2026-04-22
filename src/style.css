@@ -20,7 +20,8 @@ body {
     --calendar-add-line: url('./visuals/calendar/calendar-add-line.svg');
     --calendar-add-fill: url('./visuals/calendar/calendar-add-fill.svg');
     --calendar-arrow: url('./visuals/calendar/calendar-arrow.svg');
-    --important-line: url('./visuals/important/important-line.svg');
+    --important-line-black: url('./visuals/important/important-line-black.svg');
+    --important-line-gray: url('./visuals/important/important-line-gray.svg');
     --important-fill-black: url('./visuals/important/important-fill-black.svg');
     --important-fill-gray: url('./visuals/important/important-fill-gray.svg');
     --close-line: url('./visuals/close-line.svg');
@@ -40,7 +41,7 @@ body {
     height: 100vh;
 
     display: grid;
-    grid-template: 1fr 2em / 25% 1fr;
+    grid-template: 1fr 2em / 1fr 3fr 1fr;
 }
 
 button {
@@ -60,15 +61,17 @@ button:hover {
     background-color: yellowgreen;
 }
 
-/* --- SIDEBAR --- */
-div.sidebar {
+/* --- LEFT SIDEBAR --- */
+div.left-sidebar {
+    grid-area: 1 / 1 / 3 / 2;
+
     display: flex;
     flex-direction: column;
 
     background-color: whitesmoke;
 }
 
-div.sidebar > div.navigation {
+div.left-sidebar > div.navigation {
     display: flex;
     flex-direction: column;
 }
@@ -79,13 +82,16 @@ div.navigation button {
     padding-left: 3em;
 }
 
-button#today-all::before {
+div.navigation button::before {
     position: absolute;
-    content: var(--calendar-today-line);
     left: 0.5em;
     top: 0.6em;
 
     transition: transform 0.1s ease-in-out;
+}
+
+button#today-all::before {
+    content: var(--calendar-today-line);
 }
 
 button#today-all:hover::before {
@@ -94,16 +100,19 @@ button#today-all:hover::before {
 }
 
 button#important-all::before {
-    position: absolute;
-    content: var(--important-line);
-    left: 0.5em;
-    top: 0.6em;
-
-    transition: transform 0.1s ease-in-out;
+    content: var(--important-line-black);
 }
 
 button#important-all:hover::before {
     content: var(--important-fill-black);
+    transform: scale(1.2);
+}
+
+button#new-project::before {
+    content: var(--new-line-black);
+}
+
+button#new-project:hover::before {
     transform: scale(1.2);
 }
 
@@ -180,42 +189,40 @@ button.project-remove-confirm:hover{
     flex-grow: 1;
 }
 
-dialog.dialog-project {
-    border: none;
-}
-
-dialog.dialog-project button {
-    padding: 5px;
-}
-
-dialog.dialog-project > form {
+/* --- RIGHT SIDEBAR --- */
+div.right-sidebar {
+    grid-area: 1 / 3 / 3 / 4;
     display: flex;
     flex-direction: column;
 
-    width: 280px;
+    background-color: whitesmoke;
 }
 
-/* ------------------------- */
-/* --- CONTENT CONTAINER --- */
-/* ------------------------- */
-div.content-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-
-    margin: 2em;
+/* CALENDAR */
+div.calendar-container {
+    width: 100%;
 }
 
-/* TODAY CONTENT */
-div.calendar-month-nav {
+div.calendar-title-container {
     display: flex;
     align-items: center;
+    gap: auto;
+}
+
+div.calendar-title-container span {
+    font-size: 1.5em;
+    font-weight: bold;
+    padding-left: 10px;
+}
+
+div.calendar-month-nav {
+    display: flex;
     gap: 0.5em;
-    flex-grow: 0;
+    margin-left: auto;
 }
 
 div.calendar-today-reset {
-    padding: 3px;
+    padding: 3px 12px;
 }
 
 div.calendar-arrow-left,
@@ -242,6 +249,47 @@ div.calendar-arrow-left {
 div.calendar-arrow-right {
     background-image: var(--calendar-arrow);
     transform: rotate(180deg);
+}
+
+table.calendar {
+    font-family: "Atkinson Hyperlegible Mono", sans-serif;
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 100%;
+    font-size: small;
+}
+
+table.calendar td {
+    text-align: center;
+}
+
+table.calendar td:hover {
+    cursor: pointer;
+    background-color: yellowgreen;
+}
+
+td:has( > div.day-today) {
+    border: solid 2px yellowgreen;
+}
+
+div.day-adjacent-month {
+    color: var(--light-gray-highlight);
+}
+
+table.calendar > colgroup :first-child {
+    border-right: solid 1px black;
+}
+
+/* ------------------------- */
+/* --- CONTENT CONTAINER --- */
+/* ------------------------- */
+div.content-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    flex-grow: 1;
+
+    margin: 2em;
 }
 
 /* PROJECT CONTENT */
@@ -429,7 +477,7 @@ input.task-header {
     border: none;
     outline: none;
     background-image: unset;
-    background-position: top 50% right 22px;
+    background-position: top 50% right 23px;  /* Positions important flag */
     background-repeat: no-repeat;
 
     flex-grow: 1;
@@ -532,7 +580,7 @@ button.task-date-button {
 }
 
 button.task-important-button {
-    background-image: var(--important-line);
+    background-image: var(--important-line-gray);
 }
 
 button.task-date-button {
@@ -550,32 +598,27 @@ button.task-date-button:focus-visible {
 }
 
 /* --- FOOTER --- */
-div.new-project-container {
-    background-color: whitesmoke;
-    border-top: solid 1px rgb(118, 118, 118);
-
+div.footer {
+    grid-area: 2 / 1 / 3 / 4;
+    border-top: solid 1px var(--medium-gray-highlight);
     display: flex;
 }
 
-button#new-project {
-    width: 100%;
-    position: relative;
-    padding-left: 3em;
+div.footer button {
+    height: 100%;
+    width: 100px;
 }
 
-button#new-project::before {
-    content: var(--new-line-black);
-    position: absolute;
-    left: 0.5em;
-    top: 3px;
-
-    transition: transform 0.1s ease-in-out;
+div.footer button#toggle-left {
+    background-image: var(--arrow-down);
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
-button#new-project:hover::before {
-    transform: scale(1.1);
+div.footer button#toggle-right {
+    margin-left: auto;
+    background-image: var(--arrow-down);
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
-div.footer {
-    border-top: solid 1px var(--medium-gray-highlight);
-}

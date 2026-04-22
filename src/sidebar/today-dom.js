@@ -1,21 +1,14 @@
 import { currentDate, clearContent } from '../utilities/utility.js'
-import { createCalendar } from '../utilities/calendar.js'
 import { Task } from '../task/task-class.js'
 import { taskCreate, taskRemove } from '../task/task-dom.js'
 
 // --- Today's tasks DOM control ---
 
 const contentContainer = document.querySelector('div.content-container')
-
 function viewToday() {
     clearContent(contentContainer)  // Clear the content container
     // FILL WITH EXISTING TODAY TASKS
 
-    const todayHeader = document.createElement('h1')
-    todayHeader.textContent = 'Today'
-
-    const calendar = createCalendar()
-    
     const tasksContainer = document.createElement('div')
     tasksContainer.className = 'tasks-container'
 
@@ -30,7 +23,7 @@ function viewToday() {
         task.header.focus()  // Focus task description after creation
     })
 
-    contentContainer.append(todayHeader, calendar, taskNewButton, tasksContainer)
+    contentContainer.append(taskNewButton, tasksContainer)
 }
 
 // function collectTodayTasks() {

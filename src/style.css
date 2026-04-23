@@ -210,6 +210,7 @@ div.right-sidebar {
 /* CALENDAR */
 div.calendar-container {
     width: 90%;
+    padding-top: 10px;
 }
 
 div.calendar-title-container {
@@ -235,18 +236,17 @@ div.calendar-today-reset {
 
 div.calendar-arrow-left,
 div.calendar-arrow-right {
-    height: 5px;
-    width: 5px;
     padding: 10px;
     background-position: center;
     background-repeat: no-repeat;
+    background-size: 100%;
 }
 
 div.calendar-today-reset:hover,
 div.calendar-arrow-left:hover,
 div.calendar-arrow-right:hover {
     cursor: pointer;
-    background-color: yellowgreen;
+    background-color: var(--light-gray-highlight);
 }
 
 div.calendar-arrow-left {
@@ -271,26 +271,25 @@ table.calendar td {
 }
 
 div.day {
-    background-color: yellowgreen;
+    font-weight: bolder;
 }
 
 div.day:hover {
     cursor: pointer;
-    background-color: unset;
+    background-color: rgba(153, 205, 50, 0.5);
 }
 
 div.day-today {
-    background-color: unset;
+    color: white;
+    background-color: var(--medium-gray-highlight);
 }
 
 div.day-today:hover {
-    color: white;
-    background-color: var(--medium-gray-highlight);
+    color: black;
 }
 
 div.day-adjacent-month {
-    color: white;
-    background-color: var(--medium-gray-highlight);
+    color: var(--light-gray-highlight);
 }
 
 div.day-adjacent-month:hover {
@@ -637,32 +636,11 @@ div.date-picker > * {
 
 div.date-picker .calendar-arrow-left,
 div.date-picker .calendar-arrow-right {
-    padding: 5px;
+    padding: 5px 8px;
 }
 
 div.date-picker .calendar-today-reset {
     padding: 2px 5px;
-}
-
-div.date-picker .day {
-    background-color: unset;
-}
-
-div.date-picker .day:hover {
-    background-color: rgba(153, 205, 50, 0.5);
-}
-
-div.date-picker .day-today {
-    outline: solid 2px yellowgreen;
-    outline-offset: -2px;
-}
-
-div.date-picker .day-today:hover {
-    color: unset;
-}
-
-div.date-picker .day-adjacent-month {
-    color: var(--light-gray-highlight);
 }
 
 /* --- FOOTER --- */

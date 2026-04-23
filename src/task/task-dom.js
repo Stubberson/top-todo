@@ -1,5 +1,6 @@
 import { Task } from "./task-class.js"
 import { clearContent } from "../utilities/utility.js"
+import { createCalendar } from "../utilities/calendar.js"
 import { Project } from "../project/project-class.js"
 
 function taskCreate(project = undefined) {
@@ -12,7 +13,8 @@ function taskCreate(project = undefined) {
     const taskDescription = document.createElement('textarea')
     const taskTagsContainer = document.createElement('div')
     const taskImportant = document.createElement('button')
-    const taskDate = document.createElement('button')
+    const taskDateButton = document.createElement('button')
+    const taskDatePicker = createCalendar(true)
 
     // Envelop each task into a div element
     taskContainer.className = 'task-container'
@@ -48,9 +50,13 @@ function taskCreate(project = undefined) {
     taskImportant.hidden = true
     taskImportant.textContent = 'Important'
 
-    taskDate.classList.add('task-date-button', 'task-tag')
-    taskDate.hidden = true
-    taskDate.textContent = 'Date'
+    taskDateButton.classList.add('task-date-button', 'task-tag')
+    taskDateButton.hidden = true
+    taskDateButton.textContent = 'Date'
+
+    taskDatePicker.classList.add('date-picker')
+    taskDatePicker.hidden = true
+    taskDatePicker.setAttribute('tabindex', 0)
 
     taskCompleteCheckbox.addEventListener('click', (event) => {
         if (event.target.checked) {
@@ -84,7 +90,7 @@ function taskCreate(project = undefined) {
                 if (taskDescription.hidden) {
                     taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
                 } else {
-                    taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
+                    taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
                 }
         }
     }))
@@ -92,7 +98,7 @@ function taskCreate(project = undefined) {
     // Eases minimizing task description
     taskDescription.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-            taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
+            taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
         }
     })
 
@@ -101,22 +107,50 @@ function taskCreate(project = undefined) {
     })
 
     // Indicate important task
-    let toggle = 0
+    let toggleImportant = 0
     taskImportant.addEventListener('click', (event) => {
-        if (!toggle) {
+        if (!toggleImportant) {
             event.target.classList.add('task-important-flag')
             event.target.style.setProperty('background-image', 'var(--important-fill-black)')
-            toggle = 1
+            toggleImportant = 1
         } else {
             event.target.classList.remove('task-important-flag')
             event.target.style.setProperty('background-image', 'revert-layer')
-            toggle = 0
+            toggleImportant = 0
+        }
+    })
+
+    // Show date picker
+    let toggleDate = 0
+    taskDateButton.addEventListener('click', (event) => {
+        if (!toggleDate) {
+            toggleDate = 1
+            event.target.style.setProperty('background-image', 'var(--calendar-add-fill)')
+            taskDatePicker.hidden = false
+            taskDatePicker.querySelector('td').focus()  // Focus first cell
+        } else {
+            toggleDate = 0
+            event.target.style.setProperty('background-image', 'revert-layer')
+            taskDatePicker.hidden = true
+        }
+    })
+
+    // Hide date picker when clicked outside or Escaped
+    document.addEventListener('click', (event) => {
+        if (taskDatePicker.hidden === false && !event.target.closest('div.date-picker') && !event.target.classList.contains('task-date-button')) {
+            taskDatePicker.hidden = true
+        }
+    })
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            taskDatePicker.hidden = true
         }
     })
 
     taskRemoveContainer.append(taskRemoveButton)
-    taskTagsContainer.append(taskImportant, taskDate)
-    taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveContainer, taskDescription, taskTagsContainer)
+    taskTagsContainer.append(taskImportant, taskDateButton)
+    taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveContainer, taskDescription, taskTagsContainer, taskDatePicker)
     
     let task = new Task(taskContainer, project)
     
@@ -149,7 +183,7 @@ function taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer,
     taskDescription.focus()
 }
 
-function taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton) {
+function taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker) {
     taskDescription.hidden = true
     const taskTags = Array.from(taskTagsContainer.children)
     taskTags.forEach(tag => {  // Indicate importance even if task minimized
@@ -160,6 +194,7 @@ function taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer,
     })
     taskDescriptionOpener.checked = false
     taskRemoveButton.hidden = true
+    taskDatePicker.hidden = true
 
     taskHeader.focus()
 }

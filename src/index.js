@@ -39,11 +39,8 @@ const rightSidebar = document.querySelector('div.right-sidebar');
         viewCurrent = 'project'
     })
 
-    let toggleCount = 1
     toggleLeft.addEventListener('click', () => {
-        // TODO: CANNOT remove() THE WHOLE THING, ONLY MINIMIZE. OTHERWISE CONTENT IS FUCKED.
-        toggleCount % 2 === 0 ? body.prepend(leftSidebar) : leftSidebar.remove()
-        toggleCount++
+        // SOMETHINGSOMETHING
     })
 })();
 

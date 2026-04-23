@@ -28,4 +28,10 @@ export class Task {
             return true
         }
     }
+
+    get getToday() {
+        if (this.date.year === Temporal.Now.zonedDateTimeISO().year && this.date.dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear) {
+            return true
+        }
+    }
 }

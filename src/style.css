@@ -20,6 +20,7 @@ body {
     --calendar-add-line: url('./visuals/calendar/calendar-add-line.svg');
     --calendar-add-fill: url('./visuals/calendar/calendar-add-fill.svg');
     --calendar-arrow: url('./visuals/calendar/calendar-arrow.svg');
+    --check-black: url('./visuals/check-black.svg');
     --important-line-black: url('./visuals/important/important-line-black.svg');
     --important-line-gray: url('./visuals/important/important-line-gray.svg');
     --important-fill-black: url('./visuals/important/important-fill-black.svg');
@@ -41,7 +42,7 @@ body {
     height: 100vh;
 
     display: grid;
-    grid-template: 1fr 2em / 1fr 3fr 1fr;
+    grid-template: 1fr 2em / 1fr 3fr 1.5fr;
 }
 
 button {
@@ -53,6 +54,7 @@ button {
 
     padding: 0;
     margin: 0;
+    box-sizing: border-box;
 }
 
 button:hover {
@@ -105,6 +107,14 @@ button#important-all::before {
 
 button#important-all:hover::before {
     content: var(--important-fill-black);
+    transform: scale(1.2);
+}
+
+button#finished-all::before {
+    content: var(--check-black);
+}
+
+button#finished-all:hover::before {
     transform: scale(1.2);
 }
 
@@ -193,35 +203,33 @@ button.project-remove-confirm:hover{
 div.right-sidebar {
     grid-area: 1 / 3 / 3 / 4;
     display: flex;
-    flex-direction: column;
-
+    justify-content: center;
     background-color: whitesmoke;
 }
 
 /* CALENDAR */
 div.calendar-container {
-    width: 100%;
+    width: 90%;
 }
 
 div.calendar-title-container {
     display: flex;
     align-items: center;
-    gap: auto;
 }
 
 div.calendar-title-container span {
     font-size: 1.5em;
     font-weight: bold;
-    padding-left: 10px;
+    padding-left: 12px;
 }
 
 div.calendar-month-nav {
     display: flex;
-    gap: 0.5em;
     margin-left: auto;
 }
 
 div.calendar-today-reset {
+    text-align: center;
     padding: 3px 12px;
 }
 
@@ -231,7 +239,6 @@ div.calendar-arrow-right {
     width: 5px;
     padding: 10px;
     background-position: center;
-    background-size: 80%;
     background-repeat: no-repeat;
 }
 
@@ -255,25 +262,39 @@ table.calendar {
     font-family: "Atkinson Hyperlegible Mono", sans-serif;
     table-layout: fixed;
     border-collapse: collapse;
-    width: 100%;
     font-size: small;
+    width: 100%;
 }
 
 table.calendar td {
     text-align: center;
 }
 
-table.calendar td:hover {
-    cursor: pointer;
+div.day {
     background-color: yellowgreen;
 }
 
-td:has( > div.day-today) {
-    border: solid 2px yellowgreen;
+div.day:hover {
+    cursor: pointer;
+    background-color: unset;
+}
+
+div.day-today {
+    background-color: unset;
+}
+
+div.day-today:hover {
+    color: white;
+    background-color: var(--medium-gray-highlight);
 }
 
 div.day-adjacent-month {
-    color: var(--light-gray-highlight);
+    color: white;
+    background-color: var(--medium-gray-highlight);
+}
+
+div.day-adjacent-month:hover {
+    color: var(--medium-gray-highlight);
 }
 
 table.calendar > colgroup :first-child {
@@ -595,6 +616,53 @@ button.task-date-button:hover,
 button.task-date-button:focus-visible {
     flex-grow: 1;
     background-color: whitesmoke;
+}
+
+/* POPUP DATE PICKER */
+div.date-picker {
+    position: absolute;
+    bottom: -150px;
+    right: 0;
+    z-index: 3;
+    padding: 2px 2px 4px 2px;
+    
+    width: 200px;
+    background-color: white;
+    outline: solid 1px black;
+}
+
+div.date-picker > * {
+    font-size: x-small;
+}
+
+div.date-picker .calendar-arrow-left,
+div.date-picker .calendar-arrow-right {
+    padding: 5px;
+}
+
+div.date-picker .calendar-today-reset {
+    padding: 2px 5px;
+}
+
+div.date-picker .day {
+    background-color: unset;
+}
+
+div.date-picker .day:hover {
+    background-color: rgba(153, 205, 50, 0.5);
+}
+
+div.date-picker .day-today {
+    outline: solid 2px yellowgreen;
+    outline-offset: -2px;
+}
+
+div.date-picker .day-today:hover {
+    color: unset;
+}
+
+div.date-picker .day-adjacent-month {
+    color: var(--light-gray-highlight);
 }
 
 /* --- FOOTER --- */

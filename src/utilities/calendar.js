@@ -1,7 +1,7 @@
 import { clearContent } from './utility.js'
 
 const daysNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-function createCalendar() {
+function createCalendar(popup = false) {
     let displayedMonth = Temporal.Now.zonedDateTimeISO()  // Default to current date
 
     const calendarContainer = document.createElement('div')
@@ -20,11 +20,11 @@ function createCalendar() {
     calendarNavContainer.className = 'calendar-nav-container'
     titleContainer.className = 'calendar-title-container'
     
-    titleYear.className = 'calendar-year'
+    titleYear.classList.add('date-picker-year')
     titleYear.textContent = displayedMonth.toLocaleString('en', {year: 'numeric'})
 
-    titleMonth.className = 'calendar-month'
-    titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'short'})
+    titleMonth.classList.add('date-picker-month')
+    titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'short'})    
 
     navMonthContainer.className = 'calendar-month-nav'
     prevMonth.className = 'calendar-arrow-left'
@@ -133,6 +133,7 @@ function displayMonth(calendarContainer, calendar, createdMonth) {
                 bodyDataContent.className = 'week-num'
                 bodyDataContent.textContent = createdMonth[i].weekNum
              } else {       // Days
+                bodyData.setAttribute('tabindex', 0)  // Allows focus
                 bodyDataContent.className = 'day'
                 // Today class for styling
                 if (createdMonth[i].days[j - 1].dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear && createdMonth[i].days[j - 1].year === Temporal.Now.zonedDateTimeISO().year) {

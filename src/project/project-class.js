@@ -5,7 +5,7 @@ export class Project {
         // Content
         this.header = header
         this.description = description
-        this.dueDate = date
+        this.date = date
         this.tasks = []
 
         // Containers for DOM
@@ -16,7 +16,7 @@ export class Project {
 
         // Sidebar and utility
         this.projectButton = null
-        this.viewStatus = undefined  // viewStatus remembers the view a user left the project at
+        // this.viewStatus = undefined // viewStatus remembers the view a user left the project at
         Project.memory.push(this)
     }
 

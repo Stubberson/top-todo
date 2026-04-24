@@ -2,9 +2,9 @@ import { viewCurrent } from '../index.js'
 import { Project } from './project-class.js'
 import { Task } from '../task/task-class.js'
 import { taskCreate, tasksFilter } from '../task/task-dom.js'
-import { viewToday } from '../sidebar/today-dom.js'
+import { viewToday } from '../sidebar-left/today-dom.js'
 import { currentDate, clearContent } from '../utilities/utility.js'
-import { viewImportant } from '../sidebar/important-dom.js'
+import { viewImportant } from '../sidebar-left/important-dom.js'
 
 // --- Project DOM control ---
 
@@ -51,16 +51,16 @@ function createProject() {
             project.description.value = project.description.value
         })
 
-        project.dueDate.type = 'date'
-        project.dueDate.className = 'project-date-content'
-        project.dueDate.name = 'project-date-content'
-        project.dueDate.min = currentDate
-        project.dueDate.addEventListener('input', () => {
-            projectButtonDate.textContent = project.dueDate.value
-            project.dueDate.value = project.dueDate.value
+        project.date.type = 'date'
+        project.date.className = 'project-date-content'
+        project.date.name = 'project-date-content'
+        project.date.min = currentDate
+        project.date.addEventListener('input', () => {
+            projectButtonDate.textContent = project.date.value
+            project.date.value = project.date.value
         });
 
-        project.infoContainer.append(project.header, project.description, project.dueDate);
+        project.infoContainer.append(project.header, project.description, project.date);
         projectContainer.append(project.infoContainer)
     })();
 
@@ -127,7 +127,7 @@ function listProject(project) {
     } else {
         projectButtonHeader.textContent = project.header.value
     } 
-    projectButtonDate.textContent = project.dueDate.value
+    projectButtonDate.textContent = project.date.value
 
     projectButton.append(projectButtonHeader, projectButtonDate)
     project.projectButton = projectButton

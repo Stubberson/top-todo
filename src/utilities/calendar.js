@@ -1,7 +1,7 @@
 import { clearContent } from './utility.js'
+import { displayDate } from '../sidebar-right/calendar-dom.js'
 
-const daysNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-function createCalendar(popup = false) {
+function createCalendar() {
     let displayedMonth = Temporal.Now.zonedDateTimeISO()  // Default to current date
 
     const calendarContainer = document.createElement('div')
@@ -48,7 +48,7 @@ function createCalendar(popup = false) {
     })
 
     titleToday.className = 'calendar-today-reset'
-    titleToday.textContent = 'Today'
+    titleToday.textContent = 'TODAY'
     titleToday.addEventListener('click', () => {
         clearContent(calendar)
         displayMonth(calendarContainer, calendar, createMonth(Temporal.Now.zonedDateTimeISO()))
@@ -67,8 +67,8 @@ function createCalendar(popup = false) {
     const calendar = document.createElement('table')
     calendar.className = 'calendar'
 
-    const currentCalendarMonth = createMonth(displayedMonth)  // Default to current date 
-    displayMonth(calendarContainer, calendar, currentCalendarMonth)
+    const currentMonthWeeks = createMonth(displayedMonth)  // Default to current date 
+    displayMonth(calendarContainer, calendar, currentMonthWeeks)
     
     return calendarContainer
 };
@@ -97,7 +97,7 @@ function createMonth(selectedMonth) {
     return month
 }
 
-function displayMonth(calendarContainer, calendar, createdMonth) {
+function displayMonth(calendarContainer, calendar, currentMonthWeeks) {
     const columnGroup = document.createElement('colgroup')
     const calendarHead = document.createElement('thead')
     const calendarHeadRow = document.createElement('tr')
@@ -117,7 +117,8 @@ function displayMonth(calendarContainer, calendar, createdMonth) {
         if (i === 0) {
             columnTitle.textContent = 'W'
         } else {
-            columnTitle.textContent = daysNames[i - 1]
+            // Week days 'Mon', 'Tue', etc.
+            columnTitle.textContent = currentMonthWeeks[0].days[i - 1].toLocaleString('en', {weekday: 'short'}).toUpperCase()
         }
         calendarHeadRow.append(columnTitle)
     }
@@ -131,19 +132,23 @@ function displayMonth(calendarContainer, calendar, createdMonth) {
             let bodyDataContent = document.createElement('div')
             if (j === 0) {  // Week number
                 bodyDataContent.className = 'week-num'
-                bodyDataContent.textContent = createdMonth[i].weekNum
+                bodyDataContent.textContent = currentMonthWeeks[i].weekNum
              } else {       // Days
-                bodyData.setAttribute('tabindex', 0)  // Allows focus
+                bodyData.setAttribute('tabindex', 0)  // Allow focus for each day
                 bodyDataContent.className = 'day'
-                // Today class for styling
-                if (createdMonth[i].days[j - 1].dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear && createdMonth[i].days[j - 1].year === Temporal.Now.zonedDateTimeISO().year) {
+                bodyDataContent.textContent = currentMonthWeeks[i].days[j - 1].day
+
+                if (currentMonthWeeks[i].days[j - 1].dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear && currentMonthWeeks[i].days[j - 1].year === Temporal.Now.zonedDateTimeISO().year) {
                     bodyDataContent.classList.add('day-today')
                 }
-                // Adjacent months days class for styling
-                if (createdMonth[i].days[j - 1].month < createdMonth[i].monthNum || createdMonth[i].days[j - 1].month > createdMonth[i].monthNum) {
+
+                if (currentMonthWeeks[i].days[j - 1].month < currentMonthWeeks[i].monthNum || currentMonthWeeks[i].days[j - 1].month > currentMonthWeeks[i].monthNum) {
                     bodyDataContent.classList.add('day-adjacent-month')
                 }
-                bodyDataContent.textContent = createdMonth[i].days[j - 1].day
+                
+                let dataDate = currentMonthWeeks[i].days[j - 1]  // dataDate === Temporal ZonedDateTime obj
+                bodyData.addEventListener('click', (event) => dateSelect(dataDate, event))  // Add event listeners for date selection
+                bodyData.addEventListener('keydown', (event) => { if(event.code === 'Space' || event.code === 'Enter') dateSelect(dataDate, event) })
              }
              bodyData.append(bodyDataContent)
              bodyRow.append(bodyData)
@@ -153,6 +158,18 @@ function displayMonth(calendarContainer, calendar, createdMonth) {
 
     calendar.append(columnGroup, calendarHead, calendarBody)
     calendarContainer.append(calendar)
+}
+
+function dateSelect(date, event) {
+    // Differentiate between SIDEBAR and TASK date selection
+    const taskCalendar = document.querySelector('.date-picker')
+    if (!taskCalendar || event.currentTarget.compareDocumentPosition(taskCalendar) !== 10) {
+        // SIDEBAR
+        displayDate(date)
+    } else {
+        // TASK
+        console.log(event.target, 'this happened inside a date picker')
+    }
 }
 
 export { createCalendar }

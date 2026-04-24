@@ -1,6 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:ital,wght@0,200..800;1,200..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 body {
+    /* FONTS */
+    --atkinson-sans-serif: "Atkinson Hyperlegible", sans-serif;
+    --atkinson-mono: "Atkinson Hyperlegible Mono", sans-serif;
+
     /* COLORS */
     --light-gray-highlight: #e5e5e5;
     --medium-gray-highlight: #767676;
@@ -15,27 +19,28 @@ body {
     --pacific-cyan: #0091ad;
 
     /* ICONS */
-    --calendar-today-line: url('./visuals/calendar/today-line.svg');
-    --calendar-today-fill: url('./visuals/calendar/today-fill.svg');
+    --arrow-down: url('./visuals/arrow-down.svg');
+    --arrow-up: url('./visuals/arrow-up.svg');
     --calendar-add-line: url('./visuals/calendar/calendar-add-line.svg');
     --calendar-add-fill: url('./visuals/calendar/calendar-add-fill.svg');
     --calendar-arrow: url('./visuals/calendar/calendar-arrow.svg');
+    --calendar-today-line: url('./visuals/calendar/today-line.svg');
+    --calendar-today-fill: url('./visuals/calendar/today-fill.svg');
     --check-black: url('./visuals/check-black.svg');
+    --close-line: url('./visuals/close-line.svg');
+    --delete-line-black: url('./visuals/delete/delete-line-black.svg');
+    --delete-fill-white: url('./visuals/delete/delete-fill.svg');
     --important-line-black: url('./visuals/important/important-line-black.svg');
     --important-line-gray: url('./visuals/important/important-line-gray.svg');
     --important-fill-black: url('./visuals/important/important-fill-black.svg');
     --important-fill-gray: url('./visuals/important/important-fill-gray.svg');
-    --close-line: url('./visuals/close-line.svg');
-    --delete-line-black: url('./visuals/delete/delete-line-black.svg');
-    --delete-fill-white: url('./visuals/delete/delete-fill.svg');
+    --minimize-black: url('./visuals/minimize-black.svg');
     --new-line-black: url('./visuals/new-default.svg');
     --new-line-white: url('./visuals/new-hover.svg');
     --task-checkbox-line: url('./visuals/task-incomplete.svg');
     --task-checkbox-fill: url('./visuals/task-complete.svg');
-    --arrow-down: url('./visuals/arrow-down.svg');
-    --arrow-up: url('./visuals/arrow-up.svg');
 
-    font-family: "Atkinson Hyperlegible", sans-serif;
+    font-family: var(--atkinson-sans-serif);
 
     margin: 0;
     padding: 0;
@@ -46,7 +51,7 @@ body {
 }
 
 button {
-    font-family: "Atkinson Hyperlegible Mono", sans-serif;
+    font-family: var(--atkinson-mono);
 
     border: none;
     background-color: inherit;
@@ -63,8 +68,10 @@ button:hover {
     background-color: yellowgreen;
 }
 
+/* -------------------- */
 /* --- LEFT SIDEBAR --- */
-div.left-sidebar {
+/* -------------------- */
+div.sidebar-left {
     grid-area: 1 / 1 / 3 / 2;
 
     display: flex;
@@ -73,7 +80,7 @@ div.left-sidebar {
     background-color: whitesmoke;
 }
 
-div.left-sidebar > div.navigation {
+div.sidebar-left > div.navigation {
     display: flex;
     flex-direction: column;
 }
@@ -153,7 +160,7 @@ button#listing-button:hover {
 
 li span#listing-header,
 li span#listing-date {
-    font-family: "Atkinson Hyperlegible Mono", sans-serif;
+    font-family: var(--atkinson-mono);
 }
 
 li span#listing-header {
@@ -199,11 +206,17 @@ button.project-remove-confirm:hover{
     flex-grow: 1;
 }
 
+/* --------------------- */
 /* --- RIGHT SIDEBAR --- */
-div.right-sidebar {
+/* --------------------- */
+div.sidebar-right {
     grid-area: 1 / 3 / 3 / 4;
+    
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+    
     background-color: whitesmoke;
 }
 
@@ -216,12 +229,13 @@ div.calendar-container {
 div.calendar-title-container {
     display: flex;
     align-items: center;
+    gap: 6px;
+    padding-bottom: 1em;
 }
 
 div.calendar-title-container span {
     font-size: 1.5em;
     font-weight: bold;
-    padding-left: 12px;
 }
 
 div.calendar-month-nav {
@@ -230,6 +244,8 @@ div.calendar-month-nav {
 }
 
 div.calendar-today-reset {
+    font-family: var(--atkinson-mono);
+    font-weight: 100;
     text-align: center;
     padding: 3px 12px;
 }
@@ -258,8 +274,20 @@ div.calendar-arrow-right {
     transform: rotate(180deg);
 }
 
+div.week-num {
+    width: fit-content;
+}
+
+th.column-title:first-child {
+    width: 22px;
+}
+
+th.column-title {
+    font-weight: 200;
+}
+
 table.calendar {
-    font-family: "Atkinson Hyperlegible Mono", sans-serif;
+    font-family: var(--atkinson-mono);
     table-layout: fixed;
     border-collapse: collapse;
     font-size: small;
@@ -271,7 +299,7 @@ table.calendar td {
 }
 
 div.day {
-    font-weight: bolder;
+    font-weight: 600;
 }
 
 div.day:hover {
@@ -300,6 +328,44 @@ table.calendar > colgroup :first-child {
     border-right: solid 1px black;
 }
 
+/* DATE TASK */
+div.date-container {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+
+    box-shadow: 
+        0 -15.5px whitesmoke,
+        0 -1em black;
+}
+
+div.date-header-container {
+    display: flex;
+    gap: 6px;
+}
+
+div.date-tasks-container span {
+    font-family: var(--atkinson-mono);
+    font-weight: 100;
+}
+
+button#date-tasks-close {
+    width: 20.5px;
+    height: 100%;
+    margin-left: auto;
+
+    background-image: var(--minimize-black);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    transition: background-size 0.2s ease-in-out;
+}
+
+button#date-tasks-close:hover {
+    background-size: 120%;
+}
+
 /* ------------------------- */
 /* --- CONTENT CONTAINER --- */
 /* ------------------------- */
@@ -312,7 +378,18 @@ div.content-container {
     margin: 2em;
 }
 
+/* TODAY CONTENT */
+div.today-summary-container {
+    width: 100%;
+    height: 100px; /* HAS TO BE fit-content */
+    background-color: whitesmoke;
+}
+
 /* PROJECT CONTENT */
+div.content-container h1 {
+    margin: 0;
+}
+
 input.project-header-content {
     font-size: 2em;
     font-weight: 700;
@@ -331,7 +408,7 @@ div.content-container div.project-info-container {
 }
 
 textarea.description {
-    font-family: "Atkinson Hyperlegible Mono", sans-serif;
+    font-family: var(--atkinson-mono);
     font-size: medium;
     color: var(--medium-gray-highlight);
     
@@ -445,9 +522,7 @@ button.task-new-button:hover {
     transform: scale(1.1);
 }
 
-/* ------------- */
-/* --- TASKS --- */
-/* ------------- */
+/* TASKS */
 div.tasks-container {
     display: flex;
     flex-direction: column;
@@ -491,7 +566,7 @@ input.task-complete-checkbox:checked {
 }
 
 input.task-header {
-    font-family: "Atkinson Hyperlegible", sans-serif;
+    font-family: var(--atkinson-sans-serif);
     font-size: medium;
 
     border: none;
@@ -643,7 +718,9 @@ div.date-picker .calendar-today-reset {
     padding: 2px 5px;
 }
 
+/* -------------- */
 /* --- FOOTER --- */
+/* -------------- */
 div.footer {
     grid-area: 2 / 1 / 3 / 4;
     border-top: solid 1px var(--medium-gray-highlight);

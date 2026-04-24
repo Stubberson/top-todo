@@ -1,20 +1,17 @@
 import './style.css'
-import { viewToday } from './sidebar/today-dom.js'
-import { viewImportant } from './sidebar/important-dom.js'
+import { viewToday } from './sidebar-left/today-dom.js'
+import { viewImportant } from './sidebar-left/important-dom.js'
+import { viewMainCalendar } from './sidebar-right/calendar-dom.js'
 import { createCalendar } from './utilities/calendar.js'
 import { createProject } from './project/project-dom.js'
 
 let viewCurrent = undefined;  // Track currently open view
 
-const body = document.querySelector('body')
-const leftSidebar = document.querySelector('div.left-sidebar');
-const rightSidebar = document.querySelector('div.right-sidebar');
+const body = document.querySelector('body');
 
 (() => {  // Default view
     viewToday()
-
-    const newCalendar = createCalendar()
-    rightSidebar.append(newCalendar)
+    viewMainCalendar()
 })();
 
 (function listenIndexEvents() {

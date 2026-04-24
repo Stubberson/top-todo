@@ -14,7 +14,7 @@ function taskCreate(project = undefined) {
     const taskTagsContainer = document.createElement('div')
     const taskImportant = document.createElement('button')
     const taskDateButton = document.createElement('button')
-    const taskDatePicker = createCalendar(true)
+    const taskDatePicker = createCalendar()
 
     // Envelop each task into a div element
     taskContainer.className = 'task-container'
@@ -141,7 +141,6 @@ function taskCreate(project = undefined) {
             taskDatePicker.hidden = true
         }
     })
-
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             taskDatePicker.hidden = true
@@ -159,7 +158,6 @@ function taskCreate(project = undefined) {
 
 function tasksFilter(mode, project, tasksContainer) {
     clearContent(tasksContainer)
-
     if (mode === 'all') {
         project.tasks.forEach(task => tasksContainer.append(task.container))
     }

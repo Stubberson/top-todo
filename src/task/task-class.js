@@ -2,6 +2,7 @@ export class Task {
     static memory = []  // Memory for all tasks
 
     constructor(container, project = undefined) {
+        // taskElements are HTML elements within one task container (div)
         const taskElements = Array.from(container.children)
 
         this.container = container
@@ -10,10 +11,12 @@ export class Task {
         this.opener = taskElements[2]
         this.remove = taskElements[3]
         this.description = taskElements[4]
-        
-        const taskTags = Array.from(taskElements[5].children)
+
+        const taskTags = Array.from(taskElements[5].children)  // 5th elem is taskTagsContainer
         this.important = taskTags[0]
-        this.date = taskTags[1]
+        this.dateButton = taskTags[1]
+        
+        this.date = undefined
 
         if (project) {
             this.owningProject = project

@@ -8,6 +8,14 @@ const contentContainer = document.querySelector('div.content-container')
 function viewToday() {
     clearContent(contentContainer)  // Clear the content container
 
+    const todayHeader = document.createElement('h1')
+    todayHeader.textContent = 'Today'
+
+    const summaryContainer = document.createElement('div')
+    const summaryItemContainer = document.createElement('div')
+    summaryContainer.className = 'today-summary-container'
+    summaryItemContainer.className = 'today-summary-item'
+
     const tasksContainer = document.createElement('div')
     tasksContainer.className = 'tasks-container'
 
@@ -20,10 +28,11 @@ function viewToday() {
         let task = taskCreate()
         task.date = Temporal.Now.zonedDateTimeISO()
         tasksContainer.append(task.container)
-        task.header.focus()  // Focus task description after creation
+        task.header.focus()
     })
 
-    contentContainer.append(taskNewButton, tasksContainer)
+    summaryContainer.append(summaryItemContainer)
+    contentContainer.append(todayHeader, summaryContainer, taskNewButton, tasksContainer)
 }
 
 function collectTodayTasks() {

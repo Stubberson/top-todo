@@ -26,6 +26,7 @@ export class Task {
         Task.memory.push(this)
     }
 
+    // TODO: I THINKS I'VE MISUNDERSTOOD THESE get FUNCTIONS
     get getImportant() {
         if (this.important.classList.contains('task-important-flag')) {
             return true

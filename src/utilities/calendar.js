@@ -1,5 +1,5 @@
 import { clearContent } from './utility.js'
-import { displayDate } from '../sidebar-right/calendar-dom.js'
+import { displayDate, createDateTask } from '../sidebar-right/calendar-dom.js'
 
 function createCalendar() {
     let displayedMonth = Temporal.Now.zonedDateTimeISO()  // Default to current date
@@ -165,7 +165,7 @@ function dateSelect(date, event) {
     const taskCalendar = document.querySelector('.date-picker')
     if (!taskCalendar || event.currentTarget.compareDocumentPosition(taskCalendar) !== 10) {
         // SIDEBAR
-        displayDate(date)
+        displayDate(date, event)
     } else {
         // TASK
         console.log(event.target, 'this happened inside a date picker')

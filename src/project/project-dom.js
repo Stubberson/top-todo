@@ -3,7 +3,8 @@ import { Project } from './project-class.js'
 import { Task } from '../task/task-class.js'
 import { taskCreate, tasksFilter } from '../task/task-dom.js'
 import { viewToday } from '../sidebar-left/today-dom.js'
-import { currentDate, clearContent } from '../utilities/utility.js'
+import { clearContent } from '../utilities/utility.js'
+import { createCalendar } from '../utilities/calendar.js'
 import { viewImportant } from '../sidebar-left/important-dom.js'
 
 // --- Project DOM control ---
@@ -17,9 +18,8 @@ function createProject() {
     (function projectBase() {
         const projectHeader = document.createElement('input')
         const projectDescription = document.createElement('textarea')
-        const projectDueDate = document.createElement('input')
 
-        project = new Project(projectHeader, projectDescription, projectDueDate)
+        project = new Project(projectHeader, projectDescription)
         listProject(project)
     })();
 
@@ -35,11 +35,7 @@ function createProject() {
         project.header.placeholder = 'Add header...'
         project.header.autocomplete = 'off'
         project.header.addEventListener('input', () => {  // Update project header when header edited in content view
-            if (project.header.value.length > 25) {
-                projectButtonHeader.textContent = project.header.value.slice(0, 25) + '...'
-            } else {
-                projectButtonHeader.textContent = project.header.value
-            }
+            projectButtonHeader.textContent = project.header.value
             project.header.value = project.header.value
         })
 
@@ -51,16 +47,14 @@ function createProject() {
             project.description.value = project.description.value
         })
 
-        project.date.type = 'date'
-        project.date.className = 'project-date-content'
-        project.date.name = 'project-date-content'
-        project.date.min = currentDate
-        project.date.addEventListener('input', () => {
-            projectButtonDate.textContent = project.date.value
-            project.date.value = project.date.value
-        });
+        // project.date.className = 'project-date-content'
+        // project.date.min = currentDate
+        // project.date.addEventListener('input', () => {
+        //     projectButtonDate.textContent = project.date.value
+        //     project.date.value = project.date.value
+        // });
 
-        project.infoContainer.append(project.header, project.description, project.date);
+        project.infoContainer.append(project.header, project.description)  // ADD project.date
         projectContainer.append(project.infoContainer)
     })();
 
@@ -122,14 +116,10 @@ function listProject(project) {
     projectButtonDate.id = 'listing-date'
     projectRemoveButton.id = 'listing-rm-button'
 
-    if (project.header.length > 25) {
-        projectButtonHeader.textContent = project.header.value.slice(0, 25) + '...'
-    } else {
-        projectButtonHeader.textContent = project.header.value
-    } 
-    projectButtonDate.textContent = project.date.value
+    projectButtonHeader.textContent = project.header.value
+    // projectButtonDate.textContent = project.date.value
 
-    projectButton.append(projectButtonHeader, projectButtonDate)
+    projectButton.append(projectButtonHeader)  // ADD projectButtonDate
     project.projectButton = projectButton
     projectListing.append(projectButton, projectRemoveButton)
 

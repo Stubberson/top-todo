@@ -11,6 +11,7 @@ const body = document.querySelector('body');
 
 (() => {  // Default view
     viewToday()
+    viewCurrent = 'today'
     viewMainCalendar()
 })();
 

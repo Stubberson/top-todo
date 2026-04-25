@@ -1,4 +1,6 @@
+import { viewCurrent } from '../index.js';
 import { clearContent } from './utility.js'
+import { viewToday } from '../sidebar-left/today-dom.js';
 import { displayDate, createDateTask } from '../sidebar-right/calendar-dom.js'
 
 function createCalendar() {

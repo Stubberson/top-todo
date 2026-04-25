@@ -1,6 +1,6 @@
 import { currentDate, clearContent } from '../utilities/utility.js'
 import { Task } from '../task/task-class.js'
-import { taskCreate, taskRemove } from '../task/task-dom.js'
+import { taskElementCreate, taskRemove } from '../task/task-dom.js'
 
 // --- Today's tasks DOM control ---
 
@@ -20,15 +20,15 @@ function viewToday() {
     tasksContainer.className = 'tasks-container'
 
     const tasksToday = collectTodayTasks()
-    tasksToday.forEach(task => tasksContainer.append(task.container))
+    tasksToday.forEach(task => tasksContainer.append(taskElementCreate(task)))
 
     const taskNewButton = document.createElement('button')
     taskNewButton.className = 'task-new-button'
-    taskNewButton.addEventListener('click', (event) => {
-        let task = taskCreate()
-        task.date = Temporal.Now.zonedDateTimeISO()
-        tasksContainer.append(task.container)
-        task.header.focus()
+    taskNewButton.addEventListener('click', () => {
+        const task = new Task()
+        task.date = Temporal.Now.zonedDateTimeISO()  // Today's date for all tasks in 'Today'
+        const element = taskElementCreate(task)
+        tasksContainer.append(element)
     })
 
     summaryContainer.append(summaryItemContainer)
@@ -36,12 +36,8 @@ function viewToday() {
 }
 
 function collectTodayTasks() {
-    const tasksToday = []
-    Task.memory.forEach(task => {
-        if (task.getToday) tasksToday.push(task)
-    })
+    const tasksToday = Task.memory.filter(task => task.date.year === Temporal.Now.zonedDateTimeISO().year && task.date.dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear )
     return tasksToday
 }
-
 
 export { viewToday }

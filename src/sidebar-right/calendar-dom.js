@@ -1,7 +1,8 @@
 import { createCalendar } from '../utilities/calendar.js'
 import { clearContent } from '../utilities/utility.js'
-import { taskCreate } from '../task/task-dom.js'
+import { taskElementCreate } from '../task/task-dom.js'
 import { Task } from '../task/task-class.js'
+import { viewToday } from '../sidebar-left/today-dom.js'
 
 const rightSidebar = document.querySelector('div.sidebar-right')
 const dateContainer = document.createElement('div')
@@ -44,23 +45,20 @@ function displayDate(date, event) {
     dateTasksContainer.append(dateTaskButton)
 
     const collectedTasks = collectDateTasks(date)
-    collectedTasks.forEach(task => dateTasksContainer.append(task.container))
+    collectedTasks.forEach(task => dateTasksContainer.append(taskElementCreate(task)))
 
     dateContainer.append(dateHeaderContainer, dateTasksContainer)
 };
 
 function createDateTask(date, container) {
-    let task = taskCreate()
+    const task = new Task()
     task.date = date
-    container.append(task.container)
-    task.header.focus()
+    const element = taskElementCreate(task)
+    container.append(element)
 };
 
 function collectDateTasks(date) {
-    const dateTasks = []
-    Task.memory.forEach(task => {
-        if (date === task.date) dateTasks.push(task)
-    })
+    const dateTasks = Task.memory.filter(task => date.year === task.date.year && date.dayOfYear === task.date.dayOfYear)
     return dateTasks
 };
 

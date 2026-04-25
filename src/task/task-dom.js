@@ -3,7 +3,7 @@ import { clearContent } from "../utilities/utility.js"
 import { createCalendar } from "../utilities/calendar.js"
 import { Project } from "../project/project-class.js"
 
-function taskCreate(project = undefined) {
+function taskElementCreate(task, date = undefined, project = undefined) {
     const taskContainer = document.createElement('div')
     const taskCompleteCheckbox = document.createElement('input')
     const taskHeader = document.createElement('input')
@@ -16,7 +16,6 @@ function taskCreate(project = undefined) {
     const taskDateButton = document.createElement('button')
     const taskDatePicker = createCalendar()
 
-    // Envelop each task into a div element
     taskContainer.className = 'task-container'
 
     taskCompleteCheckbox.className = 'task-complete-checkbox'
@@ -28,6 +27,10 @@ function taskCreate(project = undefined) {
     taskHeader.name = 'task-header'
     taskHeader.placeholder = 'Add task...'
     taskHeader.autocomplete = 'off'
+    taskHeader.addEventListener('input', () => {
+        // TODO: MAKE TASK HEADERS (and description) DYNAMIC
+        task.header = taskHeader.value
+    })
 
     taskDescriptionOpener.className = 'task-open-checkbox'
     taskDescriptionOpener.type = 'checkbox'
@@ -43,6 +46,9 @@ function taskCreate(project = undefined) {
     taskDescription.name = 'task-description-area'
     taskDescription.rows = 3
     taskDescription.hidden = true
+    taskDescription.addEventListener('input', () => {
+        task.description = taskDescription.value
+    })
 
     taskTagsContainer.className = 'task-tags-container'
 
@@ -63,10 +69,12 @@ function taskCreate(project = undefined) {
             taskHeader.style['color'] = '#767676'
             taskHeader.style['text-decoration'] = '#767676 line-through solid 1px'
             taskDescription.style['text-decoration'] = '#767676 line-through solid 0.5px'
+            task.completed = true
         } else {
             taskHeader.style['color'] = 'revert'
             taskHeader.style['text-decoration'] = 'revert'
             taskDescription.style['text-decoration'] = 'revert'
+            task.completed = false
         }
     })
     
@@ -113,10 +121,12 @@ function taskCreate(project = undefined) {
             event.target.classList.add('task-important-flag')
             event.target.style.setProperty('background-image', 'var(--important-fill-black)')
             toggleImportant = 1
+            task.important = true
         } else {
             event.target.classList.remove('task-important-flag')
             event.target.style.setProperty('background-image', 'revert-layer')
             toggleImportant = 0
+            task.important = false
         }
     })
 
@@ -151,9 +161,7 @@ function taskCreate(project = undefined) {
     taskTagsContainer.append(taskImportant, taskDateButton)
     taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveContainer, taskDescription, taskTagsContainer, taskDatePicker)
     
-    let task = new Task(taskContainer, project)
-    
-    return task
+    return taskContainer
 }
 
 function tasksFilter(mode, project, tasksContainer) {
@@ -205,4 +213,4 @@ function taskRemove(task, project = undefined) {
     Task.memory.splice(Task.memory.indexOf(task), 1)         // Remove task from tasks mem
 }
 
-export { taskCreate, tasksFilter, taskRemove }
+export { taskElementCreate, tasksFilter, taskRemove }

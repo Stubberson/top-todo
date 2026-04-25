@@ -1,7 +1,7 @@
 import { viewCurrent } from '../index.js'
 import { Project } from './project-class.js'
 import { Task } from '../task/task-class.js'
-import { taskCreate, tasksFilter } from '../task/task-dom.js'
+import { taskElementCreate, tasksFilter } from '../task/task-dom.js'
 import { viewToday } from '../sidebar-left/today-dom.js'
 import { clearContent } from '../utilities/utility.js'
 import { createCalendar } from '../utilities/calendar.js'
@@ -73,9 +73,9 @@ function createProject() {
 
         taskNewButton.className = 'task-new-button'
         taskNewButton.addEventListener('click', () => {
-            let task = taskCreate(project)
-            project.tasksContainer.append(task.container)
-            task.header.focus()  // Focus task description after creation
+            const task = new Task(project)
+            const element = taskElementCreate(task)
+            project.tasksContainer.append(element)
         })
 
         taskAllButton.id = 'task-control-all'
@@ -192,7 +192,6 @@ function removeProjectListing(projectListing, project) {
 function viewProject(project) {
     clearContent(projectContainer)  // Clear previous content
 
-    project.tasks.forEach(task => project.tasksContainer.append(task.container))
     projectContainer.append(project.infoContainer, project.controlsContainer, project.tasksContainer)
 }
 

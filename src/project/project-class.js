@@ -19,8 +19,4 @@ export class Project {
         // this.viewStatus = undefined // viewStatus remembers the view a user left the project at
         Project.memory.push(this)
     }
-
-    newTask(task) {
-        this.tasks.push(task)
-    }
 }

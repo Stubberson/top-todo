@@ -25,10 +25,10 @@ function viewToday() {
     const taskNewButton = document.createElement('button')
     taskNewButton.className = 'task-new-button'
     taskNewButton.addEventListener('click', () => {
-        const task = new Task()
-        task.date = Temporal.Now.zonedDateTimeISO()  // Today's date for all tasks in 'Today'
+        const task = new Task(Temporal.Now.zonedDateTimeISO())  // Today's date for all tasks in 'Today'
         const element = taskElementCreate(task)
         tasksContainer.append(element)
+        element.children[1].focus()
     })
 
     summaryContainer.append(summaryItemContainer)

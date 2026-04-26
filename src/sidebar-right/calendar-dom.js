@@ -13,7 +13,7 @@ function viewMainCalendar() {
     rightSidebar.append(newCalendar, dateContainer)
 };
 
-function displayDate(date, event) {
+function displayDate(date, event = '') {
     clearContent(dateContainer)
     
     const dateHeaderContainer = document.createElement('div')
@@ -51,10 +51,10 @@ function displayDate(date, event) {
 };
 
 function createDateTask(date, container) {
-    const task = new Task()
-    task.date = date
+    const task = new Task(date)
     const element = taskElementCreate(task)
     container.append(element)
+    element.children[1].focus() // Focus header
 };
 
 function collectDateTasks(date) {

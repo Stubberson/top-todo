@@ -619,6 +619,7 @@ input.task-open-checkbox:checked {
     transform: rotate(180deg) scale(1.5);
 }
 
+/* TODO: MOVE TASK REMOVE TO THE TAGS CONTAINER */
 div.task-remove-container {
     display: flex;
     flex-direction: column;

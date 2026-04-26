@@ -2,8 +2,10 @@ import { Task } from "./task-class.js"
 import { clearContent } from "../utilities/utility.js"
 import { createCalendar } from "../utilities/calendar.js"
 import { Project } from "../project/project-class.js"
+import { viewToday } from "../sidebar-left/today-dom.js"
+import { displayDate } from "../sidebar-right/calendar-dom.js"
 
-function taskElementCreate(task, date = undefined, project = undefined) {
+function taskElementCreate(task) {
     const taskContainer = document.createElement('div')
     const taskCompleteCheckbox = document.createElement('input')
     const taskHeader = document.createElement('input')
@@ -16,7 +18,9 @@ function taskElementCreate(task, date = undefined, project = undefined) {
     const taskDateButton = document.createElement('button')
     const taskDatePicker = createCalendar()
 
-    taskContainer.className = 'task-container'
+    taskContainer.classList.add('task-container')
+    // Add a data-id to refer to this exact task in multiple places
+    taskContainer.setAttribute('data-id', task.id)
 
     taskCompleteCheckbox.className = 'task-complete-checkbox'
     taskCompleteCheckbox.type = 'checkbox'
@@ -27,9 +31,16 @@ function taskElementCreate(task, date = undefined, project = undefined) {
     taskHeader.name = 'task-header'
     taskHeader.placeholder = 'Add task...'
     taskHeader.autocomplete = 'off'
-    taskHeader.addEventListener('input', () => {
-        // TODO: MAKE TASK HEADERS (and description) DYNAMIC
+    taskHeader.value = task.header  // If header is already given, use it
+    taskHeader.addEventListener('input', () => {  // Sync changes between every copy
         task.header = taskHeader.value
+        task.syncLinked('header')
+    })
+    taskHeader.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault()  // Prevent adding new line in description
+            taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
+        }
     })
 
     taskDescriptionOpener.className = 'task-open-checkbox'
@@ -38,6 +49,9 @@ function taskElementCreate(task, date = undefined, project = undefined) {
 
     taskRemoveButton.className = 'task-remove-button'
     taskRemoveButton.hidden = true
+    taskRemoveButton.addEventListener('click', () => {
+        task.removeElement()
+    })
 
     taskRemoveContainer.className = 'task-remove-container'
 
@@ -46,10 +60,32 @@ function taskElementCreate(task, date = undefined, project = undefined) {
     taskDescription.name = 'task-description-area'
     taskDescription.rows = 3
     taskDescription.hidden = true
+    taskDescription.value = task.description
     taskDescription.addEventListener('input', () => {
         task.description = taskDescription.value
+        task.syncLinked('description')
     })
 
+    const taskOpenerEvents = ['mouseenter', 'mouseleave', 'click']
+    taskOpenerEvents.forEach(event => taskDescriptionOpener.addEventListener(event, () => {
+        switch (event) {
+            case 'mouseenter':
+                taskHeader.style['background-color'] = 'whitesmoke'
+                break
+            case 'mouseleave':
+                taskHeader.style['background-color'] = 'revert-layer'
+                break
+            case 'click':
+                if (taskDescription.hidden) {
+                    taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
+                } else {
+                    taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
+                }
+        }
+    }))
+
+    // TODO: NEED SLIGHTLY DIFFERENT TASK CONTROLS FOR DAILY TASKS, E.G. NO DATE NEEDED
+    // TODO: MOVE TASK REMOVE TO TAGS CONTAINER
     taskTagsContainer.className = 'task-tags-container'
 
     taskImportant.classList.add('task-important-button', 'task-tag')
@@ -77,41 +113,12 @@ function taskElementCreate(task, date = undefined, project = undefined) {
             task.completed = false
         }
     })
-    
-    taskHeader.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault()  // Prevent adding new line in description
-            taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
-        }
-    })
-
-    const taskOpenerEvents = ['mouseenter', 'mouseleave', 'click']
-    taskOpenerEvents.forEach(event => taskDescriptionOpener.addEventListener(event, () => {
-        switch (event) {
-            case 'mouseenter':
-                taskHeader.style['background-color'] = 'whitesmoke'
-                break
-            case 'mouseleave':
-                taskHeader.style['background-color'] = 'revert-layer'
-                break
-            case 'click':
-                if (taskDescription.hidden) {
-                    taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
-                } else {
-                    taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
-                }
-        }
-    }))
 
     // Eases minimizing task description
     taskDescription.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
         }
-    })
-
-    taskRemoveButton.addEventListener('click', () => {
-        taskRemove(task, project)
     })
 
     // Indicate important task
@@ -205,12 +212,4 @@ function taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer,
     taskHeader.focus()
 }
 
-function taskRemove(task, project = undefined) {
-    task.container.remove()                                  // Remove task from DOM
-    if (project) {
-        project.tasks.splice(project.tasks.indexOf(task), 1) // Remove task from project mem
-    }    
-    Task.memory.splice(Task.memory.indexOf(task), 1)         // Remove task from tasks mem
-}
-
-export { taskElementCreate, tasksFilter, taskRemove }
+export { taskElementCreate, tasksFilter }

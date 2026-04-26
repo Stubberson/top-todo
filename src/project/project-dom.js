@@ -73,9 +73,10 @@ function createProject() {
 
         taskNewButton.className = 'task-new-button'
         taskNewButton.addEventListener('click', () => {
-            const task = new Task(project)
+            const task = new Task('', project)  // Skip date arg
             const element = taskElementCreate(task)
             project.tasksContainer.append(element)
+            element.children[1].focus()
         })
 
         taskAllButton.id = 'task-control-all'

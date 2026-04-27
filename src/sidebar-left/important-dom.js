@@ -1,5 +1,6 @@
 import { clearContent } from '../utilities/utility.js'
 import { Task } from '../task/task-class.js'
+import { taskElementCreate } from '../task/task-dom.js'
 
 const contentContainer = document.querySelector('div.content-container')
 
@@ -14,8 +15,8 @@ function viewImportant() {
 
     const tasksAll = Task.memory
     tasksAll.forEach(task => {
-        if (task.getImportant) {
-            tasksContainer.append(task.container)
+        if (task.important) {
+            tasksContainer.append(taskElementCreate(task))
         }
     })
 

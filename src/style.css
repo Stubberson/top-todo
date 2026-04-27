@@ -29,6 +29,8 @@ body {
     --check-black: url('./visuals/check-black.svg');
     --close-line: url('./visuals/close-line.svg');
     --delete-line-black: url('./visuals/delete/delete-line-black.svg');
+    --delete-line-gray: url('./visuals/delete/delete-line-gray.svg');
+    --delete-line-red: url('./visuals/delete/delete-line-red.svg');
     --delete-fill-white: url('./visuals/delete/delete-fill.svg');
     --important-line-black: url('./visuals/important/important-line-black.svg');
     --important-line-gray: url('./visuals/important/important-line-gray.svg');
@@ -541,23 +543,15 @@ div.tasks-container {
     gap: 1em;
 }
 
-div.tasks-container > div.task-container {
+div.task-container {
     display: grid;
-    grid-template: 25px 1fr / 25px 1fr;
+    grid-template: 25px 1fr 0.5fr / 25px 1fr 25px;
 
     position: relative;
 }
 
-input.task-header {
-    background-color: inherit;
-}
-
-div.task-container textarea {
-    font-size: small;
-    background-color: inherit;
-}
-
 input.task-complete-checkbox {
+    grid-area: 1 / 1 / 2 / 2;
     appearance: none;
     margin: 0;
     outline-offset: -2px;
@@ -578,6 +572,8 @@ input.task-complete-checkbox:checked {
 }
 
 input.task-header {
+    grid-area: 1 / 2 / 2 / 3;
+    background-color: inherit;
     font-family: var(--atkinson-sans-serif);
     font-size: medium;
 
@@ -591,11 +587,13 @@ input.task-header {
     min-height: 20px;  /* If not explicit, there's a 0.5px nudge when description revealed */
 }
 
-input.task-header:hover {
+input.task-header:hover,
+input.task-header:focus-visible {
     background-color: whitesmoke
 }
 
 input.task-open-checkbox {
+    grid-area: 1 / 3 / 2 / 4;
     width: 22px;
     height: 22px;
     outline-offset: -3px;
@@ -619,43 +617,23 @@ input.task-open-checkbox:checked {
     transform: rotate(180deg) scale(1.5);
 }
 
-/* TODO: MOVE TASK REMOVE TO THE TAGS CONTAINER */
-div.task-remove-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-button.task-remove-button {
-    appearance: none;
-    outline: none;
-    cursor: pointer;
-    margin-top: 2.5px;
-
-    width: 16px;
-    height: 16px;
-    
-    border: dashed 1px red;
-    background-repeat: no-repeat;
-    background-position: top;
-    transition: flex-grow 0.2s;
-}
-
-button.task-remove-button:hover,
-button.task-remove-button:focus-visible {
-    flex-grow: 1;
-    background-image: var(--delete-fill-white);
-    background-size: 120%;
-    background-color: red;
-}
-
 textarea.task-description-area {
+    grid-area: 2 / 2 / 3 / 4;
+    font-size: small;
+    background-color: inherit;
+
     flex-grow: 1;
     z-index: 1;
     position: relative;
 }
 
+textarea.task-description-area:hover,
+textarea.task-description-area:focus-visible {
+    background-color: whitesmoke;
+}
+
 div.task-tags-container {
+    grid-area: 3 / 2 / 4 / 4;
     display: flex;
     justify-content: end;
 
@@ -663,12 +641,13 @@ div.task-tags-container {
     right: 3px;
     bottom: 0;
 
-    width: 135px;
+    width: 160px;
     height: fit-content;
 }
 
 button.task-important-button,
-button.task-date-button {
+button.task-date-button,
+button.task-remove-button {
     z-index: 2;
 
     width: 22px;
@@ -697,12 +676,23 @@ button.task-date-button {
     background-position-x: 1.5px;
 }
 
+button.task-remove-button {
+    background-image: var(--delete-line-gray);
+}
+
 button.task-important-button:hover,
 button.task-important-button:focus-visible,
 button.task-date-button:hover,
-button.task-date-button:focus-visible {
+button.task-date-button:focus-visible,
+button.task-remove-button:hover,
+button.task-remove-button:focus-visible {
     flex-grow: 1;
     background-color: whitesmoke;
+}
+
+button.task-remove-button:hover,
+button.task-remove-button:focus-visible {
+    background-image: var(--delete-line-red);
 }
 
 /* POPUP DATE PICKER */

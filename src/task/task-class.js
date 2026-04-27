@@ -52,8 +52,4 @@ export class Task {
             this.owningProject.tasks.splice(this.owningProject.tasks.indexOf(this), 1)
         }
     }
-
-    getImportant() {
-        return Task.memory.filter(task => task.important.classList.contains('task-important-flag'))
-    }
 }

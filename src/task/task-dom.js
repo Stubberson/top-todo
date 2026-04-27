@@ -10,12 +10,11 @@ function taskElementCreate(task) {
     const taskCompleteCheckbox = document.createElement('input')
     const taskHeader = document.createElement('input')
     const taskDescriptionOpener = document.createElement('input')
-    const taskRemoveButton = document.createElement('button')
-    const taskRemoveContainer = document.createElement('div')
     const taskDescription = document.createElement('textarea')
     const taskTagsContainer = document.createElement('div')
-    const taskImportant = document.createElement('button')
+    const taskImportantButton = document.createElement('button')
     const taskDateButton = document.createElement('button')
+    const taskRemoveButton = document.createElement('button')
     const taskDatePicker = createCalendar()
 
     taskContainer.classList.add('task-container')
@@ -25,6 +24,19 @@ function taskElementCreate(task) {
     taskCompleteCheckbox.className = 'task-complete-checkbox'
     taskCompleteCheckbox.type = 'checkbox'
     taskCompleteCheckbox.name = 'task-complete-checkbox'
+    taskCompleteCheckbox.addEventListener('click', (event) => {
+        if (event.target.checked) {
+            taskHeader.style['color'] = '#767676'
+            taskHeader.style['text-decoration'] = '#767676 line-through solid 1px'
+            taskDescription.style['text-decoration'] = '#767676 line-through solid 0.5px'
+            task.completed = true
+        } else {
+            taskHeader.style['color'] = 'revert'
+            taskHeader.style['text-decoration'] = 'revert'
+            taskDescription.style['text-decoration'] = 'revert'
+            task.completed = false
+        }
+    })
 
     taskHeader.className = 'task-header'
     taskHeader.type = 'text'
@@ -46,14 +58,13 @@ function taskElementCreate(task) {
     taskDescriptionOpener.className = 'task-open-checkbox'
     taskDescriptionOpener.type = 'checkbox'
     taskDescriptionOpener.name = 'task-open-checkbox'
-
-    taskRemoveButton.className = 'task-remove-button'
-    taskRemoveButton.hidden = true
-    taskRemoveButton.addEventListener('click', () => {
-        task.removeElement()
+    taskDescriptionOpener.addEventListener('click', () => {
+        if (taskDescription.hidden) {
+            taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
+        } else {
+            taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
+        }
     })
-
-    taskRemoveContainer.className = 'task-remove-container'
 
     taskDescription.classList.add('task-description-area', 'description')
     taskDescription.placeholder = 'Add description...'
@@ -65,78 +76,32 @@ function taskElementCreate(task) {
         task.description = taskDescription.value
         task.syncLinked('description')
     })
-
-    const taskOpenerEvents = ['mouseenter', 'mouseleave', 'click']
-    taskOpenerEvents.forEach(event => taskDescriptionOpener.addEventListener(event, () => {
-        switch (event) {
-            case 'mouseenter':
-                taskHeader.style['background-color'] = 'whitesmoke'
-                break
-            case 'mouseleave':
-                taskHeader.style['background-color'] = 'revert-layer'
-                break
-            case 'click':
-                if (taskDescription.hidden) {
-                    taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
-                } else {
-                    taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
-                }
-        }
-    }))
-
-    // TODO: NEED SLIGHTLY DIFFERENT TASK CONTROLS FOR DAILY TASKS, E.G. NO DATE NEEDED
-    // TODO: MOVE TASK REMOVE TO TAGS CONTAINER
-    taskTagsContainer.className = 'task-tags-container'
-
-    taskImportant.classList.add('task-important-button', 'task-tag')
-    taskImportant.hidden = true
-    taskImportant.textContent = 'Important'
-
-    taskDateButton.classList.add('task-date-button', 'task-tag')
-    taskDateButton.hidden = true
-    taskDateButton.textContent = 'Date'
-
-    taskDatePicker.classList.add('date-picker')
-    taskDatePicker.hidden = true
-    taskDatePicker.setAttribute('tabindex', 0)
-
-    taskCompleteCheckbox.addEventListener('click', (event) => {
-        if (event.target.checked) {
-            taskHeader.style['color'] = '#767676'
-            taskHeader.style['text-decoration'] = '#767676 line-through solid 1px'
-            taskDescription.style['text-decoration'] = '#767676 line-through solid 0.5px'
-            task.completed = true
-        } else {
-            taskHeader.style['color'] = 'revert'
-            taskHeader.style['text-decoration'] = 'revert'
-            taskDescription.style['text-decoration'] = 'revert'
-            task.completed = false
-        }
-    })
-
-    // Eases minimizing task description
     taskDescription.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
         }
     })
 
-    // Indicate important task
-    let toggleImportant = 0
-    taskImportant.addEventListener('click', (event) => {
-        if (!toggleImportant) {
-            event.target.classList.add('task-important-flag')
-            event.target.style.setProperty('background-image', 'var(--important-fill-black)')
-            toggleImportant = 1
-            task.important = true
-        } else {
-            event.target.classList.remove('task-important-flag')
-            event.target.style.setProperty('background-image', 'revert-layer')
-            toggleImportant = 0
+    // TODO: NEED SLIGHTLY DIFFERENT TASK CONTROLS FOR DAILY TASKS, E.G. NO DATE NEEDED
+    taskTagsContainer.className = 'task-tags-container'
+
+    taskImportantButton.classList.add('task-important-button', 'task-tag')
+    taskImportantButton.hidden = true
+    taskImportantButton.textContent = 'Important'
+    if (task.important) taskImportantButton.style.setProperty('background-image', 'var(--important-fill-black)')
+    taskImportantButton.addEventListener('click', (event) => {
+        if (task.important) {
             task.important = false
+            event.target.style.setProperty('background-image', 'revert-layer')
+        } else {
+            task.important = true
+            event.target.style.setProperty('background-image', 'var(--important-fill-black)')
         }
     })
 
+    taskDateButton.classList.add('task-date-button', 'task-tag')
+    taskDateButton.hidden = true
+    taskDateButton.textContent = 'Date'
     // Show date picker
     let toggleDate = 0
     taskDateButton.addEventListener('click', (event) => {
@@ -152,6 +117,17 @@ function taskElementCreate(task) {
         }
     })
 
+    taskRemoveButton.classList.add('task-remove-button', 'task-tag')
+    taskRemoveButton.hidden = true
+    taskRemoveButton.textContent = 'Delete'
+    taskRemoveButton.addEventListener('click', () => {
+        task.removeElement()
+    })
+
+    taskDatePicker.classList.add('date-picker')
+    taskDatePicker.hidden = true
+    taskDatePicker.setAttribute('tabindex', 0)
+
     // Hide date picker when clicked outside or Escaped
     document.addEventListener('click', (event) => {
         if (taskDatePicker.hidden === false && !event.target.closest('div.date-picker') && !event.target.classList.contains('task-date-button')) {
@@ -164,9 +140,8 @@ function taskElementCreate(task) {
         }
     })
 
-    taskRemoveContainer.append(taskRemoveButton)
-    taskTagsContainer.append(taskImportant, taskDateButton)
-    taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskRemoveContainer, taskDescription, taskTagsContainer, taskDatePicker)
+    taskTagsContainer.append(taskImportantButton, taskDateButton, taskRemoveButton)
+    taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskTagsContainer, taskDatePicker)
     
     return taskContainer
 }

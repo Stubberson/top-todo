@@ -25,17 +25,8 @@ function taskElementCreate(task) {
     taskCompleteCheckbox.type = 'checkbox'
     taskCompleteCheckbox.name = 'task-complete-checkbox'
     taskCompleteCheckbox.addEventListener('click', (event) => {
-        if (event.target.checked) {
-            taskHeader.style['color'] = '#767676'
-            taskHeader.style['text-decoration'] = '#767676 line-through solid 1px'
-            taskDescription.style['text-decoration'] = '#767676 line-through solid 0.5px'
-            task.completed = true
-        } else {
-            taskHeader.style['color'] = 'revert'
-            taskHeader.style['text-decoration'] = 'revert'
-            taskDescription.style['text-decoration'] = 'revert'
-            task.completed = false
-        }
+        event.target.checked ? task.completed = true : task.completed = false
+        syncLinked(task, 'completed')
     })
 
     taskHeader.className = 'task-header'
@@ -46,7 +37,7 @@ function taskElementCreate(task) {
     taskHeader.value = task.header  // If header is already given, use it
     taskHeader.addEventListener('input', () => {  // Sync changes between every copy
         task.header = taskHeader.value
-        task.syncLinked('header')
+        syncLinked(task, 'header')
     })
     taskHeader.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
@@ -62,7 +53,7 @@ function taskElementCreate(task) {
         if (taskDescription.hidden) {
             taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
         } else {
-            taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
+            taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
         }
     })
 
@@ -74,11 +65,11 @@ function taskElementCreate(task) {
     taskDescription.value = task.description
     taskDescription.addEventListener('input', () => {
         task.description = taskDescription.value
-        task.syncLinked('description')
+        syncLinked(task, 'description')
     })
     taskDescription.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-            taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
+            taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
         }
     })
 
@@ -88,32 +79,33 @@ function taskElementCreate(task) {
     taskImportantButton.classList.add('task-important-button', 'task-tag')
     taskImportantButton.hidden = true
     taskImportantButton.textContent = 'Important'
-    if (task.important) taskImportantButton.style.setProperty('background-image', 'var(--important-fill-black)')
-    taskImportantButton.addEventListener('click', (event) => {
-        if (task.important) {
-            task.important = false
-            event.target.style.setProperty('background-image', 'revert-layer')
-        } else {
-            task.important = true
-            event.target.style.setProperty('background-image', 'var(--important-fill-black)')
+    if (task.important) {  // Indicate important task, if so already indicated somewhere else
+        taskImportantButton.style.setProperty('background-image', 'var(--important-fill-black)')
+        if (!taskDescriptionOpener.checked) {
+            taskHeader.style.setProperty('background-image', 'var(--important-fill-gray)')
+            taskHeader.style.setProperty('text-indent', '24px')
         }
+    } 
+    taskImportantButton.addEventListener('click', (event) => {
+        task.important ? task.important = false : task.important = true
+        syncLinked(task, 'important')
     })
 
     taskDateButton.classList.add('task-date-button', 'task-tag')
     taskDateButton.hidden = true
-    taskDateButton.textContent = 'Date'
-    // Show date picker
-    let toggleDate = 0
+    if (task.date) {
+        taskDateButton.textContent = task.date.toLocaleString('en-de', { day: '2-digit', month: 'short', year:'2-digit' })
+        taskDateButton.style.setProperty('background-image', 'var(--calendar-add-fill)')
+    } else {
+        taskDateButton.textContent = 'Date'
+    }
     taskDateButton.addEventListener('click', (event) => {
-        if (!toggleDate) {
-            toggleDate = 1
-            event.target.style.setProperty('background-image', 'var(--calendar-add-fill)')
+        // TODO: THIS HAS TO GO TO THE syncLinked() function
+        if (!task.date) {  // this currently prevents the picker from opening in 'Today'
             taskDatePicker.hidden = false
             taskDatePicker.querySelector('td').focus()  // Focus first cell
         } else {
-            toggleDate = 0
-            event.target.style.setProperty('background-image', 'revert-layer')
-            taskDatePicker.hidden = true
+            taskDatePicker.hidden = false
         }
     })
 
@@ -121,7 +113,7 @@ function taskElementCreate(task) {
     taskRemoveButton.hidden = true
     taskRemoveButton.textContent = 'Delete'
     taskRemoveButton.addEventListener('click', () => {
-        task.removeElement()
+        removeElement(task)
     })
 
     taskDatePicker.classList.add('date-picker')
@@ -146,23 +138,90 @@ function taskElementCreate(task) {
     return taskContainer
 }
 
+function getHTML(task) {
+    return Array.from(document.querySelectorAll(`[data-id='${task.id}']`))
+}
+
+// Sync all HTML elements linked to a specific task
+function syncLinked(task, property) {
+    const taskHTML = getHTML(task)
+    switch(property) {
+        case 'header':
+            taskHTML.forEach(copy => copy.children[1].value = task.header)
+            break
+        case 'description':
+            taskHTML.forEach(copy => copy.children[3].value = task.description)
+            break
+        case 'completed':
+            if (!task.completed) {
+                taskHTML.forEach(copy => {
+                    copy.children[0].checked = false
+                    copy.children[1].style['color'] = 'revert-layer'
+                    copy.children[1].style['text-decoration'] = 'revert-layer'
+                    copy.children[3].style['text-decoration'] = 'revert-layer'
+                })
+            } else {
+                taskHTML.forEach(copy => {
+                    copy.children[0].checked = true
+                    copy.children[1].style['color'] = '#767676'
+                    copy.children[1].style['text-decoration'] = '#767676 line-through solid 1px'
+                    copy.children[3].style['text-decoration'] = '#767676 line-through solid 0.5px'
+                })
+            }
+            break
+        case 'important':
+            if (!task.important) {
+                taskHTML.forEach(copy => {
+                    copy.children[1].style.setProperty('background-image', 'revert-layer')
+                    copy.children[1].style.setProperty('text-indent', 'revert')
+                    copy.children[4].firstChild.style.setProperty('background-image', 'revert-layer')
+                })
+            } else {
+                taskHTML.forEach(copy => {
+                    copy.children[1].style.setProperty('background-image', 'var(--important-fill-gray)')
+                    copy.children[1].style.setProperty('text-indent', '24px')
+                    copy.children[4].firstChild.style.setProperty('background-image', 'var(--important-fill-black)')
+                })
+            }
+            break
+        case 'date':
+            // TODO: SET UP DATE DEFINITION
+            // taskHTML.forEach(copy => copy.children[4] = this.description)
+            console.log('muna')
+            break
+    }
+}
+
+function removeElement(task) {
+    // Remove task HTML
+    const taskHTML = getHTML(task)
+    taskHTML.forEach(copy => copy.remove())
+
+    // Remove task from mem
+    Task.memory.splice(Task.memory.indexOf(task), 1)
+
+    // Remove task from project mem
+    if (task.owningProject) {
+        task.owningProject.tasks.splice(task.owningProject.tasks.indexOf(task), 1)
+    }
+}
+
 function tasksFilter(mode, project, tasksContainer) {
     clearContent(tasksContainer)
     if (mode === 'all') {
-        project.tasks.forEach(task => tasksContainer.append(task.container))
+        project.tasks.forEach(task => tasksContainer.append(taskElementCreate(task)))
     }
     
     if (mode === 'important') {
         project.tasks.forEach(task => {
-            if (task.getImportant) {
-                tasksContainer.append(task.container)
+            if (task.important) {
+                tasksContainer.append(taskElementCreate(task))
             }
         })
     }
 }
 
 function taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton) {
-    taskHeader.style.setProperty('background-image', 'unset')
     taskDescription.hidden = false
     Array.from(taskTagsContainer.children).forEach(tag => tag.hidden = false)
     taskDescriptionOpener.checked = true
@@ -171,13 +230,12 @@ function taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer,
     taskDescription.focus()
 }
 
-function taskDescriptionMinimize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker) {
+function taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker) {
     taskDescription.hidden = true
-    const taskTags = Array.from(taskTagsContainer.children)
-    taskTags.forEach(tag => {  // Indicate importance even if task minimized
+    Array.from(taskTagsContainer.children).forEach(tag => {  // Indicate importance even if task minimized
         tag.hidden = true
-        if (tag.classList.contains('task-important-flag')) {
-            taskHeader.style.setProperty('background-image', 'var(--important-fill-gray)')
+        if (task.important) {
+            syncLinked(task, 'important')
         }
     })
     taskDescriptionOpener.checked = false

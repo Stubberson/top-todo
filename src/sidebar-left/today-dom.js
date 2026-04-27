@@ -22,6 +22,7 @@ function viewToday() {
     const tasksToday = collectTodayTasks()
     tasksToday.forEach(task => tasksContainer.append(taskElementCreate(task)))
 
+    // TODO: CREATE THE TASK SIMULTANEOUSLY TO TODAY'S DATE IN THE CALENDAR, IF OPEN
     const taskNewButton = document.createElement('button')
     taskNewButton.className = 'task-new-button'
     taskNewButton.addEventListener('click', () => {
@@ -36,8 +37,7 @@ function viewToday() {
 }
 
 function collectTodayTasks() {
-    const tasksToday = Task.memory.filter(task => task.date.year === Temporal.Now.zonedDateTimeISO().year && task.date.dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear )
-    return tasksToday
+    return Task.memory.filter(task => task.date.year === Temporal.Now.zonedDateTimeISO().year && task.date.dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear)
 }
 
 export { viewToday }

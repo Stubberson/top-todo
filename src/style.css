@@ -49,7 +49,7 @@ body {
     height: 100vh;
 
     display: grid;
-    grid-template: 1fr 2em / 1fr 3fr 1.5fr;
+    grid-template: 1fr 2em / 300px 3fr 300px;
 }
 
 button {
@@ -139,13 +139,13 @@ button#new-project:hover::before {
 ul.projects-list {
     margin: 0px;
     padding: 0px;
+    max-width: 100%;
 }
 
 ul.projects-list > li {
     position: relative;
     list-style: none;
     display: flex;
-    max-width: 250px;
 
     padding: 0.5em;
 }
@@ -176,6 +176,7 @@ span#listing-header {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    text-wrap: nowrap;
 }
 
 button#listing-rm-button {
@@ -201,20 +202,27 @@ button#listing-rm-button:hover {
 }
 
 button.project-remove-confirm {
+    position: absolute;
+    right: 2em;
+    align-self: center;
+
     width: 20px;
-    padding-right: 50px;
+    height: 20px;
 
     background-image: var(--delete-line-black);
     background-position: center;
     background-repeat: no-repeat;
 
-    transition: flex-grow 0.2s ease;
+    transition: height 0.2s ease;
 }
 
-button.project-remove-confirm:hover{
+button.project-remove-confirm:hover,
+button.project-remove-confirm:focus-visible {
     background-image: var(--delete-fill-white);
     background-color: red;
-    flex-grow: 1;
+    right: 11.5px;
+    width: 50px;
+    height: 100%
 }
 
 /* --------------------- */
@@ -580,8 +588,10 @@ input.task-header {
     border: none;
     outline: none;
     background-image: unset;
-    background-position: top 50% right 23px;  /* Positions important flag */
+    background-position: top 50% left 0px;  /* Positions important flag */
     background-repeat: no-repeat;
+
+    text-indent: unset;
 
     flex-grow: 1;
     min-height: 20px;  /* If not explicit, there's a 0.5px nudge when description revealed */
@@ -652,14 +662,17 @@ button.task-remove-button {
 
     width: 22px;
     height: 22px;
-    color: var(--medium-gray-highlight);
+
     appearance: none;
     outline: unset;
-    overflow: hidden;
-    text-indent: 28px;
+    color: var(--medium-gray-highlight);
 
     background-position: left;
     background-repeat: no-repeat;
+    
+    text-indent: 28px;
+    overflow: hidden;
+    text-wrap: nowrap;
 
     cursor: pointer;
 

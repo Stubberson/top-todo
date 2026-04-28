@@ -73,7 +73,6 @@ function taskElementCreate(task) {
         }
     })
 
-    // TODO: NEED SLIGHTLY DIFFERENT TASK CONTROLS FOR DAILY TASKS, E.G. NO DATE NEEDED
     taskTagsContainer.className = 'task-tags-container'
 
     taskImportantButton.classList.add('task-important-button', 'task-tag')
@@ -145,51 +144,47 @@ function getHTML(task) {
 // Sync all HTML elements linked to a specific task
 function syncLinked(task, property) {
     const taskHTML = getHTML(task)
-    switch(property) {
-        case 'header':
-            taskHTML.forEach(copy => copy.children[1].value = task.header)
-            break
-        case 'description':
-            taskHTML.forEach(copy => copy.children[3].value = task.description)
-            break
-        case 'completed':
-            if (!task.completed) {
-                taskHTML.forEach(copy => {
-                    copy.children[0].checked = false
-                    copy.children[1].style['color'] = 'revert-layer'
-                    copy.children[1].style['text-decoration'] = 'revert-layer'
-                    copy.children[3].style['text-decoration'] = 'revert-layer'
-                })
-            } else {
-                taskHTML.forEach(copy => {
-                    copy.children[0].checked = true
-                    copy.children[1].style['color'] = '#767676'
-                    copy.children[1].style['text-decoration'] = '#767676 line-through solid 1px'
-                    copy.children[3].style['text-decoration'] = '#767676 line-through solid 0.5px'
-                })
-            }
-            break
-        case 'important':
-            if (!task.important) {
-                taskHTML.forEach(copy => {
-                    copy.children[1].style.setProperty('background-image', 'revert-layer')
-                    copy.children[1].style.setProperty('text-indent', 'revert')
-                    copy.children[4].firstChild.style.setProperty('background-image', 'revert-layer')
-                })
-            } else {
-                taskHTML.forEach(copy => {
-                    copy.children[1].style.setProperty('background-image', 'var(--important-fill-gray)')
-                    copy.children[1].style.setProperty('text-indent', '24px')
-                    copy.children[4].firstChild.style.setProperty('background-image', 'var(--important-fill-black)')
-                })
-            }
-            break
-        case 'date':
-            // TODO: SET UP DATE DEFINITION
-            // taskHTML.forEach(copy => copy.children[4] = this.description)
-            console.log('muna')
-            break
-    }
+    // Clarification for taskHTML children structure
+    const [completed, header, opener, description, tags, datePicker] = [0, 1, 2, 3, 4, 5]
+    taskHTML.forEach(copy => {
+        switch(property) {
+            case 'header':
+                copy.children[header].value = task.header
+                break
+            case 'description':
+                copy.children[description].value = task.description
+                break
+            case 'completed':
+                if (!task.completed) {
+                    copy.children[completed].checked = false
+                    copy.children[header].style['color'] = 'revert-layer'
+                    copy.children[header].style['text-decoration'] = 'revert-layer'
+                    copy.children[description].style['text-decoration'] = 'revert-layer'
+                } else {
+                    copy.children[completed].checked = true
+                    copy.children[header].style['color'] = '#767676'
+                    copy.children[header].style['text-decoration'] = '#767676 line-through solid 1px'
+                    copy.children[description].style['text-decoration'] = '#767676 line-through solid 0.5px'
+                }
+                break
+            case 'important':
+                if (!task.important) {
+                    copy.children[header].style.setProperty('background-image', 'revert-layer')
+                    copy.children[header].style.setProperty('text-indent', 'revert')
+                    copy.children[tags].firstChild.style.setProperty('background-image', 'revert-layer')
+                } else {
+                    copy.children[header].style.setProperty('background-image', 'var(--important-fill-gray)')
+                    copy.children[header].style.setProperty('text-indent', '24px')
+                    copy.children[tags].firstChild.style.setProperty('background-image', 'var(--important-fill-black)')
+                }
+                break
+            case 'date':
+                // TODO: SET UP DATE DEFINITION
+                // taskHTML.forEach(copy => copy.children[4] = this.description)
+                console.log('muna')
+                break
+        }
+    })
 }
 
 function removeElement(task) {

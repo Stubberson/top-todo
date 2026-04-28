@@ -1,6 +1,7 @@
-import { currentDate, clearContent } from '../utilities/utility.js'
+import { clearContent, isToday } from '../utilities/utility.js'
 import { Task } from '../task/task-class.js'
 import { taskElementCreate, taskRemove } from '../task/task-dom.js'
+import { createDateTask } from '../sidebar-right/calendar-dom.js'
 
 // --- Today's tasks DOM control ---
 
@@ -26,10 +27,7 @@ function viewToday() {
     const taskNewButton = document.createElement('button')
     taskNewButton.className = 'task-new-button'
     taskNewButton.addEventListener('click', () => {
-        const task = new Task(Temporal.Now.zonedDateTimeISO())  // Today's date for all tasks in 'Today'
-        const element = taskElementCreate(task)
-        tasksContainer.append(element)
-        element.children[1].focus()
+        createDateTask(Temporal.Now.zonedDateTimeISO(), tasksContainer)
     })
 
     summaryContainer.append(summaryItemContainer)
@@ -37,7 +35,7 @@ function viewToday() {
 }
 
 function collectTodayTasks() {
-    return Task.memory.filter(task => task.date.year === Temporal.Now.zonedDateTimeISO().year && task.date.dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear)
+    return Task.memory.filter(task => isToday(task.date))
 }
 
 export { viewToday }

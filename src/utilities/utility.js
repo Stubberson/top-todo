@@ -6,4 +6,8 @@ function clearContent(container) {
     }
 }
 
-export { clearContent }
+function isToday(date) {
+    return date.dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear && date.year === Temporal.Now.zonedDateTimeISO().year ? true : false
+}
+
+export { clearContent, isToday }

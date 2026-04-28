@@ -1,7 +1,7 @@
 import { clearContent, isToday } from '../utilities/utility.js'
 import { Task } from '../task/task-class.js'
 import { taskElementCreate, taskRemove } from '../task/task-dom.js'
-import { createDateTask } from '../sidebar-right/calendar-dom.js'
+import { displayDate } from '../sidebar-right/calendar-dom.js'
 
 // --- Today's tasks DOM control ---
 
@@ -23,11 +23,13 @@ function viewToday() {
     const tasksToday = collectTodayTasks()
     tasksToday.forEach(task => tasksContainer.append(taskElementCreate(task)))
 
-    // TODO: CREATE THE TASK SIMULTANEOUSLY TO TODAY'S DATE IN THE CALENDAR, IF OPEN
     const taskNewButton = document.createElement('button')
     taskNewButton.className = 'task-new-button'
     taskNewButton.addEventListener('click', () => {
-        createDateTask(Temporal.Now.zonedDateTimeISO(), tasksContainer)
+        const element = taskElementCreate(new Task(Temporal.Now.zonedDateTimeISO()))
+        displayDate(Temporal.Now.zonedDateTimeISO())
+        tasksContainer.append(element)
+        element.children[1].focus()  // Focus header
     })
 
     summaryContainer.append(summaryItemContainer)

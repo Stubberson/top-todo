@@ -78,11 +78,11 @@ function taskElementCreate(task) {
     taskImportantButton.classList.add('task-important-button', 'task-tag')
     taskImportantButton.hidden = true
     taskImportantButton.textContent = 'Important'
-    if (task.important) {  // Indicate important task, if so already indicated somewhere else
+    if (task.important) {  // Indicate important task, if already indicated somewhere else
         taskImportantButton.style.setProperty('background-image', 'var(--important-fill-black)')
         if (!taskDescriptionOpener.checked) {
             taskHeader.style.setProperty('background-image', 'var(--important-fill-gray)')
-            taskHeader.style.setProperty('text-indent', '24px')
+            taskHeader.style.setProperty('padding-left', '24px')
         }
     } 
     taskImportantButton.addEventListener('click', (event) => {
@@ -170,11 +170,11 @@ function syncLinked(task, property) {
             case 'important':
                 if (!task.important) {
                     copy.children[header].style.setProperty('background-image', 'revert-layer')
-                    copy.children[header].style.setProperty('text-indent', 'revert')
+                    copy.children[header].style.setProperty('padding-left', 'revert')
                     copy.children[tags].firstChild.style.setProperty('background-image', 'revert-layer')
                 } else {
                     copy.children[header].style.setProperty('background-image', 'var(--important-fill-gray)')
-                    copy.children[header].style.setProperty('text-indent', '24px')
+                    copy.children[header].style.setProperty('padding-left', '24px')
                     copy.children[tags].firstChild.style.setProperty('background-image', 'var(--important-fill-black)')
                 }
                 break
@@ -240,4 +240,4 @@ function taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsCont
     taskHeader.focus()
 }
 
-export { taskElementCreate, tasksFilter }
+export { taskElementCreate, tasksFilter, getHTML }

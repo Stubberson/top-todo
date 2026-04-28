@@ -1,6 +1,6 @@
 import { createCalendar } from '../utilities/calendar.js'
 import { clearContent, isToday } from '../utilities/utility.js'
-import { taskElementCreate } from '../task/task-dom.js'
+import { taskElementCreate, getHTML } from '../task/task-dom.js'
 import { Task } from '../task/task-class.js'
 import { viewToday } from '../sidebar-left/today-dom.js'
 
@@ -39,29 +39,23 @@ function displayDate(date, event = '') {
     dateTaskButton.id = 'date-task-button'
     dateTaskButton.addEventListener('click', () => {
         indicateDateTasks(date)
-        if (isToday(date)) {
+        const task = new Task(date)
+        const element = taskElementCreate(task)
+        displayDate(task.date)
+        if (isToday(date)) {  // If today, add to 'Today'
             const todayTasksContainer = document.querySelector('.content-container > .tasks-container')
-            createDateTask(date, todayTasksContainer)
-        } else {
-            createDateTask(date)
+            todayTasksContainer.append(element)
         }
+        // Focus correct header
+        const copies = getHTML(task)
+        copies.length === 1 ? copies[0].children[1].focus() : copies[copies.length - 1].children[1].focus()
     })
 
     dateHeaderContainer.append(dateHeaderDay, dateHeaderMonth, dateHeaderYear)
     dateTasksContainer.append(dateTaskButton)
 
-    const collectedTasks = collectDateTasks(date)
-    collectedTasks.forEach(task => dateTasksContainer.append(taskElementCreate(task)))
-
+    collectDateTasks(date).forEach(task => dateTasksContainer.append(taskElementCreate(task)))
     dateContainer.append(dateHeaderContainer, dateTasksContainer)
-};
-
-function createDateTask(date, container = '') {
-    const task = new Task(date)
-    const element = taskElementCreate(task)
-    displayDate(task.date)
-    if (container) container.append(element)   // Also append to other possible containers (e.g. 'Today')
-    element.children[1].focus() // Focus header
 };
 
 function collectDateTasks(date) {
@@ -74,4 +68,4 @@ function indicateDateTasks(date) {
 };
 
 
-export { viewMainCalendar, displayDate, createDateTask }
+export { viewMainCalendar, displayDate }

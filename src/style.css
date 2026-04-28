@@ -588,10 +588,10 @@ input.task-header {
     border: none;
     outline: none;
     background-image: unset;
-    background-position: top 50% left 0px;  /* Positions important flag */
+    background-position: top 50% left 0px;  /* Positions important indicator */
     background-repeat: no-repeat;
 
-    text-indent: unset;
+    padding-left: unset;  /* Makes room for important indicator */
 
     flex-grow: 1;
     min-height: 20px;  /* If not explicit, there's a 0.5px nudge when description revealed */

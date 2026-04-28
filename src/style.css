@@ -318,7 +318,7 @@ table.calendar td {
 }
 
 div.day {
-    font-weight: 600;
+    font-weight: 200;
 }
 
 div.day:hover {
@@ -327,8 +327,7 @@ div.day:hover {
 }
 
 div.day-today {
-    color: white;
-    background-color: var(--medium-gray-highlight);
+    background-color: var(--light-gray-highlight);
 }
 
 div.day-today:hover {

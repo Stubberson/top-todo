@@ -63,13 +63,27 @@ function collectDateTasks(date) {
     return Task.memory.filter(task => date.year === task.date.year && date.dayOfYear === task.date.dayOfYear)
 };
 
-function indicateDate(date) {
+function indicateDate(date = '') {
     // TODO: WIP
-    // In the calendar, indicate that there is a task on certain date
+    // Indicate a task on certain date
     const dateContainers = Array.from(document.querySelectorAll('td:has( > .day)'))
     dateContainers.forEach(container => {
-        if (container.firstChild.textContent == date.day) {
-            container.style.setProperty('outline', 'solid 1px black')
+        // TODO: THIS BULLSHIT KINDA
+        if (date) {
+            container.getAttribute('time').slice(0, 10)
+            // Ensure the exact wanted date, first 10 chars are YYYY-MM-DD
+            if (container.getAttribute('time').slice(0, 10) === date.toString().slice(0, 10)) {
+                container.firstChild.style['font-weight'] = '900'
+            }
+        } else {
+            // If a date already has a task, indicate the date on calendar
+            Task.memory.forEach(task => {
+                if (task.date.toString().slice(0, 10)) {
+                    // TODO: DEFINE A BETTER INDICATOR
+                    console.log(task.date)
+                    indicateDate(task.date)
+                }
+            })
         }
     })
 };

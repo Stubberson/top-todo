@@ -6,7 +6,7 @@ import { Task } from '../task/task-class.js';
 import { taskElementCreate, syncLinked } from '../task/task-dom.js';
 
 function createCalendar() {
-    const displayedMonth = Temporal.Now.zonedDateTimeISO()  // Default to current date
+    let displayedMonth = Temporal.Now.zonedDateTimeISO()  // Default to current date
 
     const calendarContainer = document.createElement('div')
     calendarContainer.className = 'calendar-container'
@@ -137,17 +137,11 @@ function displayMonth(calendarContainer, calendar, currentMonthWeeks) {
             if (j === 0) {  // Week number
                 bodyDataContent.className = 'week-num'
                 bodyDataContent.textContent = currentMonthWeeks[i].weekNum
-             } else {       // Days
+             } else {  // Days
                 bodyData.setAttribute('tabindex', 0)  // Allow focus for each day
+                bodyData.setAttribute('time', currentMonthWeeks[i].days[j - 1])  // Makes finding a specific date easier
                 bodyDataContent.className = 'day'
                 bodyDataContent.textContent = currentMonthWeeks[i].days[j - 1].day
-                // If a date has a task, indicate the date on calendar
-                Task.memory.forEach(task => {
-                    if (task.date.year === currentMonthWeeks[i].days[j - 1].year && task.date.dayOfYear === currentMonthWeeks[i].days[j - 1].dayOfYear) {
-                        // TODO: DEFINE A BETTER INDICATOR
-                        // bodyData.style['color'] = 'red'
-                    }
-                })
 
                 if (currentMonthWeeks[i].days[j - 1].dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear && currentMonthWeeks[i].days[j - 1].year === Temporal.Now.zonedDateTimeISO().year) {
                     bodyDataContent.classList.add('day-today')
@@ -163,6 +157,7 @@ function displayMonth(calendarContainer, calendar, currentMonthWeeks) {
              }
              bodyData.append(bodyDataContent)
              bodyRow.append(bodyData)
+
         }
         calendarBody.append(bodyRow)
     }
@@ -185,10 +180,10 @@ function dateSelect(date, event) {
         syncLinked(task, 'date')
 
         // Reset selection on the picker
-        const allDates = Array.from(datePicker.querySelectorAll('td:has( > .day)'))
-        allDates.forEach(day => {
+        const containers = Array.from(datePicker.querySelectorAll('td:has( > .day)'))
+        containers.forEach(container => {
             // TODO: NEED BETTER INDICATOR STYLISTICALLY
-            if (day.style['outline']) day.style['outline'] = 'unset'
+            container.firstChild.style['font-weight'] = 'revert-layer'
         })
         
         indicateDate(date)  // Indicate the selection

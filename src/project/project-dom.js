@@ -1,4 +1,4 @@
-import { viewCurrent } from '../index.js'
+import { currentView } from '../index.js'
 import { Project } from './project-class.js'
 import { Task } from '../task/task-class.js'
 import { taskElementCreate, tasksFilter } from '../task/task-dom.js'

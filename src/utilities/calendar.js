@@ -1,10 +1,12 @@
 import { viewCurrent } from '../index.js';
 import { clearContent } from './utility.js'
 import { viewToday } from '../sidebar-left/today-dom.js';
-import { displayDate, createDateTask } from '../sidebar-right/calendar-dom.js'
+import { displayDate, indicateDate } from '../sidebar-right/calendar-dom.js'
+import { Task } from '../task/task-class.js';
+import { taskElementCreate, syncLinked } from '../task/task-dom.js';
 
 function createCalendar() {
-    let displayedMonth = Temporal.Now.zonedDateTimeISO()  // Default to current date
+    const displayedMonth = Temporal.Now.zonedDateTimeISO()  // Default to current date
 
     const calendarContainer = document.createElement('div')
     calendarContainer.className = 'calendar-container'
@@ -139,6 +141,13 @@ function displayMonth(calendarContainer, calendar, currentMonthWeeks) {
                 bodyData.setAttribute('tabindex', 0)  // Allow focus for each day
                 bodyDataContent.className = 'day'
                 bodyDataContent.textContent = currentMonthWeeks[i].days[j - 1].day
+                // If a date has a task, indicate the date on calendar
+                Task.memory.forEach(task => {
+                    if (task.date.year === currentMonthWeeks[i].days[j - 1].year && task.date.dayOfYear === currentMonthWeeks[i].days[j - 1].dayOfYear) {
+                        // TODO: DEFINE A BETTER INDICATOR
+                        // bodyData.style['color'] = 'red'
+                    }
+                })
 
                 if (currentMonthWeeks[i].days[j - 1].dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear && currentMonthWeeks[i].days[j - 1].year === Temporal.Now.zonedDateTimeISO().year) {
                     bodyDataContent.classList.add('day-today')
@@ -150,7 +159,7 @@ function displayMonth(calendarContainer, calendar, currentMonthWeeks) {
                 
                 let dataDate = currentMonthWeeks[i].days[j - 1]  // dataDate === Temporal ZonedDateTime obj
                 bodyData.addEventListener('click', (event) => dateSelect(dataDate, event))  // Add event listeners for date selection
-                bodyData.addEventListener('keydown', (event) => { if(event.code === 'Space' || event.code === 'Enter') dateSelect(dataDate, event) })
+                bodyData.addEventListener('keydown', (event) => { if (event.code === 'Space' || event.code === 'Enter') dateSelect(dataDate, event) })
              }
              bodyData.append(bodyDataContent)
              bodyRow.append(bodyData)
@@ -164,13 +173,25 @@ function displayMonth(calendarContainer, calendar, currentMonthWeeks) {
 
 function dateSelect(date, event) {
     // Differentiate between SIDEBAR and TASK date selection
-    const taskCalendar = document.querySelector('.date-picker')
-    if (!taskCalendar || event.currentTarget.compareDocumentPosition(taskCalendar) !== 10) {
+    const datePicker = document.querySelector('.date-picker')
+    if (!datePicker || event.currentTarget.compareDocumentPosition(datePicker) !== 10) {
         // SIDEBAR
-        displayDate(date, event)
+        displayDate(date)
     } else {
         // TASK
-        console.log(event.target, 'this happened inside a date picker')
+        const taskId = datePicker.parentNode.getAttribute('data-id')
+        const [task] = Task.memory.filter(task => task.id === taskId)  // filter() returns an array, un-nest it
+        task.date = date
+        syncLinked(task, 'date')
+
+        // Reset selection on the picker
+        const allDates = Array.from(datePicker.querySelectorAll('td:has( > .day)'))
+        allDates.forEach(day => {
+            // TODO: NEED BETTER INDICATOR STYLISTICALLY
+            if (day.style['outline']) day.style['outline'] = 'unset'
+        })
+        
+        indicateDate(date)  // Indicate the selection
     }
 }
 

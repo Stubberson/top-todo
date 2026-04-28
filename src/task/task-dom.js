@@ -26,7 +26,7 @@ function taskElementCreate(task) {
     taskCompleteCheckbox.name = 'task-complete-checkbox'
     taskCompleteCheckbox.addEventListener('click', (event) => {
         event.target.checked ? task.completed = true : task.completed = false
-        syncLinked(task, 'completed')
+        syncLinked(task, 'completed')  // syncLinked synchronizes changes between every task copy
     })
 
     taskHeader.className = 'task-header'
@@ -35,7 +35,7 @@ function taskElementCreate(task) {
     taskHeader.placeholder = 'Add task...'
     taskHeader.autocomplete = 'off'
     taskHeader.value = task.header  // If header is already given, use it
-    taskHeader.addEventListener('input', () => {  // Sync changes between every copy
+    taskHeader.addEventListener('input', () => {
         task.header = taskHeader.value
         syncLinked(task, 'header')
     })
@@ -97,16 +97,19 @@ function taskElementCreate(task) {
         taskDateButton.style.setProperty('background-image', 'var(--calendar-add-fill)')
     } else {
         taskDateButton.textContent = 'Date'
+        taskDateButton.addEventListener('click', (event) => {
+            if (taskDatePicker.hidden) {
+                // Clear the date picker visually
+                const allDates = Array.from(taskDatePicker.querySelectorAll('.day'))
+                allDates.forEach(day => {
+                    if (day.style['color'] === 'red') day.style['color'] = 'revert-layer'
+                })
+                taskDatePicker.hidden = false
+            } else {
+                taskDatePicker.hidden = true
+            }
+        })
     }
-    taskDateButton.addEventListener('click', (event) => {
-        // TODO: THIS HAS TO GO TO THE syncLinked() function
-        if (!task.date) {  // this currently prevents the picker from opening in 'Today'
-            taskDatePicker.hidden = false
-            taskDatePicker.querySelector('td').focus()  // Focus first cell
-        } else {
-            taskDatePicker.hidden = false
-        }
-    })
 
     taskRemoveButton.classList.add('task-remove-button', 'task-tag')
     taskRemoveButton.hidden = true
@@ -179,9 +182,8 @@ function syncLinked(task, property) {
                 }
                 break
             case 'date':
-                // TODO: SET UP DATE DEFINITION
-                // taskHTML.forEach(copy => copy.children[4] = this.description)
-                console.log('muna')
+                copy.children[tags].children[1].textContent = task.date.toLocaleString('en-de', { day: '2-digit', month: 'short', year:'2-digit' })
+                copy.children[tags].children[1].style.setProperty('background-image', 'var(--calendar-add-fill)')
                 break
         }
     })
@@ -191,6 +193,15 @@ function removeElement(task) {
     // Remove task HTML
     const taskHTML = getHTML(task)
     taskHTML.forEach(copy => copy.remove())
+
+    // TODO: STILL WIP
+    // Remove calendar marking
+    const dateContainers = Array.from(document.querySelectorAll('td:has( > .day)'))
+    dateContainers.forEach(container => {
+        if (container.firstChild.textContent == task.date.day) {
+            container.style.setProperty('outline', 'revert-layer')
+        }
+    })
 
     // Remove task from mem
     Task.memory.splice(Task.memory.indexOf(task), 1)
@@ -240,4 +251,4 @@ function taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsCont
     taskHeader.focus()
 }
 
-export { taskElementCreate, tasksFilter, getHTML }
+export { taskElementCreate, getHTML, tasksFilter, syncLinked }

@@ -1,7 +1,7 @@
 import { clearContent, isToday } from '../utilities/utility.js'
 import { Task } from '../task/task-class.js'
 import { taskElementCreate, taskRemove } from '../task/task-dom.js'
-import { displayDate } from '../sidebar-right/calendar-dom.js'
+import { displayDate, indicateDate } from '../sidebar-right/calendar-dom.js'
 
 // --- Today's tasks DOM control ---
 
@@ -28,6 +28,7 @@ function viewToday() {
     taskNewButton.addEventListener('click', () => {
         const element = taskElementCreate(new Task(Temporal.Now.zonedDateTimeISO()))
         displayDate(Temporal.Now.zonedDateTimeISO())
+        indicateDate(Temporal.Now.zonedDateTimeISO())
         tasksContainer.append(element)
         element.children[1].focus()  // Focus header
     })

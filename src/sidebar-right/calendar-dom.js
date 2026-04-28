@@ -1,3 +1,4 @@
+import { currentView } from '../index.js'
 import { createCalendar } from '../utilities/calendar.js'
 import { clearContent, isToday } from '../utilities/utility.js'
 import { taskElementCreate, getHTML } from '../task/task-dom.js'
@@ -10,12 +11,12 @@ const dateContainer = document.createElement('div')
 dateContainer.className = 'date-container'
 
 function viewMainCalendar() {
-    const newCalendar = createCalendar()
-    rightSidebar.append(newCalendar, dateContainer)
+    const calendar = createCalendar()
+    rightSidebar.append(calendar, dateContainer)
     displayDate(Temporal.Now.zonedDateTimeISO())  // Show today's tasks by default
 };
 
-function displayDate(date, event = '') {
+function displayDate(date, event = undefined) {
     clearContent(dateContainer)
     
     const dateHeaderContainer = document.createElement('div')
@@ -38,11 +39,11 @@ function displayDate(date, event = '') {
     const dateTaskButton = document.createElement('button')
     dateTaskButton.id = 'date-task-button'
     dateTaskButton.addEventListener('click', () => {
-        indicateDateTasks(date)
+        indicateDate(date)
         const task = new Task(date)
         const element = taskElementCreate(task)
         displayDate(task.date)
-        if (isToday(date)) {  // If today, add to 'Today'
+        if (isToday(date) && currentView === 'today') {  // If added for today and 'Today' open, add to 'Today'
             const todayTasksContainer = document.querySelector('.content-container > .tasks-container')
             todayTasksContainer.append(element)
         }
@@ -62,10 +63,16 @@ function collectDateTasks(date) {
     return Task.memory.filter(task => date.year === task.date.year && date.dayOfYear === task.date.dayOfYear)
 };
 
-function indicateDateTasks(date) {
-    // Indicate that there is a task on certain date in the calendar
-    // event.target.style['color'] = 'red'
+function indicateDate(date) {
+    // TODO: WIP
+    // In the calendar, indicate that there is a task on certain date
+    const dateContainers = Array.from(document.querySelectorAll('td:has( > .day)'))
+    dateContainers.forEach(container => {
+        if (container.firstChild.textContent == date.day) {
+            container.style.setProperty('outline', 'solid 1px black')
+        }
+    })
 };
 
 
-export { viewMainCalendar, displayDate }
+export { viewMainCalendar, displayDate, indicateDate }

@@ -5,13 +5,13 @@ import { viewMainCalendar } from './sidebar-right/calendar-dom.js'
 import { createCalendar } from './utilities/calendar.js'
 import { createProject } from './project/project-dom.js'
 
-let viewCurrent = undefined;  // Track currently open view
+let currentView = undefined;  // Track currently open view
 
 const body = document.querySelector('body');
 
 (() => {  // Default view
     viewToday()
-    viewCurrent = 'today'
+    currentView = 'today'
     viewMainCalendar()
 })();
 
@@ -23,18 +23,18 @@ const body = document.querySelector('body');
 
     tasksToday.addEventListener('click', () => {
         viewToday()
-        viewCurrent = 'today'
+        currentView = 'today'
     })
 
     tasksImportant.addEventListener('click', () => {
         viewImportant()
-        viewCurrent = 'important'
+        currentView = 'important'
     })
 
     projectNew.addEventListener('click', () => {
         createProject()
         document.querySelector('.project-header-content').focus()
-        viewCurrent = 'project'
+        currentView = 'project'
     })
 
     toggleLeft.addEventListener('click', () => {
@@ -42,4 +42,4 @@ const body = document.querySelector('body');
     })
 })();
 
-export { viewCurrent }
+export { currentView }

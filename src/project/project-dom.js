@@ -4,7 +4,7 @@ import { Task } from '../task/task-class.js'
 import { taskElementCreate, tasksFilter } from '../task/task-dom.js'
 import { viewToday } from '../sidebar-left/today-dom.js'
 import { clearContent } from '../utilities/utility.js'
-import { createCalendar } from '../utilities/calendar.js'
+import { createCalendar } from '../sidebar-right/calendar-dom.js'
 import { viewImportant } from '../sidebar-left/important-dom.js'
 
 // --- Project DOM control ---
@@ -180,7 +180,7 @@ function removeProjectListing(projectListing, project) {
     Project.memory.splice(projectIndex, 1)
 
     // Update content after removal
-    switch (viewCurrent) {
+    switch (currentView) {
         case 'today':
             viewToday()
             break

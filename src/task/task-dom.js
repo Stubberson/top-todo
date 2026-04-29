@@ -1,9 +1,8 @@
 import { Task } from "./task-class.js"
 import { clearContent } from "../utilities/utility.js"
-import { createCalendar } from "../utilities/calendar.js"
 import { Project } from "../project/project-class.js"
 import { viewToday } from "../sidebar-left/today-dom.js"
-import { displayDate, revertDateSelect } from "../sidebar-right/calendar-dom.js"
+import { createCalendar, displayDate, revertDateSelect } from "../sidebar-right/calendar-dom.js"
 
 function taskElementCreate(task) {
     const taskContainer = document.createElement('div')
@@ -102,7 +101,7 @@ function taskElementCreate(task) {
                 // Clear the date picker visually
                 const allDates = Array.from(taskDatePicker.querySelectorAll('.day'))
                 allDates.forEach(day => {
-                    if (day.style['color'] === 'red') day.style['color'] = 'revert-layer'
+                    day.style = 'revert-layer'
                 })
                 taskDatePicker.hidden = false
             } else {

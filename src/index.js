@@ -1,8 +1,7 @@
 import './style.css'
 import { viewToday } from './sidebar-left/today-dom.js'
 import { viewImportant } from './sidebar-left/important-dom.js'
-import { viewMainCalendar } from './sidebar-right/calendar-dom.js'
-import { createCalendar } from './utilities/calendar.js'
+import { viewCalendar } from './sidebar-right/calendar-dom.js'
 import { createProject } from './project/project-dom.js'
 
 let currentView = undefined;  // Track currently open view
@@ -11,8 +10,8 @@ const body = document.querySelector('body');
 
 (() => {  // Default view
     viewToday()
+    viewCalendar()
     currentView = 'today'
-    viewMainCalendar()
 })();
 
 (function listenIndexEvents() {

@@ -5,9 +5,9 @@ import { displayDate, indicateDate } from '../sidebar-right/calendar-dom.js'
 
 // --- Today's tasks DOM control ---
 
-const contentContainer = document.querySelector('div.content-container')
 function viewToday() {
-    clearContent(contentContainer)  // Clear the content container
+    const contentContainer = document.querySelector('div.content-container')
+    clearContent(contentContainer)  // Refresh content container
 
     const todayHeader = document.createElement('h1')
     todayHeader.textContent = 'Today'

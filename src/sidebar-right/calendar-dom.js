@@ -39,7 +39,6 @@ function displayDate(date, event = undefined) {
     const dateTaskButton = document.createElement('button')
     dateTaskButton.id = 'date-task-button'
     dateTaskButton.addEventListener('click', () => {
-        indicateDate(date)
         const task = new Task(date)
         const element = taskElementCreate(task)
         displayDate(task.date)
@@ -50,6 +49,8 @@ function displayDate(date, event = undefined) {
         // Focus correct header
         const copies = getHTML(task)
         copies.length === 1 ? copies[0].children[1].focus() : copies[copies.length - 1].children[1].focus()
+
+        indicateDate(date)  // Indicate date on calendar
     })
 
     dateHeaderContainer.append(dateHeaderDay, dateHeaderMonth, dateHeaderYear)
@@ -64,29 +65,54 @@ function collectDateTasks(date) {
 };
 
 function indicateDate(date = '') {
-    // TODO: WIP
     // Indicate a task on certain date
-    const dateContainers = Array.from(document.querySelectorAll('td:has( > .day)'))
-    dateContainers.forEach(container => {
-        // TODO: THIS BULLSHIT KINDA
+    const containers = Array.from(document.querySelectorAll('td:has( > .day)'))
+    const visibleContainers = containers.filter(instance => !instance.hidden)
+    const dateTasks = collectDateTasks(date)
+    console.log(dateTasks)
+    visibleContainers.forEach(container => {
+        let containerDateString = container.getAttribute('time').slice(0, 10)
         if (date) {
-            container.getAttribute('time').slice(0, 10)
-            // Ensure the exact wanted date, first 10 chars are YYYY-MM-DD
-            if (container.getAttribute('time').slice(0, 10) === date.toString().slice(0, 10)) {
-                container.firstChild.style['font-weight'] = '900'
+            let dateString = date.toString().slice(0, 10)
+                // Ensure the exact wanted date, first 10 chars are YYYY-MM-DD
+            if (containerDateString === dateString) {
+                // TODO: NEED AN INDICATOR THAT CAN STACK
+                if (dateTasks.length === 0) {
+                    container.firstChild.style = 'revert-layer'
+                } else if (dateTasks.length > 0 && dateTasks.length < 4) {
+                    container.firstChild.style['font-weight'] = '400'
+                } else {
+                    container.firstChild.style['font-weight'] = '900'
+                }
             }
         } else {
-            // If a date already has a task, indicate the date on calendar
             Task.memory.forEach(task => {
-                if (task.date.toString().slice(0, 10)) {
-                    // TODO: DEFINE A BETTER INDICATOR
-                    console.log(task.date)
+                if (containerDateString === task.date.toString().slice(0, 10)) {
                     indicateDate(task.date)
                 }
             })
-        }
+    }})
+     
+};
+
+function revertDateSelect(datePicker = '') {
+    // Only allow one datepicker date selection always
+    if (datePicker) {
+        const pickerContainers = Array.from(datePicker.querySelectorAll('td:has( > .day)'))
+        pickerContainers.forEach(container => {
+            container.firstChild.style = 'revert-layer'
+        })
+    }
+    
+    const mainContainers = Array.from(document.querySelectorAll('.sidebar-right td:has( > .day)'))
+    mainContainers.forEach(container => {
+        Task.memory.forEach(task => {
+            if (container.getAttribute('time').slice(0, 10) !== task.date.toString().slice(0, 10)) {
+                container.firstChild.style = 'revert-layer'
+            }
+        })
     })
 };
 
 
-export { viewMainCalendar, displayDate, indicateDate }
+export { viewMainCalendar, displayDate, indicateDate, revertDateSelect }

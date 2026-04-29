@@ -3,7 +3,7 @@ import { clearContent } from "../utilities/utility.js"
 import { createCalendar } from "../utilities/calendar.js"
 import { Project } from "../project/project-class.js"
 import { viewToday } from "../sidebar-left/today-dom.js"
-import { displayDate } from "../sidebar-right/calendar-dom.js"
+import { displayDate, revertDateSelect } from "../sidebar-right/calendar-dom.js"
 
 function taskElementCreate(task) {
     const taskContainer = document.createElement('div')
@@ -194,14 +194,8 @@ function removeElement(task) {
     const taskHTML = getHTML(task)
     taskHTML.forEach(copy => copy.remove())
 
-    // TODO: STILL WIP
     // Remove calendar marking
-    const dateContainers = Array.from(document.querySelectorAll('td:has( > .day)'))
-    dateContainers.forEach(container => {
-        if (container.firstChild.textContent == task.date.day) {
-            container.style.setProperty('outline', 'revert-layer')
-        }
-    })
+    revertDateSelect()
 
     // Remove task from mem
     Task.memory.splice(Task.memory.indexOf(task), 1)

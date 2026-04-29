@@ -1,7 +1,7 @@
 import { viewCurrent } from '../index.js';
 import { clearContent } from './utility.js'
 import { viewToday } from '../sidebar-left/today-dom.js';
-import { displayDate, indicateDate } from '../sidebar-right/calendar-dom.js'
+import { displayDate, indicateDate, revertDateSelect } from '../sidebar-right/calendar-dom.js'
 import { Task } from '../task/task-class.js';
 import { taskElementCreate, syncLinked } from '../task/task-dom.js';
 
@@ -164,29 +164,24 @@ function displayMonth(calendarContainer, calendar, currentMonthWeeks) {
 
     calendar.append(columnGroup, calendarHead, calendarBody)
     calendarContainer.append(calendar)
+    indicateDate()  // If a date already does have a task, indicate it while flipping through months
 }
 
 function dateSelect(date, event) {
-    // Differentiate between SIDEBAR and TASK date selection
-    const datePicker = document.querySelector('.date-picker')
-    if (!datePicker || event.currentTarget.compareDocumentPosition(datePicker) !== 10) {
-        // SIDEBAR
-        displayDate(date)
-    } else {
+    // TASK vs MAIN CALENDAR date selection
+    const datePickers = Array.from(document.querySelectorAll('.date-picker'))  // querySelector() also picks up hidden elements
+    const [datePicker] = datePickers.filter(instance => !instance.hidden)
+    if (datePicker) {
         // TASK
         const taskId = datePicker.parentNode.getAttribute('data-id')
-        const [task] = Task.memory.filter(task => task.id === taskId)  // filter() returns an array, un-nest it
+        const [task] = Task.memory.filter(task => task.id === taskId)
         task.date = date
-        syncLinked(task, 'date')
-
-        // Reset selection on the picker
-        const containers = Array.from(datePicker.querySelectorAll('td:has( > .day)'))
-        containers.forEach(container => {
-            // TODO: NEED BETTER INDICATOR STYLISTICALLY
-            container.firstChild.style['font-weight'] = 'revert-layer'
-        })
-        
-        indicateDate(date)  // Indicate the selection
+        syncLinked(task, 'date')       // Controls date button
+        revertDateSelect(datePicker)  // Revert previous selection
+        indicateDate(date)           // Indicate the current selection
+    } else {
+        // MAIN
+        displayDate(date)
     }
 }
 

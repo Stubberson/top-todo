@@ -13,7 +13,7 @@ dateContainer.className = 'date-container'
 function viewCalendar() {
     const calendar = createCalendar()
     rightSidebar.append(calendar, dateContainer)
-    displayDate(Temporal.Now.zonedDateTimeISO())  // Show today's tasks by default
+    displayDate(Temporal.Now.zonedDateTimeISO())  // Show today by default
 };
 
 function createCalendar() {
@@ -47,6 +47,7 @@ function createCalendar() {
     prevMonth.addEventListener('click', () => {
         clearContent(calendar)
         displayMonth(calendarContainer, calendar, createMonth(displayedMonth.subtract({ months: 1 })))
+        indicateDate()
         // Update displayed month and year
         displayedMonth = displayedMonth.subtract({ months: 1 })
         titleYear.textContent = displayedMonth.toLocaleString('en', {year: 'numeric'})
@@ -57,6 +58,7 @@ function createCalendar() {
     nextMonth.addEventListener('click', () => {
         clearContent(calendar)
         displayMonth(calendarContainer, calendar, createMonth(displayedMonth.add({ months: 1 })))
+        indicateDate()
         displayedMonth = displayedMonth.add({ months: 1 })
         titleYear.textContent = displayedMonth.toLocaleString('en', {year: 'numeric'})
         titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'short'})
@@ -67,6 +69,7 @@ function createCalendar() {
     titleToday.addEventListener('click', () => {
         clearContent(calendar)
         displayMonth(calendarContainer, calendar, createMonth(Temporal.Now.zonedDateTimeISO()))
+        indicateDate()
         displayedMonth = Temporal.Now.zonedDateTimeISO()
         titleYear.textContent = displayedMonth.toLocaleString('en', {year: 'numeric'})
         titleMonth.textContent = displayedMonth.toLocaleString('en', {month: 'short'})
@@ -121,6 +124,7 @@ function displayMonth(calendarContainer, calendar, currentMonthWeeks) {
         for (let j = 0; j < 8; j++) {
             let bodyData = document.createElement('td')
             let bodyDataContent = document.createElement('div')
+            let taskIndicatorContainer = document.createElement('div')
             if (j === 0) {  // Week number
                 bodyDataContent.className = 'week-num'
                 bodyDataContent.textContent = currentMonthWeeks[i].weekNum
@@ -129,6 +133,7 @@ function displayMonth(calendarContainer, calendar, currentMonthWeeks) {
                 bodyData.setAttribute('time', currentMonthWeeks[i].days[j - 1])  // Makes finding a specific date easier
                 bodyDataContent.className = 'day'
                 bodyDataContent.textContent = currentMonthWeeks[i].days[j - 1].day
+                taskIndicatorContainer.className = 'tasks-indicator'
 
                 if (currentMonthWeeks[i].days[j - 1].dayOfYear === Temporal.Now.zonedDateTimeISO().dayOfYear && 
                     currentMonthWeeks[i].days[j - 1].year === Temporal.Now.zonedDateTimeISO().year) {
@@ -145,7 +150,7 @@ function displayMonth(calendarContainer, calendar, currentMonthWeeks) {
                 bodyData.addEventListener('keydown', (event) => { if (event.code === 'Space' || 
                                           event.code === 'Enter') dateSelect(dataDate, event) })
              }
-             bodyData.append(bodyDataContent)
+             bodyData.append(bodyDataContent, taskIndicatorContainer)
              bodyRow.append(bodyData)
 
         }
@@ -206,17 +211,17 @@ function collectDateTasks(date) {
 
 function dateSelect(date, event) {
     // TASK vs MAIN CALENDAR date selection
-    const datePickers = Array.from(document.querySelectorAll('.date-picker'))  // querySelector() also selects hidden elements
-    const [datePicker] = datePickers.filter(instance => !instance.hidden)
+    const datePickers = Array.from(document.querySelectorAll('.date-picker'))
+    const [datePicker] = datePickers.filter(instance => !instance.hidden)  // querySelector() also selects hidden elements, take the visible
     if (datePicker) {
         // TASK
         const taskId = datePicker.parentNode.getAttribute('data-id')
         const [task] = Task.memory.filter(task => task.id === taskId)
         task.date = date
-        syncLinked(task, 'date')       // Controls date button
+        syncLinked(task, 'date')       // Controls the appearance of date button
         revertDateSelect(datePicker)  // Revert previous selection
         datePicker.hidden = true     // Hide the picker when selection is made
-        indicateDate(date)          // Indicate the current selection
+        indicateDate(date)          // Indicate the current selection on main calendar
     } else {
         // MAIN
         displayDate(date)
@@ -225,22 +230,34 @@ function dateSelect(date, event) {
 
 function indicateDate(date = '') {
     // Indicate a task on certain date
-    const containers = document.querySelectorAll('td:has( > .day)')
-    const dateTasks = collectDateTasks(date)
-    console.log(containers)
+    const containers = document.querySelectorAll('.sidebar-right > .calendar-container td:has( > .day)')
     containers.forEach(container => {
         let containerDateString = container.getAttribute('time').slice(0, 10)
         if (date) {
-            let dateString = date.toString().slice(0, 10)
-                // Ensure the exact wanted date, first 10 chars are YYYY-MM-DD
+            const dateString = date.toString().slice(0, 10)
             if (containerDateString === dateString) {
-                // TODO: NEED AN INDICATOR THAT CAN STACK
-                if (dateTasks.length === 0) {
-                    container.firstChild.style = 'revert-layer'
-                } else if (dateTasks.length > 0 && dateTasks.length < 4) {
-                    container.firstChild.style['font-weight'] = '400'
+                container.firstChild.style['font-weight'] = '600'
+
+                const svgns = 'http://www.w3.org/2000/svg'
+                const rect = document.createElementNS(svgns, 'rect')
+                rect.setAttribute('x', '0')
+                rect.setAttribute('y', '0')
+                rect.setAttribute('width', '6')
+                rect.setAttribute('height', '1')
+                const svgContainer = document.createElementNS(svgns, 'svg')
+                svgContainer.setAttribute('width', '6')
+                svgContainer.setAttribute('height', '3')
+                svgContainer.appendChild(rect)
+                container.lastChild.append(svgContainer)
+
+                if (Array.from(container.lastChild.children).length < 3) {
+                    rect.style['fill'] = 'var(--cerulean)'
+                } else if (Array.from(container.lastChild.children).length >= 3 && Array.from(container.lastChild.children).length < 5) {
+                    rect.style['fill'] = 'var(--velvet-purple)'
+                    rect.style['height'] = '2px'
                 } else {
-                    container.firstChild.style['font-weight'] = '900'
+                    rect.style['fill'] = 'var(--cherry-rose)'
+                    rect.style['height'] = '3px'
                 }
             }
         } else {
@@ -253,7 +270,7 @@ function indicateDate(date = '') {
 };
 
 function revertDateSelect(datePicker = '') {
-    // Only allow one datepicker date selection always
+    // Clear task indicators in the date picker
     if (datePicker) {
         const pickerContainers = Array.from(datePicker.querySelectorAll('td:has( > .day)'))
         pickerContainers.forEach(container => {
@@ -261,15 +278,28 @@ function revertDateSelect(datePicker = '') {
         })
     }
     
-    const mainContainers = Array.from(document.querySelectorAll('.sidebar-right td:has( > .day)'))
+    let taskDates = []
+    Task.memory.forEach(task => {
+        taskDates.push(task.date.toString().slice(0, 10))
+    })
+
+    const mainContainers = Array.from(document.querySelectorAll('.sidebar-right > .calendar-container td:has( > .day)'))
     mainContainers.forEach(container => {
-        Task.memory.forEach(task => {
-            if (container.getAttribute('time').slice(0, 10) !== task.date.toString().slice(0, 10)) {
-                container.firstChild.style = 'revert-layer'
-            }
-        })
+        // Only revert a date's style in the 'main' calendar if it doesn't have a task
+        if (!taskDates.includes(container.getAttribute('time').slice(0, 10))) {
+            container.firstChild.style = 'revert-layer'
+        }
     })
 };
 
+function removeDateIndicator(task) {
+    const taskDate = task.date.toString().slice(0, 10)
+    const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${taskDate}"`)
+    calendarDateContainer.lastChild.lastChild.remove()
+    if (calendarDateContainer.lastChild.childNodes.length === 0) {
+        calendarDateContainer.firstChild.style['font-weight'] = 'revert'
+    }
+}
 
-export { viewCalendar, createCalendar, displayDate, indicateDate, revertDateSelect }
+
+export { viewCalendar, createCalendar, displayDate, indicateDate, revertDateSelect, removeDateIndicator }

@@ -28,6 +28,9 @@ body {
     --calendar-today-fill: url('./visuals/calendar/today-fill.svg');
     --check-black: url('./visuals/check-black.svg');
     --close-line: url('./visuals/close-line.svg');
+    --counter-1: url('./visuals/priority/priority-1-line.svg');
+    --counter-2: url('./visuals/priority/priority-2-line.svg');
+    --counter-3: url('./visuals/priority/priority-3-line.svg');
     --delete-line-black: url('./visuals/delete/delete-line-black.svg');
     --delete-line-gray: url('./visuals/delete/delete-line-gray.svg');
     --delete-line-red: url('./visuals/delete/delete-line-red.svg');
@@ -315,13 +318,32 @@ table.calendar {
 
 table.calendar td {
     text-align: center;
+    position: relative;
+}
+
+div.tasks-indicator {
+    position: absolute;
+    display: flex;
+    top: 0;
+    right: 1px;
+    
+    max-width: 33px;
+}
+
+/* Rectangle for indicating a task on a date */
+rect {
+    fill: unset;
+}
+
+div.day-adjacent-month + div.tasks-indicator rect {
+    fill: var(--medium-gray-highlight);
 }
 
 div.day {
     font-weight: 200;
 }
 
-div.day:hover {
+td:has( > .day):hover {
     cursor: pointer;
     background-color: rgba(153, 205, 50, 0.5);
 }
@@ -330,15 +352,11 @@ div.day-today {
     background-color: var(--light-gray-highlight);
 }
 
-div.day-today:hover {
-    color: black;
-}
-
 div.day-adjacent-month {
     color: var(--light-gray-highlight);
 }
 
-div.day-adjacent-month:hover {
+td:has( > div.day-adjacent-month):hover div.day-adjacent-month {
     color: var(--medium-gray-highlight);
 }
 

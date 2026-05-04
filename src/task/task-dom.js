@@ -2,7 +2,7 @@ import { Task } from "./task-class.js"
 import { clearContent } from "../utilities/utility.js"
 import { Project } from "../project/project-class.js"
 import { viewToday } from "../sidebar-left/today-dom.js"
-import { createCalendar, displayDate, revertDateSelect } from "../sidebar-right/calendar-dom.js"
+import { createCalendar, displayDate, indicateDate, revertDateSelect, removeDateIndicator } from "../sidebar-right/calendar-dom.js"
 
 function taskElementCreate(task) {
     const taskContainer = document.createElement('div')
@@ -23,6 +23,7 @@ function taskElementCreate(task) {
     taskCompleteCheckbox.className = 'task-complete-checkbox'
     taskCompleteCheckbox.type = 'checkbox'
     taskCompleteCheckbox.name = 'task-complete-checkbox'
+    taskCompleteCheckbox.checked = task.completed
     taskCompleteCheckbox.addEventListener('click', (event) => {
         event.target.checked ? task.completed = true : task.completed = false
         syncLinked(task, 'completed')  // syncLinked synchronizes changes between every task copy
@@ -193,9 +194,6 @@ function removeElement(task) {
     const taskHTML = getHTML(task)
     taskHTML.forEach(copy => copy.remove())
 
-    // Remove calendar marking
-    revertDateSelect()
-
     // Remove task from mem
     Task.memory.splice(Task.memory.indexOf(task), 1)
 
@@ -203,6 +201,9 @@ function removeElement(task) {
     if (task.owningProject) {
         task.owningProject.tasks.splice(task.owningProject.tasks.indexOf(task), 1)
     }
+
+    // Remove main calendar marking
+    removeDateIndicator(task)
 }
 
 function tasksFilter(mode, project, tasksContainer) {

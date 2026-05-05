@@ -323,20 +323,32 @@ table.calendar td {
 
 div.tasks-indicator {
     position: absolute;
-    display: flex;
-    top: 0;
-    right: 1px;
+    display: grid;
+    grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+
+    top: -4px;
+    right: -4px;
     
-    max-width: 33px;
+    max-width: 10px;
+    max-height: 10px;
+
+    overflow: hidden;
 }
 
-/* Rectangle for indicating a task on a date */
+/* Default values for the rectangle indicating how many tasks on a date */
 rect {
-    fill: unset;
+    x: 1px;
+    y: 1px;
+    width: 3px;
+    height: 3px;
+    fill-opacity: 0;
+
+    transition: transform 0.2s ease-in-out;
+    transform-origin: center;
 }
 
-div.day-adjacent-month + div.tasks-indicator rect {
-    fill: var(--medium-gray-highlight);
+td:has( > div.tasks-indicator > svg):hover rect {
+    transform: scale(1.5);
 }
 
 div.day {

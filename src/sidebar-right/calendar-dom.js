@@ -201,11 +201,11 @@ function displayDate(date, event = undefined) {
     dateHeaderContainer.append(dateHeaderDay, dateHeaderMonth, dateHeaderYear)
     dateTasksContainer.append(dateTaskButton)
 
-    collectDateTasks(date).forEach(task => dateTasksContainer.append(taskElementCreate(task)))
+    getDateTasks(date).forEach(task => dateTasksContainer.append(taskElementCreate(task)))
     dateContainer.append(dateHeaderContainer, dateTasksContainer)
 };
 
-function collectDateTasks(date) {
+function getDateTasks(date) {
     return Task.memory.filter(task => date.year === task.date.year && date.dayOfYear === task.date.dayOfYear)
 };
 
@@ -231,6 +231,7 @@ function dateSelect(date, event) {
 function indicateDate(date = '') {
     // Indicate a task on certain date
     const containers = document.querySelectorAll('.sidebar-right > .calendar-container td:has( > .day)')
+    const dateTasks = getDateTasks(date)
     containers.forEach(container => {
         let containerDateString = container.getAttribute('time').slice(0, 10)
         if (date) {
@@ -240,25 +241,27 @@ function indicateDate(date = '') {
 
                 const svgns = 'http://www.w3.org/2000/svg'
                 const rect = document.createElementNS(svgns, 'rect')
-                rect.setAttribute('x', '0')
-                rect.setAttribute('y', '0')
-                rect.setAttribute('width', '6')
-                rect.setAttribute('height', '1')
                 const svgContainer = document.createElementNS(svgns, 'svg')
-                svgContainer.setAttribute('width', '6')
-                svgContainer.setAttribute('height', '3')
-                svgContainer.appendChild(rect)
-                container.lastChild.append(svgContainer)
+                svgContainer.setAttribute('width', '5px')
+                svgContainer.setAttribute('height', '5px')
 
-                if (Array.from(container.lastChild.children).length < 3) {
-                    rect.style['fill'] = 'var(--cerulean)'
-                } else if (Array.from(container.lastChild.children).length >= 3 && Array.from(container.lastChild.children).length < 5) {
-                    rect.style['fill'] = 'var(--velvet-purple)'
-                    rect.style['height'] = '2px'
+                if (dateTasks.length < 5) {
+                    rect.style['stroke'] = 'black'
+                    rect.style['stroke-width'] = '0.5px'
+                } else if (dateTasks.length >= 5 && dateTasks.length < 9) {
+                    rect.style['stroke'] = 'var(--cherry-rose)'
+                    rect.style['stroke-width'] = '0.5px'
                 } else {
+                    rect.style['x'] = '0.5px'
+                    rect.style['y'] = '0.5px'
+                    rect.style['width'] = '4px'
+                    rect.style['height'] = '4px'
                     rect.style['fill'] = 'var(--cherry-rose)'
-                    rect.style['height'] = '3px'
+                    rect.style['fill-opacity'] = '1'
                 }
+
+                svgContainer.appendChild(rect)
+                container.lastChild.prepend(svgContainer)
             }
         } else {
             Task.memory.forEach(task => {
@@ -278,6 +281,7 @@ function revertDateSelect(datePicker = '') {
         })
     }
     
+    // If there's no tasks on a date in main calendar, revert its style
     let taskDates = []
     Task.memory.forEach(task => {
         taskDates.push(task.date.toString().slice(0, 10))
@@ -285,9 +289,11 @@ function revertDateSelect(datePicker = '') {
 
     const mainContainers = Array.from(document.querySelectorAll('.sidebar-right > .calendar-container td:has( > .day)'))
     mainContainers.forEach(container => {
-        // Only revert a date's style in the 'main' calendar if it doesn't have a task
         if (!taskDates.includes(container.getAttribute('time').slice(0, 10))) {
             container.firstChild.style = 'revert-layer'
+            if (container.lastChild.className === 'tasks-indicator') {
+                clearContent(container.lastChild)
+            }
         }
     })
 };
@@ -295,9 +301,10 @@ function revertDateSelect(datePicker = '') {
 function removeDateIndicator(task) {
     const taskDate = task.date.toString().slice(0, 10)
     const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${taskDate}"`)
-    calendarDateContainer.lastChild.lastChild.remove()
+    calendarDateContainer.lastChild.firstChild.remove()
+    
     if (calendarDateContainer.lastChild.childNodes.length === 0) {
-        calendarDateContainer.firstChild.style['font-weight'] = 'revert'
+        calendarDateContainer.firstChild.style['font-weight'] = 'revert-layer'
     }
 }
 

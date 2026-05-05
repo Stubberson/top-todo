@@ -1,6 +1,6 @@
 import { clearContent } from '../utilities/utility.js'
 import { Task } from '../task/task-class.js'
-import { taskElementCreate } from '../task/task-dom.js'
+import { syncLinked, taskElementCreate } from '../task/task-dom.js'
 
 const contentContainer = document.querySelector('div.content-container')
 
@@ -13,14 +13,14 @@ function viewImportant() {
     importantHeader.textContent = 'Important'
     tasksContainer.className = 'tasks-container'
 
-    const tasksAll = Task.memory
-    tasksAll.forEach(task => {
-        if (task.important) {
-            tasksContainer.append(taskElementCreate(task))
-        }
-    })
+    const tasksImportant = getImportantTasks()
+    tasksImportant.forEach(task => tasksContainer.append(taskElementCreate(task)))
 
     contentContainer.append(importantHeader, tasksContainer)
+}
+
+function getImportantTasks() {
+    return Task.memory.filter(task => task.important)
 }
 
 export { viewImportant }

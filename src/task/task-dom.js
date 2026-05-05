@@ -115,7 +115,7 @@ function taskElementCreate(task) {
     taskRemoveButton.hidden = true
     taskRemoveButton.textContent = 'Delete'
     taskRemoveButton.addEventListener('click', () => {
-        removeElement(task)
+        removeTask(task)
     })
 
     taskDatePicker.classList.add('date-picker')
@@ -189,7 +189,7 @@ function syncLinked(task, property) {
     })
 }
 
-function removeElement(task) {
+function removeTask(task) {
     // Remove task HTML
     const taskHTML = getHTML(task)
     taskHTML.forEach(copy => copy.remove())

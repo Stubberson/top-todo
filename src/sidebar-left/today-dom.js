@@ -17,11 +17,11 @@ function viewToday() {
     summaryContainer.className = 'today-summary-container'
     summaryItemContainer.className = 'today-summary-item'
 
-    const tasksContainer = document.createElement('div')
-    tasksContainer.className = 'tasks-container'
+    const todayTasksContainer = document.createElement('div')
+    todayTasksContainer.className = 'tasks-container'
 
-    const tasksToday = collectTodayTasks()
-    tasksToday.forEach(task => tasksContainer.append(taskElementCreate(task)))
+    const tasksToday = getTodayTasks()
+    tasksToday.forEach(task => todayTasksContainer.append(taskElementCreate(task)))
 
     const taskNewButton = document.createElement('button')
     taskNewButton.className = 'task-new-button'
@@ -29,15 +29,15 @@ function viewToday() {
         const element = taskElementCreate(new Task(Temporal.Now.zonedDateTimeISO()))
         displayDate(Temporal.Now.zonedDateTimeISO())
         indicateDate(Temporal.Now.zonedDateTimeISO())
-        tasksContainer.append(element)
+        todayTasksContainer.append(element)
         element.children[1].focus()  // Focus header
     })
 
     summaryContainer.append(summaryItemContainer)
-    contentContainer.append(todayHeader, summaryContainer, taskNewButton, tasksContainer)
+    contentContainer.append(todayHeader, summaryContainer, taskNewButton, todayTasksContainer)
 }
 
-function collectTodayTasks() {
+function getTodayTasks() {
     return Task.memory.filter(task => isToday(task.date))
 }
 

@@ -2,7 +2,8 @@ import './style.css'
 import { viewToday } from './sidebar-left/today-dom.js'
 import { viewImportant } from './sidebar-left/important-dom.js'
 import { viewCalendar } from './sidebar-right/calendar-dom.js'
-import { createProject } from './project/project-dom.js'
+import { Project } from './project/project-class.js'
+import { viewProject } from './project/project-dom.js'
 
 let currentView = undefined;  // Track currently open view
 
@@ -31,8 +32,7 @@ const body = document.querySelector('body');
     })
 
     projectNew.addEventListener('click', () => {
-        createProject()
-        document.querySelector('.project-header-content').focus()
+        viewProject(new Project())
         currentView = 'project'
     })
 

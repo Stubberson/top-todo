@@ -8,104 +8,80 @@ import { createCalendar } from '../sidebar-right/calendar-dom.js'
 import { viewImportant } from '../sidebar-left/important-dom.js'
 
 // --- Project DOM control ---
+function viewProject(project) {
+    const element = projectElementCreate(project)
+    listProject(project)
+    const contentContainer = document.querySelector('div.content-container')
+    clearContent(contentContainer)
+    contentContainer.append(element)
+}
 
-const projectsList = document.querySelector('ul.projects-list')
-const projectContainer = document.querySelector('div.content-container')
+function projectElementCreate(project) {
+    const projectContainer = document.createElement('div')
+    const projectHeadContainer = document.createElement('div')
+    const projectHeader = document.createElement('input')
+    const projectDescription = document.createElement('textarea')
+    const projectDateButton = document.createElement('button')
+    const projectDatePicker = createCalendar()
+    const taskNewButton = document.createElement('button')
+    const projectTasksContainer = document.createElement('div')
 
-function createProject() {
-    let project = undefined;
+    projectContainer.className = 'project-container'
 
-    (function projectBase() {
-        const projectHeader = document.createElement('input')
-        const projectDescription = document.createElement('textarea')
+    projectHeadContainer.className = 'project-head-container'
 
-        project = new Project(projectHeader, projectDescription)
-        listProject(project)
-    })();
+    projectHeader.type = 'text'
+    projectHeader.className = 'project-header-content'
+    projectHeader.name = 'project-header-content'
+    projectHeader.placeholder = 'Add header...'
+    projectHeader.autocomplete = 'off'
+    projectHeader.addEventListener('input', () => {
+        // projectButtonHeader.textContent = project.header.value
+        project.header = projectHeader.value
+    })
 
-    (function projectDetails() {
-        project.infoContainer = document.createElement('div')
-        const [projectButtonHeader, projectButtonDate] = project.projectButton.children
+    projectDescription.classList.add('project-description-area', 'description')
+    projectDescription.placeholder = 'Add project description...'
+    projectDescription.rows = 3
+    projectDescription.name = 'project-description-area'
+    projectDescription.addEventListener('input', () => {
+        project.description = projectDescription.value
+    })
 
-        project.infoContainer.className = 'project-info-container'
+    projectDateButton.className = 'project-date-button'
+    projectDateButton.textContent = 'Date'
+    projectDateButton.addEventListener('click', () => {
+        if (projectDatePicker.hidden) {
+            // Clear the date picker visually
+            const allDates = Array.from(projectDatePicker.querySelectorAll('.day'))
+            allDates.forEach(day => {
+                day.style = 'revert-layer'
+            })
+            projectDatePicker.hidden = false
+        } else {
+            projectDatePicker.hidden = true
+        }
+    })
 
-        project.header.type = 'text'
-        project.header.className = 'project-header-content'
-        project.header.name = 'project-header-content'
-        project.header.placeholder = 'Add header...'
-        project.header.autocomplete = 'off'
-        project.header.addEventListener('input', () => {  // Update project header when header edited in content view
-            projectButtonHeader.textContent = project.header.value
-            project.header.value = project.header.value
-        })
+    taskNewButton.className = 'task-new-button'
+    taskNewButton.addEventListener('click', () => {
+        const task = new Task('', project)
+        const element = taskElementCreate(task)
+        projectTasksContainer.append(element)
+        element.children[1].focus()
+    })
 
-        project.description.classList.add('project-description-area', 'description')
-        project.description.placeholder = 'Add project description...'
-        project.description.rows = 3
-        project.description.name = 'project-description-area'
-        project.description.addEventListener('input', () => {
-            project.description.value = project.description.value
-        })
+    projectTasksContainer.className = 'project-tasks-container'
 
-        // project.date.className = 'project-date-content'
-        // project.date.min = currentDate
-        // project.date.addEventListener('input', () => {
-        //     projectButtonDate.textContent = project.date.value
-        //     project.date.value = project.date.value
-        // });
+    projectHeadContainer.append(projectHeader, projectDescription, projectDateButton)
+    projectContainer.append(projectHeadContainer, taskNewButton, projectTasksContainer)
 
-        project.infoContainer.append(project.header, project.description)  // ADD project.date
-        projectContainer.append(project.infoContainer)
-    })();
-
-    (function createTaskControls() {
-        project.tabsContainer = document.createElement('div')
-        project.controlsContainer = document.createElement('div')
-        project.tasksContainer = document.createElement('div')
-        
-        const taskNewButton = document.createElement('button')
-        const taskAllButton = document.createElement('button')
-        const taskImportantButton = document.createElement('button')
-
-        project.tabsContainer.className = 'task-tabs-container'
-        project.controlsContainer.className = 'tasks-controls-container'
-        project.tasksContainer.className = 'tasks-container'
-
-        taskNewButton.className = 'task-new-button'
-        taskNewButton.addEventListener('click', () => {
-            const task = new Task('', project)  // Skip date arg
-            const element = taskElementCreate(task)
-            project.tasksContainer.append(element)
-            element.children[1].focus()
-        })
-
-        taskAllButton.id = 'task-control-all'
-        taskAllButton.className = 'task-control-button'
-        taskAllButton.textContent = 'All'
-        taskAllButton.disabled = true
-        taskAllButton.addEventListener('click', (event) => {
-            tasksFilter('all', project, project.tasksContainer)
-            event.target.disabled = true
-            taskImportantButton.disabled = false
-        })
-
-        taskImportantButton.id = 'task-control-important'
-        taskImportantButton.className = 'task-control-button'
-        taskImportantButton.textContent = 'Important'
-        taskImportantButton.addEventListener('click', (event) => {
-            tasksFilter('important', project, project.tasksContainer)
-            event.target.disabled = true
-            taskAllButton.disabled = false
-        })
-
-        project.tabsContainer.append(taskAllButton, taskImportantButton)
-        project.controlsContainer.append(taskNewButton, project.tabsContainer)
-        
-        projectContainer.append(project.controlsContainer, project.tasksContainer)
-    })();
+    return projectContainer
 };
 
 function listProject(project) {    
+    const projectsList = document.querySelector('ul.projects-list')
+
     const projectListing = document.createElement('li')
     const projectButton = document.createElement('button')
     const projectButtonHeader = document.createElement('span')
@@ -117,19 +93,16 @@ function listProject(project) {
     projectButtonDate.id = 'listing-date'
     projectRemoveButton.id = 'listing-rm-button'
 
-    projectButtonHeader.textContent = project.header.value
-    // projectButtonDate.textContent = project.date.value
+    projectButtonHeader.textContent = project.header
+    if (project.date) projectButtonDate.textContent = project.date.toString().splice(0, 10)
 
-    projectButton.append(projectButtonHeader)  // ADD projectButtonDate
-    project.projectButton = projectButton
+    projectButton.append(projectButtonHeader, projectButtonDate)
     projectListing.append(projectButton, projectRemoveButton)
 
     projectsList.appendChild(projectListing)
 
-    clearContent(projectContainer)  // Clear content view before opening new project
     projectButton.addEventListener('click', () => {
-        viewProject(project)        // Open project from sidebar
-        project.header.focus()
+        projectElementCreate(project)
     })
 
     projectRemoveButton.addEventListener('click', () => {
@@ -143,15 +116,15 @@ function listProject(project) {
         // Confirm project removal
         confirmRemove.addEventListener('click', () => {
             // Only clear view if currently viewed project removed
-            if (project.header.value === document.querySelector('.project-header-content').value) {
+            if (project.header === document.querySelector('.project-header-content').value) {
                 // Default to immediate sibling project, finally Today
                 const projectIndex = Project.memory.indexOf(project)
                 if (Project.memory.length > 1 && projectIndex < Project.memory.length - 1) {
                     const followingProject = Project.memory[projectIndex + 1]
-                    viewProject(followingProject)
+                    projectElementCreate(followingProject)
                 } else if (Project.memory.length > 1 && projectIndex === Project.memory.length - 1) {
                     const previousProject = Project.memory[projectIndex - 1]
-                    viewProject(previousProject)
+                    projectElementCreate(previousProject)
                 } else {
                     viewToday()
                 }
@@ -169,6 +142,7 @@ function listProject(project) {
 
 function removeProjectListing(projectListing, project) {
     // Remove project from sidebar
+    const projectsList = document.querySelector('ul.projects-list')
     projectsList.removeChild(projectListing)
 
     // Remove project related tasks
@@ -190,10 +164,4 @@ function removeProjectListing(projectListing, project) {
     }
 };
 
-function viewProject(project) {
-    clearContent(projectContainer)  // Clear previous content
-
-    projectContainer.append(project.infoContainer, project.controlsContainer, project.tasksContainer)
-}
-
-export { projectContainer, createProject }
+export { viewProject }

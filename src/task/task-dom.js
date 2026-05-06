@@ -2,7 +2,7 @@ import { Task } from "./task-class.js"
 import { clearContent } from "../utilities/utility.js"
 import { Project } from "../project/project-class.js"
 import { viewToday } from "../sidebar-left/today-dom.js"
-import { createCalendar, displayDate, indicateDate, revertDateSelect, removeDateIndicator } from "../sidebar-right/calendar-dom.js"
+import { createCalendar, displayDate, indicateDate, revertDateIndicator } from "../sidebar-right/calendar-dom.js"
 
 function taskElementCreate(task) {
     const taskContainer = document.createElement('div')
@@ -26,7 +26,7 @@ function taskElementCreate(task) {
     taskCompleteCheckbox.checked = task.completed
     taskCompleteCheckbox.addEventListener('click', (event) => {
         event.target.checked ? task.completed = true : task.completed = false
-        syncLinked(task, 'completed')  // syncLinked synchronizes changes between every task copy
+        taskSyncLinked(task, 'completed')  // taskSyncLinked synchronizes changes between every task copy
     })
 
     taskHeader.className = 'task-header'
@@ -37,7 +37,7 @@ function taskElementCreate(task) {
     taskHeader.value = task.header  // If header is already given, use it
     taskHeader.addEventListener('input', () => {
         task.header = taskHeader.value
-        syncLinked(task, 'header')
+        taskSyncLinked(task, 'header')
     })
     taskHeader.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
@@ -65,7 +65,7 @@ function taskElementCreate(task) {
     taskDescription.value = task.description
     taskDescription.addEventListener('input', () => {
         task.description = taskDescription.value
-        syncLinked(task, 'description')
+        taskSyncLinked(task, 'description')
     })
     taskDescription.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
@@ -87,7 +87,7 @@ function taskElementCreate(task) {
     } 
     taskImportantButton.addEventListener('click', (event) => {
         task.important ? task.important = false : task.important = true
-        syncLinked(task, 'important')
+        taskSyncLinked(task, 'important')
     })
 
     taskDateButton.classList.add('task-date-button', 'task-tag')
@@ -98,18 +98,20 @@ function taskElementCreate(task) {
     } else {
         taskDateButton.textContent = 'Date'
         taskDateButton.addEventListener('click', (event) => {
-            if (taskDatePicker.hidden) {
-                // Clear the date picker visually
-                const allDates = Array.from(taskDatePicker.querySelectorAll('.day'))
-                allDates.forEach(day => {
-                    day.style = 'revert-layer'
-                })
-                taskDatePicker.hidden = false
-            } else {
-                taskDatePicker.hidden = true
-            }
+            taskDatePicker.hidden ? taskDatePicker.hidden = false : taskDatePicker.hidden = true
         })
     }
+    taskDateButton.addEventListener('keydown', (event) => {
+        if (event.key === 'Backspace') {
+            taskDateButton.textContent = 'Date'
+            taskDateButton.style = 'revert-layer'
+            taskDatePicker.hidden = true
+            taskDateButton.blur()
+
+            revertDateIndicator(task)
+            task.date = ''
+        }
+    })
 
     taskRemoveButton.classList.add('task-remove-button', 'task-tag')
     taskRemoveButton.hidden = true
@@ -118,9 +120,9 @@ function taskElementCreate(task) {
         removeTask(task)
     })
 
-    taskDatePicker.classList.add('date-picker')
+    taskDatePicker.classList.add('task-date-picker', 'date-picker')
     taskDatePicker.hidden = true
-    taskDatePicker.setAttribute('tabindex', 0)
+    taskDatePicker.setAttribute('tabindex', 0)  // Allows focus on date picker
 
     // Hide date picker when clicked outside or Escaped
     document.addEventListener('click', (event) => {
@@ -140,13 +142,13 @@ function taskElementCreate(task) {
     return taskContainer
 }
 
-function getHTML(task) {
+function getTaskHTML(task) {
     return Array.from(document.querySelectorAll(`[data-id='${task.id}']`))
 }
 
 // Sync all HTML elements linked to a specific task
-function syncLinked(task, property) {
-    const taskHTML = getHTML(task)
+function taskSyncLinked(task, property) {
+    const taskHTML = getTaskHTML(task)
     // Clarification for taskHTML children structure
     const [completed, header, opener, description, tags, datePicker] = [0, 1, 2, 3, 4, 5]
     taskHTML.forEach(copy => {
@@ -191,7 +193,7 @@ function syncLinked(task, property) {
 
 function removeTask(task) {
     // Remove task HTML
-    const taskHTML = getHTML(task)
+    const taskHTML = getTaskHTML(task)
     taskHTML.forEach(copy => copy.remove())
 
     // Remove task from mem
@@ -203,7 +205,7 @@ function removeTask(task) {
     }
 
     // Remove main calendar marking
-    removeDateIndicator(task)
+    revertDateIndicator(task)
 }
 
 function tasksFilter(mode, project, tasksContainer) {
@@ -235,7 +237,7 @@ function taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsCont
     Array.from(taskTagsContainer.children).forEach(tag => {  // Indicate importance even if task minimized
         tag.hidden = true
         if (task.important) {
-            syncLinked(task, 'important')
+            taskSyncLinked(task, 'important')
         }
     })
     taskDescriptionOpener.checked = false
@@ -245,4 +247,4 @@ function taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsCont
     taskHeader.focus()
 }
 
-export { taskElementCreate, getHTML, tasksFilter, syncLinked }
+export { taskElementCreate, getTaskHTML, tasksFilter, taskSyncLinked }

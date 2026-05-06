@@ -10,10 +10,12 @@ import { viewImportant } from '../sidebar-left/important-dom.js'
 // --- Project DOM control ---
 function viewProject(project) {
     const element = projectElementCreate(project)
-    listProject(project)
+    
     const contentContainer = document.querySelector('div.content-container')
     clearContent(contentContainer)
     contentContainer.append(element)
+    
+    listProject(project)
 }
 
 function projectElementCreate(project) {
@@ -21,23 +23,26 @@ function projectElementCreate(project) {
     const projectHeadContainer = document.createElement('div')
     const projectHeader = document.createElement('input')
     const projectDescription = document.createElement('textarea')
+    const projectDateContainer = document.createElement('div')
     const projectDateButton = document.createElement('button')
     const projectDatePicker = createCalendar()
     const taskNewButton = document.createElement('button')
     const projectTasksContainer = document.createElement('div')
 
     projectContainer.className = 'project-container'
+    projectContainer.setAttribute('data-id', project.id)
 
     projectHeadContainer.className = 'project-head-container'
 
     projectHeader.type = 'text'
-    projectHeader.className = 'project-header-content'
-    projectHeader.name = 'project-header-content'
+    projectHeader.className = 'project-header'
+    projectHeader.name = 'project-header'
     projectHeader.placeholder = 'Add header...'
     projectHeader.autocomplete = 'off'
     projectHeader.addEventListener('input', () => {
-        // projectButtonHeader.textContent = project.header.value
         project.header = projectHeader.value
+        const listingButtonHeader = document.querySelector(`span[data-id='${project.id}']`)
+        listingButtonHeader.textContent = project.header
     })
 
     projectDescription.classList.add('project-description-area', 'description')
@@ -48,17 +53,35 @@ function projectElementCreate(project) {
         project.description = projectDescription.value
     })
 
+    projectDateContainer.className = 'project-date-container'
+
     projectDateButton.className = 'project-date-button'
     projectDateButton.textContent = 'Date'
     projectDateButton.addEventListener('click', () => {
-        if (projectDatePicker.hidden) {
-            // Clear the date picker visually
-            const allDates = Array.from(projectDatePicker.querySelectorAll('.day'))
-            allDates.forEach(day => {
-                day.style = 'revert-layer'
-            })
-            projectDatePicker.hidden = false
-        } else {
+        projectDatePicker.hidden ? projectDatePicker.hidden = false : projectDatePicker.hidden = true
+    })
+    projectDateButton.addEventListener('keydown', (event) => {
+        if (event.key === 'Backspace') {
+            projectDateButton.textContent = 'Date'
+            projectDateButton.style = 'revert-layer'
+            const listingButtonDate = document.querySelector(`.listing-date[data-id='${project.id}']`)
+            listingButtonDate.textContent = ''
+            projectDatePicker.hidden = true
+            projectDateButton.blur()
+        }
+    })
+
+    projectDatePicker.classList.add('project-date-picker', 'date-picker')
+    projectDatePicker.hidden = true
+    projectDatePicker.setAttribute('tabindex', 0)
+    // Hide date picker when clicked outside or Escaped
+    document.addEventListener('click', (event) => {
+        if (projectDatePicker.hidden === false && !event.target.closest('div.project-date-picker') && !event.target.classList.contains('project-date-button')) {
+            projectDatePicker.hidden = true
+        }
+    })
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
             projectDatePicker.hidden = true
         }
     })
@@ -73,13 +96,14 @@ function projectElementCreate(project) {
 
     projectTasksContainer.className = 'project-tasks-container'
 
-    projectHeadContainer.append(projectHeader, projectDescription, projectDateButton)
+    projectDateContainer.append(projectDateButton)
+    projectHeadContainer.append(projectHeader, projectDescription, projectDateContainer, projectDatePicker)
     projectContainer.append(projectHeadContainer, taskNewButton, projectTasksContainer)
 
     return projectContainer
 };
 
-function listProject(project) {    
+function listProject(project) {
     const projectsList = document.querySelector('ul.projects-list')
 
     const projectListing = document.createElement('li')
@@ -88,10 +112,12 @@ function listProject(project) {
     const projectButtonDate = document.createElement('span')
     const projectRemoveButton = document.createElement('button')
 
-    projectButton.id = 'listing-button'
-    projectButtonHeader.id = 'listing-header'
-    projectButtonDate.id = 'listing-date'
-    projectRemoveButton.id = 'listing-rm-button'
+    projectButton.className = 'listing-button'
+    projectButtonHeader.className = 'listing-header'
+    projectButtonHeader.setAttribute('data-id', project.id)
+    projectButtonDate.className = 'listing-date'
+    projectButtonDate.setAttribute('data-id', project.id)
+    projectRemoveButton.className = 'listing-rm-button'
 
     projectButtonHeader.textContent = project.header
     if (project.date) projectButtonDate.textContent = project.date.toString().splice(0, 10)
@@ -115,20 +141,6 @@ function listProject(project) {
         
         // Confirm project removal
         confirmRemove.addEventListener('click', () => {
-            // Only clear view if currently viewed project removed
-            if (project.header === document.querySelector('.project-header-content').value) {
-                // Default to immediate sibling project, finally Today
-                const projectIndex = Project.memory.indexOf(project)
-                if (Project.memory.length > 1 && projectIndex < Project.memory.length - 1) {
-                    const followingProject = Project.memory[projectIndex + 1]
-                    projectElementCreate(followingProject)
-                } else if (Project.memory.length > 1 && projectIndex === Project.memory.length - 1) {
-                    const previousProject = Project.memory[projectIndex - 1]
-                    projectElementCreate(previousProject)
-                } else {
-                    viewToday()
-                }
-            }
             removeProjectListing(projectListing, project)
         })
 

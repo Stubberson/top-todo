@@ -1,8 +1,9 @@
 import { currentView } from '../index.js'
 import { createMonth } from '../utilities/month.js'
 import { clearContent, isToday } from '../utilities/utility.js'
-import { taskElementCreate, getHTML, syncLinked } from '../task/task-dom.js'
+import { taskElementCreate, getTaskHTML, taskSyncLinked } from '../task/task-dom.js'
 import { Task } from '../task/task-class.js'
+import { Project } from '../project/project-class.js'
 import { viewToday } from '../sidebar-left/today-dom.js'
 
 // Basic building blocks
@@ -192,7 +193,7 @@ function displayDate(date, event = undefined) {
             todayTasksContainer.append(element)
         }
         // Focus correct header
-        const copies = getHTML(task)
+        const copies = getTaskHTML(task)
         copies.length === 1 ? copies[0].children[1].focus() : copies[copies.length - 1].children[1].focus()
 
         indicateDate(date)  // Indicate date on calendar
@@ -205,37 +206,47 @@ function displayDate(date, event = undefined) {
     dateContainer.append(dateHeaderContainer, dateTasksContainer)
 };
 
-function getDateTasks(date) {
-    return Task.memory.filter(task => date.year === task.date.year && date.dayOfYear === task.date.dayOfYear)
-};
-
 function dateSelect(date, event) {
-    // TASK vs MAIN CALENDAR date selection
+    // TASK, PROJECT, and MAIN CALENDAR date selection
     const datePickers = Array.from(document.querySelectorAll('.date-picker'))
     const [datePicker] = datePickers.filter(instance => !instance.hidden)  // querySelector() also selects hidden elements, take the visible
-    if (datePicker) {
+    if (datePicker && datePicker.classList.contains('task-date-picker')) {
         // TASK
         const taskId = datePicker.parentNode.getAttribute('data-id')
         const [task] = Task.memory.filter(task => task.id === taskId)
         task.date = date
-        syncLinked(task, 'date')       // Controls the appearance of date button
-        revertDateSelect(datePicker)  // Revert previous selection
-        datePicker.hidden = true     // Hide the picker when selection is made
-        indicateDate(date)          // Indicate the current selection on main calendar
+        taskSyncLinked(task, 'date')  // Controls the appearance of date button
+        indicateDate(date)           // Indicate the current selection on main calendar
+        datePicker.hidden = true    // Hide the picker when selection is made
+    } else if (datePicker && datePicker.classList.contains('project-date-picker')) {
+        // PROJECT
+        const projectId = datePicker.parentNode.parentNode.getAttribute('data-id')
+        const [project] = Project.memory.filter(project => project.id === projectId)
+        project.date = date
+        indicateDate(date, project)
+        datePicker.hidden = true
     } else {
         // MAIN
         displayDate(date)
     }
 }
 
-function indicateDate(date = '') {
-    // Indicate a task on certain date
-    const containers = document.querySelectorAll('.sidebar-right > .calendar-container td:has( > .day)')
-    const dateTasks = getDateTasks(date)
-    containers.forEach(container => {
-        let containerDateString = container.getAttribute('time').slice(0, 10)
-        if (date) {
-            const dateString = date.toString().slice(0, 10)
+function indicateDate(date = '', project = '') {
+    if (project) {
+        // Indicate date in the project listing
+        const listingButtonDate = document.querySelector(`.listing-date[data-id='${project.id}']`)
+        listingButtonDate.textContent = date.toLocaleString('en-de', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase()
+        
+        const projectDateButton = document.querySelector('.project-date-button')
+        projectDateButton.textContent = date.toLocaleString('en-de', { day: '2-digit', month: 'short', year: '2-digit' })
+        projectDateButton.style.setProperty('background-image', 'var(--calendar-add-fill)')
+    } else if (date) {
+        // Indicate a task on certain date
+        const dateTasks = getDateTasks(date)
+        const dateString = date.toString().slice(0, 10)
+        const containers = document.querySelectorAll('.sidebar-right > .calendar-container td:has( > .day)')
+        containers.forEach(container => {
+            let containerDateString = container.getAttribute('time').slice(0, 10)
             if (containerDateString === dateString) {
                 container.firstChild.style['font-weight'] = '600'
 
@@ -245,6 +256,7 @@ function indicateDate(date = '') {
                 svgContainer.setAttribute('width', '5px')
                 svgContainer.setAttribute('height', '5px')
 
+                // TODO: STILL NEEDS WORK, BLACK AND RED NOT EASY TO DISTINGUISH
                 if (dateTasks.length < 5) {
                     rect.style['stroke'] = 'black'
                     rect.style['stroke-width'] = '0.5px'
@@ -262,51 +274,45 @@ function indicateDate(date = '') {
 
                 svgContainer.appendChild(rect)
                 container.lastChild.prepend(svgContainer)
+            } else {
+                let tasksPerDate = {}
+                Task.memory.forEach(task => {
+                    let taskDateString = task.date.toString().slice(0, 10)
+                    if (taskDateString === containerDateString) {
+                        tasksPerDate[taskDateString] = Array.from(container.lastChild.children).length
+                    }
+                    // TODO: STILL FUCKED
+                    if (!Object.keys(tasksPerDate).includes(containerDateString)) {
+                        revertDateIndicator(task)
+                    }
+                })
             }
-        } else {
-            Task.memory.forEach(task => {
-                if (containerDateString === task.date.toString().slice(0, 10)) {
-                    indicateDate(task.date)
-                }
-            })
-    }})
-};
-
-function revertDateSelect(datePicker = '') {
-    // Clear task indicators in the date picker
-    if (datePicker) {
-        const pickerContainers = Array.from(datePicker.querySelectorAll('td:has( > .day)'))
-        pickerContainers.forEach(container => {
-            container.firstChild.style = 'revert-layer'
+        })
+    } else {
+        // When a "new calendar" is rendered, show calendar marks correctly
+        Task.memory.forEach(task => {
+            let taskDate = task.date.toString().slice(0, 10)
+            let calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${taskDate}"`)
+            if (taskDate === calendarDateContainer.getAttribute('time').slice(0, 10)) {
+                indicateDate(task.date)
+            }
         })
     }
-    
-    // If there's no tasks on a date in main calendar, revert its style
-    let taskDates = []
-    Task.memory.forEach(task => {
-        taskDates.push(task.date.toString().slice(0, 10))
-    })
-
-    const mainContainers = Array.from(document.querySelectorAll('.sidebar-right > .calendar-container td:has( > .day)'))
-    mainContainers.forEach(container => {
-        if (!taskDates.includes(container.getAttribute('time').slice(0, 10))) {
-            container.firstChild.style = 'revert-layer'
-            if (container.lastChild.className === 'tasks-indicator') {
-                clearContent(container.lastChild)
-            }
-        }
-    })
 };
 
-function removeDateIndicator(task) {
+function revertDateIndicator(task) {
     const taskDate = task.date.toString().slice(0, 10)
     const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${taskDate}"`)
-    calendarDateContainer.lastChild.firstChild.remove()
     
     if (calendarDateContainer.lastChild.childNodes.length === 0) {
         calendarDateContainer.firstChild.style['font-weight'] = 'revert-layer'
+    } else {
+        calendarDateContainer.lastChild.firstChild.remove()
     }
 }
 
+function getDateTasks(date) {
+    return Task.memory.filter(task => date.year === task.date.year && date.dayOfYear === task.date.dayOfYear)
+}
 
-export { viewCalendar, createCalendar, displayDate, indicateDate, revertDateSelect, removeDateIndicator }
+export { viewCalendar, createCalendar, displayDate, indicateDate, revertDateIndicator }

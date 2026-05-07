@@ -44,6 +44,7 @@ body {
     --new-line-white: url('./visuals/new-hover.svg');
     --task-checkbox-line: url('./visuals/task-incomplete.svg');
     --task-checkbox-fill: url('./visuals/task-complete.svg');
+    --time-add-line: url('./visuals/clock/time-add.svg');
 
     font-family: var(--atkinson-sans-serif);
 
@@ -128,7 +129,7 @@ button#finished-all::before {
 }
 
 button#finished-all:hover::before {
-    transform: scale(1.2);
+    transform: scale(1.1);
 }
 
 button#new-project::before {
@@ -594,7 +595,13 @@ input.task-header {
 
 input.task-header:hover,
 input.task-header:focus-visible {
-    background-color: whitesmoke
+    background-color: whitesmoke;
+}
+
+/* Hover colors must be different for sidebar */
+div.sidebar-right input.task-header:hover,
+div.sidebar-right input.task-header:focus-visible {
+    background-color: white;
 }
 
 input.task-open-checkbox {
@@ -637,6 +644,11 @@ textarea.task-description-area:focus-visible {
     background-color: whitesmoke;
 }
 
+div.sidebar-right textarea.task-description-area:hover,
+div.sidebar-right textarea.task-description-area:focus-visible {
+    background-color: white;
+}
+
 div.task-tags-container {
     grid-area: 3 / 2 / 4 / 4;
     display: flex;
@@ -646,11 +658,12 @@ div.task-tags-container {
     right: 0;
     bottom: 0;
 
-    width: 160px;
+    width: 180px;
     height: fit-content;
 }
 
 button.task-important-button,
+button.task-time-button,
 button.task-date-button,
 button.task-remove-button {
     z-index: 2;
@@ -675,6 +688,11 @@ button.task-important-button {
     background-image: var(--important-line-gray);
 }
 
+button.task-time-button {
+    background-image: var(--time-add-line);
+    background-position-x: 1.5px;
+}
+
 button.task-date-button {
     background-image: var(--calendar-add-line);
     background-position-y: 1.5px;
@@ -687,12 +705,26 @@ button.task-remove-button {
 
 button.task-important-button:hover,
 button.task-important-button:focus-visible,
+button.task-time-button:hover,
+button.task-time-button:focus-visible,
 button.task-date-button:hover,
 button.task-date-button:focus-visible,
 button.task-remove-button:hover,
 button.task-remove-button:focus-visible {
     flex-grow: 1;
     background-color: whitesmoke;
+}
+
+div.sidebar-right button.task-important-button:hover,
+div.sidebar-right button.task-important-button:focus-visible,
+div.sidebar-right button.task-time-button:hover,
+div.sidebar-right button.task-time-button:focus-visible,
+div.sidebar-right button.task-date-button:hover,
+div.sidebar-right button.task-date-button:focus-visible,
+div.sidebar-right button.task-remove-button:hover,
+div.sidebar-right button.task-remove-button:focus-visible {
+    flex-grow: 1;
+    background-color: white;
 }
 
 button.task-remove-button:hover,

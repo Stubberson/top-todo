@@ -12,6 +12,7 @@ function taskElementCreate(task) {
     const taskDescription = document.createElement('textarea')
     const taskTagsContainer = document.createElement('div')
     const taskImportantButton = document.createElement('button')
+    const taskTimeButton = document.createElement('button')
     const taskDateButton = document.createElement('button')
     const taskRemoveButton = document.createElement('button')
     const taskDatePicker = createCalendar()
@@ -93,6 +94,10 @@ function taskElementCreate(task) {
         taskSyncLinked(task, 'important')
     })
 
+    taskTimeButton.classList.add('task-time-button', 'task-tag')
+    taskTimeButton.hidden = true
+    taskTimeButton.textContent = 'Time'
+
     taskDateButton.classList.add('task-date-button', 'task-tag')
     taskDateButton.hidden = true
     if (task.date) {
@@ -103,13 +108,13 @@ function taskElementCreate(task) {
         taskDateButton.addEventListener('click', (event) => {
             if (taskDatePicker.hidden) {
                 taskDatePicker.hidden = false
-                taskDatePicker.focus()
             } else {
                 taskDatePicker.hidden = true
             }
         })
     }
     taskDateButton.addEventListener('keydown', (event) => {
+        console.log(event.key)
         if (event.key === 'Backspace') {
             taskDateButton.textContent = 'Date'
             taskDateButton.style = 'revert-layer'
@@ -145,7 +150,7 @@ function taskElementCreate(task) {
         }
     })
 
-    taskTagsContainer.append(taskImportantButton, taskDateButton, taskRemoveButton)
+    taskTagsContainer.append(taskImportantButton, taskTimeButton, taskDateButton, taskRemoveButton)
     taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskTagsContainer, taskDatePicker)
     
     return taskContainer
@@ -175,7 +180,7 @@ function taskSyncLinked(task, property) {
                     copy.children[header].style.setProperty('text-decoration', 'revert-layer')
                     copy.children[description].style.setProperty('text-decoration', 'revert-layer')
 
-                    // Save the styling ot be able to access it later
+                    // Save the styling to access later
                     task.style['header-color'] = ''
                     task.style['header-decoration'] = ''
                     task.style['description-decoration'] = '' 
@@ -202,8 +207,8 @@ function taskSyncLinked(task, property) {
                 }
                 break
             case 'date':
-                copy.children[tags].children[1].textContent = task.date.toLocaleString('en-de', { day: '2-digit', month: 'short', year:'2-digit' })
-                copy.children[tags].children[1].style.setProperty('background-image', 'var(--calendar-add-fill)')
+                copy.children[tags].children[2].textContent = task.date.toLocaleString('en-de', { day: '2-digit', month: 'short', year:'2-digit' })
+                copy.children[tags].children[2].style.setProperty('background-image', 'var(--calendar-add-fill)')
                 break
         }
     })

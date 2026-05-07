@@ -64,7 +64,6 @@ function projectElementCreate(project) {
     projectDateButton.addEventListener('click', () => {
         if (projectDatePicker.hidden) {
             projectDatePicker.hidden = false
-            projectDatePicker.focus()
         } else {
             projectDatePicker.hidden = true
         }

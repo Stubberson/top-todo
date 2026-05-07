@@ -162,9 +162,10 @@ function displayMonth(calendarContainer, calendar, currentMonthWeeks) {
     calendarContainer.append(calendar)
 };
 
-function displayDate(date, event = undefined) {
+function displayDate(date) {
     clearContent(dateContainer)
     
+    // TODO: ADD NUMBER OF TASKS?
     const dateHeaderContainer = document.createElement('div')
     const dateHeaderDay = document.createElement('span')
     const dateHeaderMonth = document.createElement('span')
@@ -202,7 +203,8 @@ function displayDate(date, event = undefined) {
     dateHeaderContainer.append(dateHeaderDay, dateHeaderMonth, dateHeaderYear)
     dateTasksContainer.append(dateTaskButton)
 
-    getDateTasks(date).forEach(task => dateTasksContainer.append(taskElementCreate(task)))
+    const dateTasks = getDateTasks(date)
+    dateTasks.forEach(task => dateTasksContainer.append(taskElementCreate(task)))
     dateContainer.append(dateHeaderContainer, dateTasksContainer)
 };
 
@@ -227,6 +229,10 @@ function dateSelect(date, event) {
         datePicker.hidden = true
     } else {
         // CALENDAR
+        const containers = document.querySelectorAll('.sidebar-right > .calendar-container td:has( > .day)')
+        containers.forEach(container => container.firstChild.style['transform'] = 'revert-layer')
+        event.currentTarget.firstChild.style.setProperty('transition', 'transform 0.2s ease-in-out')
+        event.currentTarget.firstChild.style.setProperty('transform', 'scale(1.3)')
         displayDate(date)
     }
 }

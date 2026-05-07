@@ -108,7 +108,8 @@ function taskElementCreate(task) {
             taskDatePicker.hidden = true
             taskDateButton.blur()
 
-            revertDateIndicator(task)
+            const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${task.dateToString()}"`)
+            revertDateIndicator(calendarDateContainer)
             task.date = ''
         }
     })
@@ -205,7 +206,8 @@ function removeTask(task) {
     }
 
     // Remove main calendar marking
-    revertDateIndicator(task)
+    const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${task.dateToString()}"`)
+    revertDateIndicator(calendarDateContainer)
 }
 
 function tasksFilter(mode, project, tasksContainer) {

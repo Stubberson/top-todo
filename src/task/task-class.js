@@ -17,4 +17,9 @@ export class Task {
 
         Task.memory.push(this)
     }
+
+    dateToString() {
+        // Return 'DD-MM-YYYY', eases comparison between dates
+        return this.date.toString().slice(0, 10)
+    }
 }

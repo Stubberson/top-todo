@@ -489,6 +489,10 @@ div.project-date-container {
     width: 116px;
 }
 
+textarea.project-description-area:has(div.project-date-container:hover) {
+    background-color: whitesmoke;
+}
+
 button.project-date-button {
     width: 22px;
     height: 22px;

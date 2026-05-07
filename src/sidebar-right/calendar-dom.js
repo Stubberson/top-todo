@@ -192,7 +192,7 @@ function displayDate(date, event = undefined) {
             const todayTasksContainer = document.querySelector('.content-container > .tasks-container')
             todayTasksContainer.append(element)
         }
-        // Focus correct header
+        // Focus correct task header
         const copies = getTaskHTML(task)
         copies.length === 1 ? copies[0].children[1].focus() : copies[copies.length - 1].children[1].focus()
 
@@ -207,9 +207,9 @@ function displayDate(date, event = undefined) {
 };
 
 function dateSelect(date, event) {
-    // TASK, PROJECT, and MAIN CALENDAR date selection
+    // TASK, PROJECT, and main CALENDAR date selection
     const datePickers = Array.from(document.querySelectorAll('.date-picker'))
-    const [datePicker] = datePickers.filter(instance => !instance.hidden)  // querySelector() also selects hidden elements, take the visible
+    const [datePicker] = datePickers.filter(instance => !instance.hidden)  // querySelector() also selects hidden elements, select the visible
     if (datePicker && datePicker.classList.contains('task-date-picker')) {
         // TASK
         const taskId = datePicker.parentNode.getAttribute('data-id')
@@ -226,7 +226,7 @@ function dateSelect(date, event) {
         indicateDate(date, project)
         datePicker.hidden = true
     } else {
-        // MAIN
+        // CALENDAR
         displayDate(date)
     }
 }
@@ -275,21 +275,16 @@ function indicateDate(date = '', project = '') {
                 svgContainer.appendChild(rect)
                 container.lastChild.prepend(svgContainer)
             } else {
-                let tasksPerDate = {}
-                Task.memory.forEach(task => {
-                    let taskDateString = task.date.toString().slice(0, 10)
-                    if (taskDateString === containerDateString) {
-                        tasksPerDate[taskDateString] = Array.from(container.lastChild.children).length
-                    }
-                    // TODO: STILL FUCKED
-                    if (!Object.keys(tasksPerDate).includes(containerDateString)) {
-                        revertDateIndicator(task)
-                    }
-                })
+                // Keep track of correct number of tasks per date and indicate accordingly
+                const indicatorsPerDate = container.lastChild.childNodes.length
+                const tasksPerDate = getDateTasks(Temporal.ZonedDateTime.from(container.getAttribute('time')))
+                if (indicatorsPerDate > tasksPerDate.length) {
+                    revertDateIndicator(container)
+                }
             }
         })
     } else {
-        // When a "new calendar" is rendered, show calendar marks correctly
+        // When a "new calendar" is rendered (prev/next month), show task indicators correctly
         Task.memory.forEach(task => {
             let taskDate = task.date.toString().slice(0, 10)
             let calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${taskDate}"`)
@@ -300,19 +295,17 @@ function indicateDate(date = '', project = '') {
     }
 };
 
-function revertDateIndicator(task) {
-    const taskDate = task.date.toString().slice(0, 10)
-    const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${taskDate}"`)
-    
-    if (calendarDateContainer.lastChild.childNodes.length === 0) {
-        calendarDateContainer.firstChild.style['font-weight'] = 'revert-layer'
+function revertDateIndicator(dateContainer) {
+    if (dateContainer.lastChild.childNodes.length === 1) {
+        dateContainer.lastChild.firstChild.remove()
+        dateContainer.firstChild.style['font-weight'] = 'revert-layer'
     } else {
-        calendarDateContainer.lastChild.firstChild.remove()
+        dateContainer.lastChild.firstChild.remove()
     }
-}
+};
 
 function getDateTasks(date) {
     return Task.memory.filter(task => date.year === task.date.year && date.dayOfYear === task.date.dayOfYear)
-}
+};
 
 export { viewCalendar, createCalendar, displayDate, indicateDate, revertDateIndicator }

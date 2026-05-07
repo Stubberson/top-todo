@@ -23,7 +23,7 @@ function taskElementCreate(task) {
     taskCompleteCheckbox.className = 'task-complete-checkbox'
     taskCompleteCheckbox.type = 'checkbox'
     taskCompleteCheckbox.name = 'task-complete-checkbox'
-    taskCompleteCheckbox.checked = task.completed
+    if (task.completed) taskCompleteCheckbox.checked = true
     taskCompleteCheckbox.addEventListener('click', (event) => {
         event.target.checked ? task.completed = true : task.completed = false
         taskSyncLinked(task, 'completed')  // taskSyncLinked synchronizes changes between every task copy
@@ -32,9 +32,11 @@ function taskElementCreate(task) {
     taskHeader.className = 'task-header'
     taskHeader.type = 'text'
     taskHeader.name = 'task-header'
-    taskHeader.placeholder = '...'
+    taskHeader.placeholder = 'Add task...'
     taskHeader.autocomplete = 'off'
     taskHeader.value = task.header  // If header is already given, use it
+    taskHeader.style['color'] = task.style['header-color']
+    taskHeader.style['text-decoration'] = task.style['header-decoration']
     taskHeader.addEventListener('input', () => {
         task.header = taskHeader.value
         taskSyncLinked(task, 'header')
@@ -49,6 +51,7 @@ function taskElementCreate(task) {
     taskDescriptionOpener.className = 'task-open-checkbox'
     taskDescriptionOpener.type = 'checkbox'
     taskDescriptionOpener.name = 'task-open-checkbox'
+    taskDescription.style['text-decoration'] = task.style['description-decoration']
     taskDescriptionOpener.addEventListener('click', () => {
         if (taskDescription.hidden) {
             taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
@@ -58,7 +61,7 @@ function taskElementCreate(task) {
     })
 
     taskDescription.classList.add('task-description-area', 'description')
-    taskDescription.placeholder = '...'
+    taskDescription.placeholder = 'Add description...'
     taskDescription.name = 'task-description-area'
     taskDescription.rows = 3
     taskDescription.hidden = true
@@ -168,14 +171,23 @@ function taskSyncLinked(task, property) {
             case 'completed':
                 if (!task.completed) {
                     copy.children[completed].checked = false
-                    copy.children[header].style['color'] = 'revert-layer'
-                    copy.children[header].style['text-decoration'] = 'revert-layer'
-                    copy.children[description].style['text-decoration'] = 'revert-layer'
+                    copy.children[header].style.setProperty('color', 'revert-layer')
+                    copy.children[header].style.setProperty('text-decoration', 'revert-layer')
+                    copy.children[description].style.setProperty('text-decoration', 'revert-layer')
+
+                    // Save the styling ot be able to access it later
+                    task.style['header-color'] = ''
+                    task.style['header-decoration'] = ''
+                    task.style['description-decoration'] = '' 
                 } else {
                     copy.children[completed].checked = true
-                    copy.children[header].style['color'] = '#767676'
-                    copy.children[header].style['text-decoration'] = '#767676 line-through solid 1px'
-                    copy.children[description].style['text-decoration'] = '#767676 line-through solid 0.5px'
+                    copy.children[header].style.setProperty('color', '#767676')
+                    copy.children[header].style.setProperty('text-decoration', '#767676 line-through solid 1px')
+                    copy.children[description].style.setProperty('text-decoration', '#767676 line-through solid 0.5px')
+                    
+                    task.style['header-color'] = '#767676'
+                    task.style['header-decoration'] = '#767676 line-through solid 1px'
+                    task.style['description-decoration'] = '#767676 line-through solid 0.5px'
                 }
                 break
             case 'important':
@@ -215,21 +227,6 @@ function removeTask(task) {
     revertDateIndicator(calendarDateContainer)
 }
 
-function tasksFilter(mode, project, tasksContainer) {
-    clearContent(tasksContainer)
-    if (mode === 'all') {
-        project.tasks.forEach(task => tasksContainer.append(taskElementCreate(task)))
-    }
-    
-    if (mode === 'important') {
-        project.tasks.forEach(task => {
-            if (task.important) {
-                tasksContainer.append(taskElementCreate(task))
-            }
-        })
-    }
-}
-
 function taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton) {
     taskDescription.hidden = false
     Array.from(taskTagsContainer.children).forEach(tag => tag.hidden = false)
@@ -254,4 +251,4 @@ function taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsCont
     taskHeader.focus()
 }
 
-export { taskElementCreate, getTaskHTML, tasksFilter, taskSyncLinked }
+export { taskElementCreate, getTaskHTML, taskSyncLinked }

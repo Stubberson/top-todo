@@ -188,7 +188,7 @@ function displayDate(date, event = undefined) {
         const task = new Task(date)
         const element = taskElementCreate(task)
         displayDate(task.date)
-        if (isToday(date) && currentView === 'today') {  // If added for today and 'Today' open, add to 'Today'
+        if (isToday(date) && currentView[0] === 'today') {  // If added for today and 'Today' open, add to 'Today'
             const todayTasksContainer = document.querySelector('.content-container > .tasks-container')
             todayTasksContainer.append(element)
         }

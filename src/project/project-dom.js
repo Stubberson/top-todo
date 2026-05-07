@@ -35,7 +35,7 @@ function projectElementCreate(project) {
     projectHeader.type = 'text'
     projectHeader.className = 'project-header'
     projectHeader.name = 'project-header'
-    projectHeader.placeholder = '...'
+    projectHeader.placeholder = 'Add header...'
     projectHeader.autocomplete = 'off'
     if (project.header) projectHeader.value = project.header
     projectHeader.addEventListener('input', () => {
@@ -45,7 +45,7 @@ function projectElementCreate(project) {
     })
 
     projectDescription.classList.add('project-description-area', 'description')
-    projectDescription.placeholder = '...'
+    projectDescription.placeholder = 'Add description...'
     projectDescription.rows = 3
     projectDescription.name = 'project-description-area'
     if (project.description) projectDescription.textContent = project.description

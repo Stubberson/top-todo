@@ -9,6 +9,7 @@ export class Task {
         this.completed = false
         this.important = false
         this.date = date
+        this.style = {}
 
         if (project) {
             this.owningProject = project

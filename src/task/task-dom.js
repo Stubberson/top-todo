@@ -32,7 +32,7 @@ function taskElementCreate(task) {
     taskHeader.className = 'task-header'
     taskHeader.type = 'text'
     taskHeader.name = 'task-header'
-    taskHeader.placeholder = 'Add task...'
+    taskHeader.placeholder = '...'
     taskHeader.autocomplete = 'off'
     taskHeader.value = task.header  // If header is already given, use it
     taskHeader.addEventListener('input', () => {
@@ -58,7 +58,7 @@ function taskElementCreate(task) {
     })
 
     taskDescription.classList.add('task-description-area', 'description')
-    taskDescription.placeholder = 'Add description...'
+    taskDescription.placeholder = '...'
     taskDescription.name = 'task-description-area'
     taskDescription.rows = 3
     taskDescription.hidden = true
@@ -98,7 +98,12 @@ function taskElementCreate(task) {
     } else {
         taskDateButton.textContent = 'Date'
         taskDateButton.addEventListener('click', (event) => {
-            taskDatePicker.hidden ? taskDatePicker.hidden = false : taskDatePicker.hidden = true
+            if (taskDatePicker.hidden) {
+                taskDatePicker.hidden = false
+                taskDatePicker.focus()
+            } else {
+                taskDatePicker.hidden = true
+            }
         })
     }
     taskDateButton.addEventListener('keydown', (event) => {

@@ -10,4 +10,9 @@ export class Project {
 
         Project.memory.push(this)
     }
+
+    getDateString() {
+        // When the date needs to be displayed nicely
+        return this.date.toLocaleString('en-de', {day: '2-digit', month: 'short', year: '2-digit'} )
+    }
 }

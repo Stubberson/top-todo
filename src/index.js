@@ -5,14 +5,12 @@ import { viewCalendar } from './sidebar-right/calendar-dom.js'
 import { Project } from './project/project-class.js'
 import { viewProject } from './project/project-dom.js'
 
-let currentView = undefined;  // Track currently open view
-
+let currentView = [];  // Track currently open view
 const body = document.querySelector('body');
 
 (() => {  // Default view
     viewToday()
     viewCalendar()
-    currentView = 'today'
 })();
 
 (function listenIndexEvents() {
@@ -23,17 +21,14 @@ const body = document.querySelector('body');
 
     tasksToday.addEventListener('click', () => {
         viewToday()
-        currentView = 'today'
     })
 
     tasksImportant.addEventListener('click', () => {
         viewImportant()
-        currentView = 'important'
     })
 
     projectNew.addEventListener('click', () => {
         viewProject(new Project())
-        currentView = 'project'
     })
 
     toggleLeft.addEventListener('click', () => {

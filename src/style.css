@@ -480,6 +480,8 @@ textarea:hover {
 }
 
 div.project-date-container {
+    pointer-events: none; /* Disable hover/click events on the container */
+
     position: absolute;
     right: 0;
     bottom: 0;
@@ -489,11 +491,9 @@ div.project-date-container {
     width: 116px;
 }
 
-textarea.project-description-area:has(div.project-date-container:hover) {
-    background-color: whitesmoke;
-}
-
 button.project-date-button {
+    pointer-events: auto;  /* Must enable explicitly */
+
     width: 22px;
     height: 22px;
 
@@ -659,7 +659,6 @@ button.task-remove-button {
     height: 22px;
 
     appearance: none;
-    outline: unset;
     color: var(--medium-gray-highlight);
 
     background-position: left;
@@ -668,8 +667,6 @@ button.task-remove-button {
     text-indent: 28px;
     overflow: hidden;
     text-wrap: nowrap;
-
-    cursor: pointer;
 
     transition: flex-grow 0.25s ease-in-out;
 }
@@ -701,6 +698,12 @@ button.task-remove-button:focus-visible {
 button.task-remove-button:hover,
 button.task-remove-button:focus-visible {
     background-image: var(--delete-line-red);
+    color: red;
+}
+
+button.task-remove-button:focus-visible {
+    outline: 2px solid red;
+    border-radius: 2px;
 }
 
 /* POPUP DATE PICKER */

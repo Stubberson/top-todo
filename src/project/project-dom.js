@@ -3,18 +3,16 @@ import { Project } from './project-class.js'
 import { Task } from '../task/task-class.js'
 import { taskElementCreate, tasksFilter } from '../task/task-dom.js'
 import { viewToday } from '../sidebar-left/today-dom.js'
-import { clearContent } from '../utilities/utility.js'
+import { clearContent, trackView } from '../utilities/utility.js'
 import { createCalendar } from '../sidebar-right/calendar-dom.js'
 import { viewImportant } from '../sidebar-left/important-dom.js'
 
 // --- Project DOM control ---
+const contentContainer = document.querySelector('div.content-container')
+
 function viewProject(project) {
-    const element = projectElementCreate(project)
-    
-    const contentContainer = document.querySelector('div.content-container')
-    clearContent(contentContainer)
-    contentContainer.append(element)
-    
+    trackView(`project-${project.id}`)
+    renderProject(project)
     listProject(project)
 }
 
@@ -37,8 +35,9 @@ function projectElementCreate(project) {
     projectHeader.type = 'text'
     projectHeader.className = 'project-header'
     projectHeader.name = 'project-header'
-    projectHeader.placeholder = 'Add header...'
+    projectHeader.placeholder = '...'
     projectHeader.autocomplete = 'off'
+    if (project.header) projectHeader.value = project.header
     projectHeader.addEventListener('input', () => {
         project.header = projectHeader.value
         const listingButtonHeader = document.querySelector(`span[data-id='${project.id}']`)
@@ -46,9 +45,10 @@ function projectElementCreate(project) {
     })
 
     projectDescription.classList.add('project-description-area', 'description')
-    projectDescription.placeholder = 'Add project description...'
+    projectDescription.placeholder = '...'
     projectDescription.rows = 3
     projectDescription.name = 'project-description-area'
+    if (project.description) projectDescription.textContent = project.description
     projectDescription.addEventListener('input', () => {
         project.description = projectDescription.value
     })
@@ -57,8 +57,17 @@ function projectElementCreate(project) {
 
     projectDateButton.className = 'project-date-button'
     projectDateButton.textContent = 'Date'
+    if (project.date) {
+        projectDateButton.textContent = project.getDateString()
+        projectDateButton.style.setProperty('background-image', 'var(--calendar-add-fill)')
+    }
     projectDateButton.addEventListener('click', () => {
-        projectDatePicker.hidden ? projectDatePicker.hidden = false : projectDatePicker.hidden = true
+        if (projectDatePicker.hidden) {
+            projectDatePicker.hidden = false
+            projectDatePicker.focus()
+        } else {
+            projectDatePicker.hidden = true
+        }
     })
     projectDateButton.addEventListener('keydown', (event) => {
         if (event.key === 'Backspace') {
@@ -95,6 +104,7 @@ function projectElementCreate(project) {
     })
 
     projectTasksContainer.className = 'project-tasks-container'
+    if (project.tasks) project.tasks.forEach(task => projectTasksContainer.append(taskElementCreate(task)))
 
     projectDateContainer.append(projectDateButton)
     projectHeadContainer.append(projectHeader, projectDescription, projectDateContainer, projectDatePicker)
@@ -120,7 +130,9 @@ function listProject(project) {
     projectRemoveButton.className = 'listing-rm-button'
 
     projectButtonHeader.textContent = project.header
-    if (project.date) projectButtonDate.textContent = project.date.toString().splice(0, 10)
+    if (project.date) {
+        projectButtonDate.textContent = project.date.toLocaleString('en-de', { day: '2-digit', month: 'short', year: '2-digit' })
+    }
 
     projectButton.append(projectButtonHeader, projectButtonDate)
     projectListing.append(projectButton, projectRemoveButton)
@@ -128,10 +140,11 @@ function listProject(project) {
     projectsList.appendChild(projectListing)
 
     projectButton.addEventListener('click', () => {
-        projectElementCreate(project)
+        renderProject(project)
+        trackView(`project-${project.id}`)
     })
 
-    projectRemoveButton.addEventListener('click', () => {
+    projectRemoveButton.addEventListener('click', (event) => {
         projectRemoveButton.hidden = true
         
         const confirmRemove = document.createElement('button')
@@ -141,7 +154,12 @@ function listProject(project) {
         
         // Confirm project removal
         confirmRemove.addEventListener('click', () => {
-            removeProjectListing(projectListing, project)
+            removeProject(projectListing, project)
+            if (Project.memory.length > 0 && currentView[0].includes(project.id)) {
+                renderProject(Project.memory[0])
+            } else if (Project.memory.length === 0) {
+                viewToday()
+            }
         })
 
         // If user doesn't confirm removal, cancel
@@ -152,7 +170,7 @@ function listProject(project) {
     })
 };
 
-function removeProjectListing(projectListing, project) {
+function removeProject(projectListing, project) {
     // Remove project from sidebar
     const projectsList = document.querySelector('ul.projects-list')
     projectsList.removeChild(projectListing)
@@ -164,16 +182,15 @@ function removeProjectListing(projectListing, project) {
     // Remove project from mem
     const projectIndex = Project.memory.indexOf(project)
     Project.memory.splice(projectIndex, 1)
-
-    // Update content after removal
-    switch (currentView) {
-        case 'today':
-            viewToday()
-            break
-        case 'important':
-            viewImportant()
-            break
-    }
 };
+
+function renderProject(project) {
+    const element = projectElementCreate(project)
+
+    clearContent(contentContainer)
+    contentContainer.append(element)
+    const projectHeader = element.querySelector('.project-header')
+    projectHeader.focus()
+}
 
 export { viewProject }

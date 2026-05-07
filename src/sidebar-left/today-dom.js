@@ -1,4 +1,5 @@
-import { clearContent, isToday } from '../utilities/utility.js'
+import { currentView } from '../index.js'
+import { clearContent, isToday, trackView } from '../utilities/utility.js'
 import { Task } from '../task/task-class.js'
 import { taskElementCreate, taskRemove } from '../task/task-dom.js'
 import { displayDate, indicateDate } from '../sidebar-right/calendar-dom.js'
@@ -6,6 +7,8 @@ import { displayDate, indicateDate } from '../sidebar-right/calendar-dom.js'
 // --- Today's tasks DOM control ---
 
 function viewToday() {
+    trackView('today')  // Keep track of the current view
+
     const contentContainer = document.querySelector('div.content-container')
     clearContent(contentContainer)  // Refresh content container
 

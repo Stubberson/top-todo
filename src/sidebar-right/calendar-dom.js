@@ -231,7 +231,7 @@ function dateSelect(date, event) {
         // CALENDAR
         const containers = document.querySelectorAll('.sidebar-right > .calendar-container td:has( > .day)')
         containers.forEach(container => container.firstChild.style['transform'] = 'revert-layer')
-        event.currentTarget.firstChild.style.setProperty('transition', 'transform 0.2s ease-in-out')
+        event.currentTarget.firstChild.style.setProperty('transition', 'transform 0.1s ease-in-out')
         event.currentTarget.firstChild.style.setProperty('transform', 'scale(1.3)')
         displayDate(date)
     }
@@ -262,20 +262,16 @@ function indicateDate(date = '', project = '') {
                 svgContainer.setAttribute('width', '5px')
                 svgContainer.setAttribute('height', '5px')
 
-                // TODO: STILL NEEDS WORK, BLACK AND RED NOT EASY TO DISTINGUISH
                 if (dateTasks.length < 5) {
-                    rect.style['stroke'] = 'black'
-                    rect.style['stroke-width'] = '0.5px'
+                    rect.style['fill'] = 'black'
                 } else if (dateTasks.length >= 5 && dateTasks.length < 9) {
-                    rect.style['stroke'] = 'var(--cherry-rose)'
-                    rect.style['stroke-width'] = '0.5px'
+                    rect.style['fill'] = 'black'
+                    rect.style['width'] = '3px'
+                    rect.style['x'] = '1px'
                 } else {
-                    rect.style['x'] = '0.5px'
-                    rect.style['y'] = '0.5px'
-                    rect.style['width'] = '4px'
-                    rect.style['height'] = '4px'
-                    rect.style['fill'] = 'var(--cherry-rose)'
-                    rect.style['fill-opacity'] = '1'
+                    rect.style['fill'] = 'black'
+                    rect.style['width'] = '5px'
+                    rect.style['x'] = '0'
                 }
 
                 svgContainer.appendChild(rect)

@@ -10,21 +10,27 @@ function viewToday() {
     trackView('today')  // Keep track of the current view
 
     const contentContainer = document.querySelector('div.content-container')
-    clearContent(contentContainer)  // Refresh content container
+    clearContent(contentContainer)     // Refresh content container
+
+    const tasksToday = getTodayTasks()  // All tasks for today
 
     const todayHeader = document.createElement('h1')
     todayHeader.textContent = 'Today'
 
     const summaryContainer = document.createElement('div')
-    const summaryItemContainer = document.createElement('div')
     summaryContainer.className = 'today-summary-container'
-    summaryItemContainer.className = 'today-summary-item'
 
     const todayTasksContainer = document.createElement('div')
     todayTasksContainer.className = 'tasks-container'
 
-    const tasksToday = getTodayTasks()
-    tasksToday.forEach(task => todayTasksContainer.append(taskElementCreate(task)))
+    // Add today's tasks to the summary and as editable tasks
+    tasksToday.forEach(task => {
+        let todayTask = taskElementCreate(task)
+        
+        let summaryItem = createSummaryItem(todayTask)
+        summaryContainer.append(summaryItem)
+        todayTasksContainer.append(todayTask)
+    })
 
     const taskNewButton = document.createElement('button')
     taskNewButton.className = 'task-new-button'
@@ -36,12 +42,19 @@ function viewToday() {
         element.children[1].focus()  // Focus header
     })
 
-    summaryContainer.append(summaryItemContainer)
     contentContainer.append(todayHeader, summaryContainer, taskNewButton, todayTasksContainer)
-}
+};
+
+function createSummaryItem(task) {
+    const summaryItemContainer = document.createElement('div')
+    summaryItemContainer.className = 'today-summary-item'
+
+    summaryItemContainer.append(task.children[1].value)
+    return summaryItemContainer
+};
 
 function getTodayTasks() {
     return Task.memory.filter(task => isToday(task.date))
-}
+};
 
 export { viewToday }

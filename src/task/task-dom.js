@@ -18,7 +18,7 @@ function taskElementCreate(task) {
     const taskDatePicker = createCalendar()
 
     taskContainer.classList.add('task-container')
-    // Add a data-id to refer to this exact task in multiple places
+    // Add a data-id to refer to this task through querySelector()
     taskContainer.setAttribute('data-id', task.id)
 
     taskCompleteCheckbox.className = 'task-complete-checkbox'
@@ -114,7 +114,7 @@ function taskElementCreate(task) {
         })
     }
     taskDateButton.addEventListener('keydown', (event) => {
-        console.log(event.key)
+        // Allow to delete a date marking
         if (event.key === 'Backspace') {
             taskDateButton.textContent = 'Date'
             taskDateButton.style = 'revert-layer'
@@ -228,8 +228,10 @@ function removeTask(task) {
     }
 
     // Remove main calendar marking
-    const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${task.dateToString()}"`)
-    revertDateIndicator(calendarDateContainer)
+    if (task.date) {
+        const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${task.dateToString()}"`)
+        revertDateIndicator(calendarDateContainer)
+    }
 }
 
 function taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton) {

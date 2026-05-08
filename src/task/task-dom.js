@@ -33,7 +33,7 @@ function taskElementCreate(task) {
     taskHeader.className = 'task-header'
     taskHeader.type = 'text'
     taskHeader.name = 'task-header'
-    taskHeader.placeholder = 'Add task...'
+    taskHeader.placeholder = '[task]'
     taskHeader.autocomplete = 'off'
     taskHeader.value = task.header  // If header is already given, use it
     taskHeader.style['color'] = task.style['header-color']
@@ -62,7 +62,7 @@ function taskElementCreate(task) {
     })
 
     taskDescription.classList.add('task-description-area', 'description')
-    taskDescription.placeholder = 'Add description...'
+    taskDescription.placeholder = '[description]'
     taskDescription.name = 'task-description-area'
     taskDescription.rows = 3
     taskDescription.hidden = true
@@ -254,8 +254,6 @@ function taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsCont
     taskDescriptionOpener.checked = false
     taskRemoveButton.hidden = true
     taskDatePicker.hidden = true
-
-    taskHeader.focus()
 }
 
 export { taskElementCreate, getTaskHTML, taskSyncLinked }

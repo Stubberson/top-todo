@@ -1,6 +1,7 @@
 import './style.css'
 import { viewToday } from './sidebar-left/today-dom.js'
 import { viewImportant } from './sidebar-left/important-dom.js'
+import { viewCompleted } from './sidebar-left/completed-dom.js'
 import { viewCalendar } from './sidebar-right/calendar-dom.js'
 import { Project } from './project/project-class.js'
 import { viewProject } from './project/project-dom.js'
@@ -16,6 +17,7 @@ const body = document.querySelector('body');
 (function listenIndexEvents() {
     const tasksToday = document.querySelector('button#today-all')
     const tasksImportant = document.querySelector('button#important-all')
+    const tasksCompleted = document.querySelector('button#completed-all')
     const projectNew = document.querySelector('button#new-project')
     const toggleLeft = document.querySelector('button#toggle-left')
 
@@ -25,6 +27,10 @@ const body = document.querySelector('body');
 
     tasksImportant.addEventListener('click', () => {
         viewImportant()
+    })
+
+    tasksCompleted.addEventListener('click', () => {
+        viewCompleted()
     })
 
     projectNew.addEventListener('click', () => {

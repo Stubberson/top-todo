@@ -10,7 +10,7 @@ function viewToday() {
     trackView('today')  // Keep track of the current view
 
     const contentContainer = document.querySelector('div.content-container')
-    clearContent(contentContainer)     // Refresh content container
+    clearContent(contentContainer)
 
     const tasksToday = getTodayTasks()  // All tasks for today
 
@@ -20,17 +20,28 @@ function viewToday() {
     const summaryContainer = document.createElement('div')
     summaryContainer.className = 'today-summary-container'
 
+    const summaryItemsContainer = document.createElement('div')
+    summaryItemsContainer.className = 'today-summary-items'
+
+    const buttonContainer = document.createElement('div')
+    buttonContainer.className = 'summary-buttons-container'
+
+    const summaryContainerRefresh = document.createElement('button')
+    summaryContainerRefresh.id = 'today-summary-refresh'
+    summaryContainerRefresh.textContent = 'Refresh'
+    summaryContainerRefresh.addEventListener('click', () => {
+        clearContent(summaryItemsContainer)
+        appendSummaryTasks(getTodayTasks(), summaryItemsContainer)
+        document.querySelector('.today-summary-container').append(summaryItemsContainer)
+    })
+
     const todayTasksContainer = document.createElement('div')
     todayTasksContainer.className = 'tasks-container'
 
-    // Add today's tasks to the summary and as editable tasks
     tasksToday.forEach(task => {
-        let todayTask = taskElementCreate(task)
-        
-        let summaryItem = createSummaryItem(todayTask)
-        summaryContainer.append(summaryItem)
-        todayTasksContainer.append(todayTask)
+        todayTasksContainer.append(taskElementCreate(task))
     })
+    appendSummaryTasks(tasksToday, summaryItemsContainer)
 
     const taskNewButton = document.createElement('button')
     taskNewButton.className = 'task-new-button'
@@ -42,14 +53,33 @@ function viewToday() {
         element.children[1].focus()  // Focus header
     })
 
+    if (tasksToday.length > 0) {
+        buttonContainer.append(summaryContainerRefresh)
+        summaryContainer.prepend(buttonContainer, summaryItemsContainer)
+    }
     contentContainer.append(todayHeader, summaryContainer, taskNewButton, todayTasksContainer)
 };
 
+function appendSummaryTasks(tasksToday, itemsContainer) {
+     // Add today's tasks to the summary ('refresh' it)
+    tasksToday.forEach(task => {
+        let summaryItem = createSummaryItem(task)
+        itemsContainer.append(summaryItem)
+    })
+};
+
+// TODO: SUMMARY SHOULD SORT THE TASKS BASED ON GIVEN TIME (> todo: create time picker)
 function createSummaryItem(task) {
     const summaryItemContainer = document.createElement('div')
     summaryItemContainer.className = 'today-summary-item'
-
-    summaryItemContainer.append(task.children[1].value)
+    
+    const headerStyle = task.style['header-decoration']
+    const element = taskElementCreate(task)
+    const span = document.createElement('span')
+    span.textContent = element.children[1].value
+    span.style['text-decoration'] = headerStyle
+    
+    summaryItemContainer.append(span)
     return summaryItemContainer
 };
 

@@ -42,6 +42,7 @@ body {
     --minimize-black: url('./visuals/minimize-black.svg');
     --new-line-black: url('./visuals/new-default.svg');
     --new-line-white: url('./visuals/new-hover.svg');
+    --refresh-gray: url('./visuals/refresh-gray.svg');
     --task-checkbox-line: url('./visuals/task-incomplete.svg');
     --task-checkbox-fill: url('./visuals/task-complete.svg');
     --time-add-line: url('./visuals/clock/time-add.svg');
@@ -124,11 +125,11 @@ button#important-all:hover::before {
     transform: scale(1.2);
 }
 
-button#finished-all::before {
+button#completed-all::before {
     content: var(--check-black);
 }
 
-button#finished-all:hover::before {
+button#completed-all:hover::before {
     transform: scale(1.1);
 }
 
@@ -437,17 +438,63 @@ div.content-container {
 div.today-summary-container {
     display: flex;
     flex-direction: column;
+    position: relative;
 
     width: 100%;
     height: fit-content;
     background-color: whitesmoke;
 }
 
+span.today-summary-header {
+    color: var(--medium-gray-highlight);
+    font-family: var(--atkinson-mono);
+    font-weight: 100;
+    padding: 2px 0 0 2px;
+}
+
+div.summary-buttons-container {
+    position: absolute;
+    right: 1px;
+    width: 100px;
+    display: flex;
+    justify-content: end;
+}
+
+button#today-summary-refresh {
+    color: var(--medium-gray-highlight);
+
+    width: 18px;
+    height: 18px;
+
+    text-indent: 28px;
+    overflow: hidden;
+    text-wrap: nowrap;
+
+    appearance: none;
+    background-image: var(--refresh-gray);
+    background-repeat: no-repeat;
+    background-color: unset;
+
+    transition: flex-grow 0.25s ease-in-out;
+}
+
+button#today-summary-refresh:hover,
+button#today-summary-refresh:focus-visible {
+    flex-grow: 1;
+    background-color: var(--light-gray-highlight);
+}
+
+div.today-summary-items {
+    border-top: 1px solid var(--light-gray-highlight);
+    
+    display: flex;
+    flex-direction: column;
+}
+
 div.today-summary-item {
     color: var(--medium-gray-highlight);
     font-family: var(--atkinson-mono);
     font-size: smaller;
-    text-indent: 20px;
 }
 
 /* PROJECT CONTENT */
@@ -539,13 +586,10 @@ button.task-new-button {
     background-repeat: no-repeat;
     background-position: left;
     background-size: 30px;
-
-    transition: background-size 0.2s ease-in-out;
 }
 
 button.task-new-button:hover,
 button.task-new-button:focus-visible {
-    background-image: var(--new-line-white);
     background-color: yellowgreen;
 }
 
@@ -601,6 +645,7 @@ input.task-header {
 
     flex-grow: 1;
     min-height: 20px;  /* If not explicit, there's a 0.5px nudge when description revealed */
+    text-overflow: ellipsis;
 }
 
 input.task-header:hover,

@@ -35,7 +35,7 @@ function projectElementCreate(project) {
     projectHeader.type = 'text'
     projectHeader.className = 'project-header'
     projectHeader.name = 'project-header'
-    projectHeader.placeholder = 'Add header...'
+    projectHeader.placeholder = '[project]'
     projectHeader.autocomplete = 'off'
     if (project.header) projectHeader.value = project.header
     projectHeader.addEventListener('input', () => {
@@ -45,7 +45,7 @@ function projectElementCreate(project) {
     })
 
     projectDescription.classList.add('project-description-area', 'description')
-    projectDescription.placeholder = 'Add description...'
+    projectDescription.placeholder = '[description]'
     projectDescription.rows = 3
     projectDescription.name = 'project-description-area'
     if (project.description) projectDescription.textContent = project.description
@@ -190,6 +190,6 @@ function renderProject(project) {
     contentContainer.append(element)
     const projectHeader = element.querySelector('.project-header')
     projectHeader.focus()
-}
+};
 
 export { viewProject }

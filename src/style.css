@@ -46,6 +46,7 @@ body {
     --task-checkbox-line: url('./visuals/task-incomplete.svg');
     --task-checkbox-fill: url('./visuals/task-complete.svg');
     --time-add-line: url('./visuals/clock/time-add.svg');
+    --time-add-fill: url('./visuals/clock/time-set.svg');
 
     font-family: var(--atkinson-sans-serif);
 
@@ -791,6 +792,39 @@ button.task-remove-button:focus-visible {
 button.task-remove-button:focus-visible {
     outline: 2px solid red;
     border-radius: 2px;
+}
+
+/* POPUP TIME PICKER */
+div.task-time-picker {
+    position: absolute;
+    bottom: -30px;  /* Time picker attaches to task-container */
+    right: 45px;
+    z-index: 3;
+    padding: 2px 2px 4px 2px;
+
+    width: 50px;
+    background-color: white;
+    outline: solid 1px black;
+}
+
+div.hour-minute-container {
+    display: flex;
+}
+
+div.hour-minute-container span {
+    font-family: var(--atkinson-mono);
+    font-size: small;
+    font-weight: 100;
+}
+
+div.time-picker-hour,
+div.time-picker-minute {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+div.time-picker-minute {
+    margin-left: auto;
 }
 
 /* POPUP DATE PICKER */

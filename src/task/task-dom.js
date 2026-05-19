@@ -1,5 +1,6 @@
 import { Task } from "./task-class.js"
 import { clearContent } from "../utilities/utility.js"
+import { createTimePicker } from "../utilities/time.js"
 import { Project } from "../project/project-class.js"
 import { viewToday } from "../sidebar-left/today-dom.js"
 import { createCalendar, displayDate, indicateDate, revertDateIndicator } from "../sidebar-right/calendar-dom.js"
@@ -13,9 +14,11 @@ function taskElementCreate(task) {
     const taskTagsContainer = document.createElement('div')
     const taskImportantButton = document.createElement('button')
     const taskTimeButton = document.createElement('button')
+    const taskTimePicker = createTimePicker()
     const taskDateButton = document.createElement('button')
-    const taskRemoveButton = document.createElement('button')
     const taskDatePicker = createCalendar()
+    const taskRemoveButton = document.createElement('button')
+    
 
     taskContainer.classList.add('task-container')
     // Add a data-id to refer to this task through querySelector()
@@ -96,7 +99,17 @@ function taskElementCreate(task) {
 
     taskTimeButton.classList.add('task-time-button', 'task-tag')
     taskTimeButton.hidden = true
-    taskTimeButton.textContent = 'Time'
+    if (task.time) {
+        taskTimeButton.style.setProperty('background-image', 'var(--time-add-fill)')
+    } else {
+        taskTimeButton.textContent = 'Time'
+        taskTimeButton.addEventListener('click', () => {
+            taskTimePicker.hidden ? taskTimePicker.hidden = false : taskTimePicker.hidden = true
+        })
+    }
+    
+    taskTimePicker.hidden = true
+    taskTimePicker.setAttribute('tabindex', 0)  // Allows focus on time picker
 
     taskDateButton.classList.add('task-date-button', 'task-tag')
     taskDateButton.hidden = true
@@ -105,12 +118,8 @@ function taskElementCreate(task) {
         taskDateButton.style.setProperty('background-image', 'var(--calendar-add-fill)')
     } else {
         taskDateButton.textContent = 'Date'
-        taskDateButton.addEventListener('click', (event) => {
-            if (taskDatePicker.hidden) {
-                taskDatePicker.hidden = false
-            } else {
-                taskDatePicker.hidden = true
-            }
+        taskDateButton.addEventListener('click', () => {
+            taskDatePicker.hidden ? taskDatePicker.hidden = false : taskDatePicker.hidden = true
         })
     }
     taskDateButton.addEventListener('keydown', (event) => {
@@ -127,6 +136,25 @@ function taskElementCreate(task) {
         }
     })
 
+    taskDatePicker.classList.add('task-date-picker', 'date-picker')
+    taskDatePicker.hidden = true
+    taskDatePicker.setAttribute('tabindex', 0)  // Allows focus on date picker
+
+    // Hide time and date picker when clicked outside or Escaped
+    document.addEventListener('click', (event) => {
+        if ((taskDatePicker.hidden === false && !event.target.closest('div.date-picker') && !event.target.classList.contains('task-date-button')) ||
+            (taskTimePicker.hidden === false && !event.target.closest('div.task-time-picker') && !event.target.classList.contains('task-time-button'))) {
+            taskDatePicker.hidden = true
+            taskTimePicker.hidden = true
+        }
+    })
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            taskDatePicker.hidden = true
+            taskTimePicker.hidden = true
+        }
+    })
+
     taskRemoveButton.classList.add('task-remove-button', 'task-tag')
     taskRemoveButton.hidden = true
     taskRemoveButton.textContent = 'Delete'
@@ -134,24 +162,8 @@ function taskElementCreate(task) {
         removeTask(task)
     })
 
-    taskDatePicker.classList.add('task-date-picker', 'date-picker')
-    taskDatePicker.hidden = true
-    taskDatePicker.setAttribute('tabindex', 0)  // Allows focus on date picker
-
-    // Hide date picker when clicked outside or Escaped
-    document.addEventListener('click', (event) => {
-        if (taskDatePicker.hidden === false && !event.target.closest('div.date-picker') && !event.target.classList.contains('task-date-button')) {
-            taskDatePicker.hidden = true
-        }
-    })
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            taskDatePicker.hidden = true
-        }
-    })
-
     taskTagsContainer.append(taskImportantButton, taskTimeButton, taskDateButton, taskRemoveButton)
-    taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskTagsContainer, taskDatePicker)
+    taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskTagsContainer, taskTimePicker, taskDatePicker)
     
     return taskContainer
 }
@@ -256,4 +268,4 @@ function taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsCont
     taskDatePicker.hidden = true
 }
 
-export { taskElementCreate, getTaskHTML, taskSyncLinked }
+export { taskElementCreate, getTaskHTML, taskSyncLinked, removeTask }

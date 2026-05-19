@@ -1,7 +1,7 @@
 import { currentView } from '../index.js'
 import { Project } from './project-class.js'
 import { Task } from '../task/task-class.js'
-import { taskElementCreate, tasksFilter } from '../task/task-dom.js'
+import { taskElementCreate, removeTask, tasksFilter } from '../task/task-dom.js'
 import { viewToday } from '../sidebar-left/today-dom.js'
 import { clearContent, trackView } from '../utilities/utility.js'
 import { createCalendar } from '../sidebar-right/calendar-dom.js'
@@ -176,7 +176,7 @@ function removeProject(projectListing, project) {
 
     // Remove project related tasks
     const projectTasks = project.tasks
-    projectTasks.forEach(task => Task.memory.splice(Task.memory.indexOf(task), 1))
+    projectTasks.forEach(task => removeTask(task))
     
     // Remove project from mem
     const projectIndex = Project.memory.indexOf(project)

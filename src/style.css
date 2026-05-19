@@ -482,7 +482,6 @@ button#today-summary-refresh {
 button#today-summary-refresh:hover,
 button#today-summary-refresh:focus-visible {
     flex-grow: 1;
-    background-color: var(--light-gray-highlight);
 }
 
 div.today-summary-items {
@@ -802,7 +801,8 @@ div.task-time-picker {
     z-index: 3;
     padding: 2px 2px 4px 2px;
 
-    width: 50px;
+    width: 75px;
+    height: 15px;
     background-color: white;
     outline: solid 1px black;
 }
@@ -811,20 +811,33 @@ div.hour-minute-container {
     display: flex;
 }
 
-div.hour-minute-container span {
-    font-family: var(--atkinson-mono);
-    font-size: small;
-    font-weight: 100;
+div.hour-minute-container::before {
+    position: absolute;
+    content: ':';
+    left: 37.5px;
+    top: 0;
+    color: var(--medium-gray-highlight);
 }
 
 div.time-picker-hour,
 div.time-picker-minute {
-    padding-left: 4px;
-    padding-right: 4px;
+    padding-left: 2px;
+    padding-right: 2px;
+    cursor: pointer;
+}
+
+div.time-picker-hour {
+    margin-right: auto;
 }
 
 div.time-picker-minute {
     margin-left: auto;
+}
+
+div.hour-minute-container * {
+    font-family: var(--atkinson-mono);
+    font-size: small;
+    font-weight: 100;
 }
 
 /* POPUP DATE PICKER */

@@ -641,7 +641,7 @@ input.task-header {
     background-position: top 50% left 0px;  /* Positions important indicator */
     background-repeat: no-repeat;
 
-    padding-left: unset;  /* Makes room for important indicator */
+    padding-left: unset;  /* Makes room for important indicator when needed*/
 
     flex-grow: 1;
     min-height: 20px;  /* If not explicit, there's a 0.5px nudge when description revealed */
@@ -821,12 +821,17 @@ div.hour-minute-container::before {
 
 div.time-picker-hour,
 div.time-picker-minute {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
     padding-left: 2px;
     padding-right: 2px;
     cursor: pointer;
 
     max-height: 15px;
     overflow-y: scroll;
+    overscroll-behavior: contain;
 
     background-color: white;
 }
@@ -840,7 +845,9 @@ div.time-picker-minute {
 }
 
 div.time-picker-hour:hover,
-div.time-picker-minute:hover {
+div.time-picker-minute:hover,
+div.time-picker-hour:focus-visible,
+div.time-picker-minute:focus-visible {
     max-height: 75px;
 }
 
@@ -852,8 +859,18 @@ div.hour-minute-container * {
 
 div.hour-select,
 div.minute-select {
-    padding-top: 2px;
     text-align: center;
+}
+
+div.hour-select:hover,
+div.minute-select:hover {
+    background-color: rgba(153, 205, 50, 0.5);
+}
+
+/* This allows for the last values to scroll into view */
+div.hour-select:last-child,
+div.minute-select:last-child {
+    margin-bottom: 58px;
 }
 
 /* POPUP DATE PICKER */

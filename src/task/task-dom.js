@@ -14,7 +14,7 @@ function taskElementCreate(task) {
     const taskTagsContainer = document.createElement('div')
     const taskImportantButton = document.createElement('button')
     const taskTimeButton = document.createElement('button')
-    const taskTimePicker = createTimePicker(task)
+    const taskTimePicker = createTimePicker(task, taskTimeButton)
     const taskDateButton = document.createElement('button')
     const taskDatePicker = createCalendar()
     const taskRemoveButton = document.createElement('button')
@@ -31,8 +31,6 @@ function taskElementCreate(task) {
     taskCompleteCheckbox.addEventListener('click', (event) => {
         event.target.checked ? task.completed = true : task.completed = false
         taskSyncLinked(task, 'completed')  // taskSyncLinked synchronizes changes between every task copy
-        // PERKELE
-        console.log(task.hour, task.minute)
     })
 
     taskHeader.className = 'task-header'
@@ -101,14 +99,37 @@ function taskElementCreate(task) {
 
     taskTimeButton.classList.add('task-time-button', 'task-tag')
     taskTimeButton.hidden = true
-    if (task.time) {
+    if (task.hour) {
         taskTimeButton.style.setProperty('background-image', 'var(--time-add-fill)')
+        if (task.hour && task.minute) {
+            taskTimeButton.textContent = `${task.getHourString()}:${task.getMinuteString()}`
+        } else if (task.hour && !task.minute) {
+            taskTimeButton.textContent = `${task.getHourString()}:00`
+        }
+        // TODO: NEED TO CREATE SOME OTHER WAY TO INDICATE THE IMPORTANCE AND TIME BEFORE THE HEADER:
+        //  > CREATE A DIV WITH FLEX GROW THAT GROWS WHEN AN ELEMENT IS ADDED
+        // if (!taskDescriptionOpener.checked) {
+        //     taskHeader.style.
+        // }
     } else {
         taskTimeButton.textContent = 'Time'
-        taskTimeButton.addEventListener('click', () => {
-            taskTimePicker.hidden ? taskTimePicker.hidden = false : taskTimePicker.hidden = true
-        })
     }
+    
+    taskTimeButton.addEventListener('click', () => {
+        taskTimePicker.hidden ? taskTimePicker.hidden = false : taskTimePicker.hidden = true
+    })
+    taskTimeButton.addEventListener('keydown', (event) => {
+        // Allow to delete a time marking
+        if (event.key === 'Backspace') {
+            taskTimeButton.textContent = 'Date'
+            taskTimeButton.style = 'revert-layer'
+            taskTimePicker.hidden = true
+            taskTimeButton.blur()
+
+            task.hour = undefined
+            task.minute = 0
+        }
+    })
     
     taskTimePicker.hidden = true
     taskTimePicker.setAttribute('tabindex', 0)  // Allows focus on time picker
@@ -144,10 +165,14 @@ function taskElementCreate(task) {
 
     // Hide time and date picker when clicked outside or Escaped
     document.addEventListener('click', (event) => {
-        if ((taskDatePicker.hidden === false && !event.target.closest('div.date-picker') && !event.target.classList.contains('task-date-button')) ||
-            (taskTimePicker.hidden === false && !event.target.closest('div.task-time-picker') && !event.target.classList.contains('task-time-button'))) {
-            taskDatePicker.hidden = true
+        if (taskTimePicker.hidden === false && !event.target.closest('div.hour-minute-container') && !event.target.classList.contains('task-time-button') 
+            && !event.target.classList.contains('hour-select') && !event.target.classList.contains('minute-select')) {
             taskTimePicker.hidden = true
+        }
+    })
+    document.addEventListener('click', (event) => {
+        if (taskDatePicker.hidden === false && !event.target.closest('div.date-picker') && !event.target.classList.contains('task-date-button')) {
+            taskDatePicker.hidden = true
         }
     })
     document.addEventListener('keydown', (event) => {

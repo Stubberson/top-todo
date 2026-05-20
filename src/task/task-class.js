@@ -9,7 +9,7 @@ export class Task {
         this.completed = false
         this.important = false
         this.hour = undefined
-        this.minute = undefined
+        this.minute = 0  // Default to even hours
         this.date = date
         this.style = {}
 
@@ -24,5 +24,21 @@ export class Task {
     dateToString() {
         // Return 'DD-MM-YYYY', eases comparison between dates
         return this.date.toString().slice(0, 10)
+    }
+
+    getHourString() {
+        if (this.hour < 10) {
+            return `0${this.hour}`
+        } else {
+            return this.hour
+        }
+    }
+
+    getMinuteString() {
+        if (this.minute < 10) {
+            return `0${this.minute}`
+        } else {
+            return this.minute
+        }
     }
 }

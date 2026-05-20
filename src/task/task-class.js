@@ -8,7 +8,8 @@ export class Task {
         this.description = ''
         this.completed = false
         this.important = false
-        this.time = ''
+        this.hour = undefined
+        this.minute = undefined
         this.date = date
         this.style = {}
 

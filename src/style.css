@@ -824,6 +824,11 @@ div.time-picker-minute {
     padding-left: 2px;
     padding-right: 2px;
     cursor: pointer;
+
+    max-height: 15px;
+    overflow-y: scroll;
+
+    background-color: white;
 }
 
 div.time-picker-hour {
@@ -834,10 +839,21 @@ div.time-picker-minute {
     margin-left: auto;
 }
 
+div.time-picker-hour:hover,
+div.time-picker-minute:hover {
+    max-height: 75px;
+}
+
 div.hour-minute-container * {
     font-family: var(--atkinson-mono);
     font-size: small;
     font-weight: 100;
+}
+
+div.hour-select,
+div.minute-select {
+    padding-top: 2px;
+    text-align: center;
 }
 
 /* POPUP DATE PICKER */

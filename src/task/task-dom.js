@@ -14,7 +14,7 @@ function taskElementCreate(task) {
     const taskTagsContainer = document.createElement('div')
     const taskImportantButton = document.createElement('button')
     const taskTimeButton = document.createElement('button')
-    const taskTimePicker = createTimePicker()
+    const taskTimePicker = createTimePicker(task)
     const taskDateButton = document.createElement('button')
     const taskDatePicker = createCalendar()
     const taskRemoveButton = document.createElement('button')
@@ -31,6 +31,8 @@ function taskElementCreate(task) {
     taskCompleteCheckbox.addEventListener('click', (event) => {
         event.target.checked ? task.completed = true : task.completed = false
         taskSyncLinked(task, 'completed')  // taskSyncLinked synchronizes changes between every task copy
+        // PERKELE
+        console.log(task.hour, task.minute)
     })
 
     taskHeader.className = 'task-header'

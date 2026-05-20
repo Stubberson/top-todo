@@ -1,4 +1,4 @@
-function createTimePicker() {
+function createTimePicker(task) {
     const currentTime = Temporal.Now.plainTimeISO()
     
     const timePickerContainer = document.createElement('div')
@@ -17,17 +17,25 @@ function createTimePicker() {
     
     // Hours
     for (let i = 0; i < 24; i++) {
-        const hour = document.createElement('span')
+        const hour = document.createElement('div')
+        hour.className = 'hour-select'
         i < 10 ? hour.textContent = `0${i}` : hour.textContent = i
-        hour.hidden = true
+        hour.addEventListener('click', (event) => {
+            task.hour = Number.parseInt(event.target.textContent)
+            hourContainer.textContent = `[${event.target.textContent}]`
+        })
         hourContainer.append(hour)
     }
 
     // Minutes
     for (let i = 0; i < 60; i++) {
-        const minute = document.createElement('span')
+        const minute = document.createElement('div')
+        minute.className = 'minute-select'
         i < 10 ? minute.textContent = `0${i}` : minute.textContent = i
-        minute.hidden = true
+        minute.addEventListener('click', (event) => {
+            task.minute = Number.parseInt(event.target.textContent)
+            minuteContainer.textContent = event.target.textContent
+        })
         minuteContainer.append(minute)
     }
 

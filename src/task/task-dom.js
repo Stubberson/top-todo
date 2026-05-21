@@ -8,6 +8,8 @@ import { createCalendar, displayDate, indicateDate, revertDateIndicator } from "
 function taskElementCreate(task) {
     const taskContainer = document.createElement('div')
     const taskCompleteCheckbox = document.createElement('input')
+    const tagsHeaderContainer = document.createElement('div')
+    const tagIndicatorsContainer = document.createElement('div')
     const taskHeader = document.createElement('input')
     const taskDescriptionOpener = document.createElement('input')
     const taskDescription = document.createElement('textarea')
@@ -21,8 +23,7 @@ function taskElementCreate(task) {
     
 
     taskContainer.classList.add('task-container')
-    // Add a data-id to refer to this task through querySelector()
-    taskContainer.setAttribute('data-id', task.id)
+    taskContainer.setAttribute('data-id', task.id)  // Add a data-id for easier reference
 
     taskCompleteCheckbox.className = 'task-complete-checkbox'
     taskCompleteCheckbox.type = 'checkbox'
@@ -32,6 +33,10 @@ function taskElementCreate(task) {
         event.target.checked ? task.completed = true : task.completed = false
         taskSyncLinked(task, 'completed')  // taskSyncLinked synchronizes changes between every task copy
     })
+
+    tagsHeaderContainer.className = 'tags-header-container'
+
+    tagIndicatorsContainer.className = 'tag-indicators-container'  // Indicate selected tags if task minimized
 
     taskHeader.className = 'task-header'
     taskHeader.type = 'text'
@@ -85,13 +90,13 @@ function taskElementCreate(task) {
     taskImportantButton.classList.add('task-important-button', 'task-tag')
     taskImportantButton.hidden = true
     taskImportantButton.textContent = 'Important'
-    if (task.important) {  // Indicate important task, if already indicated somewhere else
-        taskImportantButton.style.setProperty('background-image', 'var(--important-fill-black)')
-        if (!taskDescriptionOpener.checked) {
-            taskHeader.style.setProperty('background-image', 'var(--important-fill-gray)')
-            taskHeader.style.setProperty('padding-left', '24px')
-        }
-    } 
+    if (task.important) {  // Because a task is always created anew when switching pages, I need to track the indicators added
+        const indicator = document.createElement('div')
+        indicator.className = 'tag-important'
+        indicator.style['background-image'] = 'var(--important-fill-gray)'
+        tagIndicatorsContainer.prepend(indicator)
+        taskImportantButton.style['background-image'] = 'var(--important-fill-black)'
+    }
     taskImportantButton.addEventListener('click', (event) => {
         task.important ? task.important = false : task.important = true
         taskSyncLinked(task, 'important')
@@ -99,24 +104,35 @@ function taskElementCreate(task) {
 
     taskTimeButton.classList.add('task-time-button', 'task-tag')
     taskTimeButton.hidden = true
-    if (task.hour) {
-        taskTimeButton.style.setProperty('background-image', 'var(--time-add-fill)')
-        if (task.hour && task.minute) {
+    if (task.hour || task.hour === 0) {
+        const indicatorH = document.createElement('div')
+        indicatorH.className = 'hour-indicator'
+        indicatorH.textContent = task.getHourString()
+        tagIndicatorsContainer.append(indicatorH)
+
+        // Update time button
+        taskTimeButton.textContent = `${task.getHourString()}:00`
+        taskTimeButton.style['background-image'] = 'var(--time-add-fill)'
+        if (task.minute) {
+            const indicatorM = document.createElement('div')
+            indicatorM.className = 'minute-indicator'
+            indicatorM.textContent = task.getMinuteString()
+            tagIndicatorsContainer.append(indicatorM)
+
             taskTimeButton.textContent = `${task.getHourString()}:${task.getMinuteString()}`
-        } else if (task.hour && !task.minute) {
-            taskTimeButton.textContent = `${task.getHourString()}:00`
         }
-        // TODO: NEED TO CREATE SOME OTHER WAY TO INDICATE THE IMPORTANCE AND TIME BEFORE THE HEADER:
-        //  > CREATE A DIV WITH FLEX GROW THAT GROWS WHEN AN ELEMENT IS ADDED
-        // if (!taskDescriptionOpener.checked) {
-        //     taskHeader.style.
-        // }
     } else {
+        taskTimeButton.style['background-image'] = 'revert-layer'
         taskTimeButton.textContent = 'Time'
     }
     
     taskTimeButton.addEventListener('click', () => {
-        taskTimePicker.hidden ? taskTimePicker.hidden = false : taskTimePicker.hidden = true
+        if (taskTimePicker.hidden) {
+            taskTimePicker.hidden = false
+            taskTimePicker.focus()
+        } else {
+            taskTimePicker.hidden = true
+        }
     })
     taskTimeButton.addEventListener('keydown', (event) => {
         // Allow to delete a time marking
@@ -146,16 +162,9 @@ function taskElementCreate(task) {
         })
     }
     taskDateButton.addEventListener('keydown', (event) => {
-        // Allow to delete a date marking
+        // Allow date marking deletion
         if (event.key === 'Backspace') {
-            taskDateButton.textContent = 'Date'
-            taskDateButton.style = 'revert-layer'
-            taskDatePicker.hidden = true
-            taskDateButton.blur()
-
-            const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${task.dateToString()}"`)
-            revertDateIndicator(calendarDateContainer)
-            task.date = ''
+            taskSyncLinked(task, 'date', event)
         }
     })
 
@@ -190,7 +199,8 @@ function taskElementCreate(task) {
     })
 
     taskTagsContainer.append(taskImportantButton, taskTimeButton, taskDateButton, taskRemoveButton)
-    taskContainer.append(taskCompleteCheckbox, taskHeader, taskDescriptionOpener, taskDescription, taskTagsContainer, taskTimePicker, taskDatePicker)
+    tagsHeaderContainer.append(tagIndicatorsContainer, taskHeader)
+    taskContainer.append(taskCompleteCheckbox, tagsHeaderContainer, taskDescriptionOpener, taskDescription, taskTagsContainer, taskTimePicker, taskDatePicker)
     
     return taskContainer
 }
@@ -200,14 +210,14 @@ function getTaskHTML(task) {
 }
 
 // Sync all HTML elements linked to a specific task
-function taskSyncLinked(task, property) {
+function taskSyncLinked(task, property, event = '') {
     const taskHTML = getTaskHTML(task)
     // Clarification for taskHTML children structure
-    const [completed, header, opener, description, tags, datePicker] = [0, 1, 2, 3, 4, 5]
+    const [completed, topLineContainer, opener, description, tags, timePicker, datePicker] = [0, 1, 2, 3, 4, 5, 6]
     taskHTML.forEach(copy => {
         switch(property) {
             case 'header':
-                copy.children[header].value = task.header
+                copy.children[topLineContainer].lastChild.value = task.header
                 break
             case 'description':
                 copy.children[description].value = task.description
@@ -215,9 +225,9 @@ function taskSyncLinked(task, property) {
             case 'completed':
                 if (!task.completed) {
                     copy.children[completed].checked = false
-                    copy.children[header].style.setProperty('color', 'revert-layer')
-                    copy.children[header].style.setProperty('text-decoration', 'revert-layer')
-                    copy.children[description].style.setProperty('text-decoration', 'revert-layer')
+                    copy.children[topLineContainer].lastChild.style['color'] = 'revert-layer'
+                    copy.children[topLineContainer].lastChild.style['text-decoration'] = 'revert-layer'
+                    copy.children[description].style['text-decoration'] = 'revert-layer'
 
                     // Save the styling to access later
                     task.style['header-color'] = ''
@@ -225,9 +235,9 @@ function taskSyncLinked(task, property) {
                     task.style['description-decoration'] = '' 
                 } else {
                     copy.children[completed].checked = true
-                    copy.children[header].style.setProperty('color', '#767676')
-                    copy.children[header].style.setProperty('text-decoration', '#767676 line-through solid 1px')
-                    copy.children[description].style.setProperty('text-decoration', '#767676 line-through solid 0.5px')
+                    copy.children[topLineContainer].lastChild.style['color'] = '#767676'
+                    copy.children[topLineContainer].lastChild.style['text-decoration'] = '#767676 line-through solid 1px'
+                    copy.children[description].style['text-decoration'] = '#767676 line-through solid 0.5px'
                     
                     task.style['header-color'] = '#767676'
                     task.style['header-decoration'] = '#767676 line-through solid 1px'
@@ -235,19 +245,85 @@ function taskSyncLinked(task, property) {
                 }
                 break
             case 'important':
+                const indicator = document.createElement('div')
+                indicator.className = 'tag-important'
                 if (!task.important) {
-                    copy.children[header].style.setProperty('background-image', 'revert-layer')
-                    copy.children[header].style.setProperty('padding-left', 'revert')
-                    copy.children[tags].firstChild.style.setProperty('background-image', 'revert-layer')
+                    copy.children[tags].children[0].style['background-image'] = 'revert-layer'
+                    const tag = copy.children[topLineContainer].firstChild.querySelector('.tag-important')
+                    tag.remove()
                 } else {
-                    copy.children[header].style.setProperty('background-image', 'var(--important-fill-gray)')
-                    copy.children[header].style.setProperty('padding-left', '24px')
-                    copy.children[tags].firstChild.style.setProperty('background-image', 'var(--important-fill-black)')
+                    copy.children[tags].children[0].style['background-image'] = 'var(--important-fill-black)'
+                    indicator.style['background-image'] = 'var(--important-fill-gray)'
+                    copy.children[topLineContainer].firstChild.prepend(indicator)
+                }
+                break
+            case 'time-h':
+                // Indicate selection in the time picker
+                const hours = copy.children[timePicker].querySelectorAll('.hour-select')
+                hours.forEach(elem => elem.style['font-weight'] = 'revert-layer')
+                event.target.style['font-weight'] = '500'
+                event.target.scrollIntoView({behavior: 'smooth', block: 'start'})
+
+                // Update time button
+                copy.children[tags].children[1].style['background-image'] = 'var(--time-add-fill)'
+                if (task.minute) {
+                    copy.children[tags].children[1].textContent = `${task.getHourString()}:${task.getMinuteString()}`
+                } else {
+                    copy.children[tags].children[1].textContent = `${task.getHourString()}:00`
+                }
+
+                // Indicate hh before task header
+                const hourCopy = document.createElement('div')
+                hourCopy.className = 'hour-indicator'
+                hourCopy.textContent = task.getHourString()
+                const prevH = copy.children[topLineContainer].firstChild.querySelector('.hour-indicator')
+                if (prevH) {
+                    prevH.before(hourCopy)
+                    prevH.remove()
+                } else {
+                    copy.children[topLineContainer].firstChild.append(hourCopy)
+                }
+                break
+            case 'time-m':
+                // Indicate selection in time picker
+                const minutes = copy.children[timePicker].querySelectorAll('.minute-select')
+                minutes.forEach(elem => elem.style['font-weight'] = 'revert-layer')
+                event.target.style['font-weight'] = '500'
+                event.target.scrollIntoView({behavior: 'smooth', block: 'start'})
+
+                // Update time button
+                if (task.hour) {
+                    copy.children[tags].children[1].textContent = `${task.getHourString()}:${task.getMinuteString()}`
+                } else {
+                    copy.children[tags].children[1].textContent = `[hh]:${task.getMinuteString()}`
+                }
+
+                // Indicate mm before task header
+                const minuteCopy = document.createElement('div')
+                minuteCopy.className = 'minute-indicator'
+                minuteCopy.textContent = task.getMinuteString()
+                const prevM = copy.children[1].firstChild.querySelector('.minute-indicator')
+                if (prevM) {
+                    prevM.before(minuteCopy)
+                    prevM.remove()
+                } else {
+                    copy.children[1].firstChild.append(minuteCopy)
                 }
                 break
             case 'date':
-                copy.children[tags].children[2].textContent = task.date.toLocaleString('en-de', { day: '2-digit', month: 'short', year:'2-digit' })
-                copy.children[tags].children[2].style.setProperty('background-image', 'var(--calendar-add-fill)')
+                if (event.key === 'Backspace') {
+                    copy.children[tags].children[2].textContent = 'Date'
+                    copy.children[tags].children[2].style = 'revert-layer'
+                    copy.children[datePicker].hidden = true
+                    copy.children[tags].children[2].blur()
+
+                    const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${task.dateToString()}"`)
+                    revertDateIndicator(calendarDateContainer)
+                    task.date = ''
+                } else {
+                    copy.children[tags].children[2].textContent = task.date.toLocaleString('en-de', { day: '2-digit', month: 'short', year:'2-digit' })
+                    copy.children[tags].children[2].style['background-image'] = 'var(--calendar-add-fill)'
+                }
                 break
         }
     })
@@ -284,11 +360,8 @@ function taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer,
 
 function taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker) {
     taskDescription.hidden = true
-    Array.from(taskTagsContainer.children).forEach(tag => {  // Indicate importance even if task minimized
+    Array.from(taskTagsContainer.children).forEach(tag => {
         tag.hidden = true
-        if (task.important) {
-            taskSyncLinked(task, 'important')
-        }
     })
     taskDescriptionOpener.checked = false
     taskRemoveButton.hidden = true

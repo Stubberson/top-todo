@@ -50,7 +50,7 @@ function viewToday() {
         displayDate(Temporal.Now.zonedDateTimeISO())
         indicateDate(Temporal.Now.zonedDateTimeISO())
         todayTasksContainer.append(element)
-        element.children[1].focus()  // Focus header
+        element.children[1].lastChild.focus()  // Focus header
     })
 
     if (tasksToday.length > 0) {
@@ -61,14 +61,27 @@ function viewToday() {
 };
 
 function appendSummaryTasks(tasksToday, itemsContainer) {
-     // Add today's tasks to the summary ('refresh' it)
+    // Add today's tasks to the summary ('refresh' it)
+    let prevTime = 0
     tasksToday.forEach(task => {
-        let summaryItem = createSummaryItem(task)
-        itemsContainer.append(summaryItem)
+        const summaryItem = createSummaryItem(task)
+        if (task.hour || task.hour === 0) {
+            const timeString = task.getHourString() + task.getMinuteString()
+            const time = Number.parseInt(timeString)
+            console.log(time)
+            if (time > prevTime) {
+                itemsContainer.append(summaryItem)        
+            } else {
+                itemsContainer.prepend(summaryItem)
+            }
+            prevTime = time
+        } else {
+            itemsContainer.append(summaryItem)
+        }
     })
 };
 
-// TODO: SUMMARY SHOULD SORT THE TASKS BASED ON GIVEN TIME (> todo: create time picker)
+// TODO: SUMMARY SHOULD SORT THE TASKS BASED ON TIME
 function createSummaryItem(task) {
     const summaryItemContainer = document.createElement('div')
     summaryItemContainer.className = 'today-summary-item'
@@ -76,7 +89,12 @@ function createSummaryItem(task) {
     const headerStyle = task.style['header-decoration']
     const element = taskElementCreate(task)
     const span = document.createElement('span')
-    span.textContent = element.children[1].value
+    if (task.hour || task.hour === 0) {
+        span.textContent = task.getHourString() + ':' + task.getMinuteString() + ' '
+        span.textContent += task.header
+    } else {
+        span.textContent = task.header
+    }
     span.style['text-decoration'] = headerStyle
     
     summaryItemContainer.append(span)

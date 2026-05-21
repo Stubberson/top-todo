@@ -1,3 +1,5 @@
+import { getTaskHTML, taskSyncLinked } from "../task/task-dom.js"
+
 function createTimePicker(task, button) {
     const currentTime = Temporal.Now.plainTimeISO()
     
@@ -9,25 +11,30 @@ function createTimePicker(task, button) {
 
     const hourContainer = document.createElement('div')
     hourContainer.className = 'time-picker-hour'
+    hourContainer.setAttribute('tabindex', '0')
     hourContainer.textContent = '[hh]'
 
     const minuteContainer = document.createElement('div')
     minuteContainer.className = 'time-picker-minute'
+    minuteContainer.setAttribute('tabindex', '0')
     minuteContainer.textContent = '[mm]'
     
     // Hours
     for (let i = 0; i < 24; i++) {
         const hour = document.createElement('div')
         hour.className = 'hour-select'
+        hour.setAttribute('tabindex', '0')
+        hour.style['font-weight'] = 'revert-layer'
         i < 10 ? hour.textContent = `0${i}` : hour.textContent = i
         hour.addEventListener('click', (event) => {
-            task.hour = Number.parseInt(event.target.textContent)
-            event.target.scrollIntoView({behavior: 'smooth', block: 'start'})
-            button.style.setProperty('background-image', 'var(--time-add-fill)')
-            if (task.minute) {
-                button.textContent = `${task.getHourString()}:${task.getMinuteString()}`
-            } else {
-                button.textContent = `${task.getHourString()}:00`
+            task.hour = Number.parseInt(event.target.textContent)  // Set hour for task
+            taskSyncLinked(task, 'time-h', event)  // Sync other task instances
+        })
+        hour.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                task.hour = Number.parseInt(event.target.textContent)
+                taskSyncLinked(task, 'time-h', event)
+                minuteContainer.focus()
             }
         })
         hourContainer.append(hour)
@@ -37,14 +44,20 @@ function createTimePicker(task, button) {
     for (let i = 0; i < 60; i += 5) {  // 5min step should be precise enough
         const minute = document.createElement('div')
         minute.className = 'minute-select'
+        minute.setAttribute('tabindex', '0')
         i < 10 ? minute.textContent = `0${i}` : minute.textContent = i
         minute.addEventListener('click', (event) => {
             task.minute = Number.parseInt(event.target.textContent)
-            event.target.scrollIntoView({behavior: 'smooth', block: 'start'})
-            if (task.hour) {
-                button.textContent = `${task.getHourString()}:${task.getMinuteString()}`
-            } else {
-                button.textContent = `[hh]:${task.getMinuteString()}`
+            taskSyncLinked(task, 'time-m', event)
+        })
+        minute.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                task.minute = Number.parseInt(event.target.textContent)
+                taskSyncLinked(task, 'time-m', event)
+                function hidePicker() {
+                    timePickerContainer.hidden = true
+                }
+                setTimeout(hidePicker, 200)
             }
         })
         minuteContainer.append(minute)

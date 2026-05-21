@@ -1,6 +1,6 @@
 import { clearContent } from '../utilities/utility.js'
 import { Task } from '../task/task-class.js'
-import { syncLinked, taskElementCreate } from '../task/task-dom.js'
+import { taskSyncLinked, taskElementCreate } from '../task/task-dom.js'
 
 const contentContainer = document.querySelector('div.content-container')
 

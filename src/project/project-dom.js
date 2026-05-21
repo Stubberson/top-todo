@@ -99,7 +99,7 @@ function projectElementCreate(project) {
         const task = new Task('', project)
         const element = taskElementCreate(task)
         projectTasksContainer.append(element)
-        element.children[1].focus()
+        element.children[1].lastChild.focus()
     })
 
     projectTasksContainer.className = 'project-tasks-container'

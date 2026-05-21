@@ -298,6 +298,7 @@ function indicateDate(date = '', project = '') {
 };
 
 function revertDateIndicator(dateContainer) {
+    console.log(dateContainer.lastChild)
     if (dateContainer.lastChild.childNodes.length === 1) {
         dateContainer.lastChild.firstChild.remove()
         dateContainer.firstChild.style['font-weight'] = 'revert-layer'

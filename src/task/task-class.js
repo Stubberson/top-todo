@@ -8,7 +8,7 @@ export class Task {
         this.description = ''
         this.completed = false
         this.important = false
-        this.hour = undefined
+        this.hour = undefined  // Must 'undefined' to handle 00:mm correctly
         this.minute = 0  // Default to even hours
         this.date = date
         this.style = {}

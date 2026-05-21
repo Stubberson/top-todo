@@ -629,17 +629,42 @@ input.task-complete-checkbox:checked {
     opacity: 0.5;
 }
 
-input.task-header {
+div.tags-header-container {
     grid-area: 1 / 2 / 2 / 3;
+    background-color: inherit;
+    display: flex;
+}
+
+div.tag-indicators-container {
+    display: flex;
+    width: max-content;
+}
+
+div.tag-important {
+    width: 25px;
+    height: 20px;
+    background-image: unset;
+    background-repeat: no-repeat;
+}
+
+div.hour-indicator,
+div.minute-indicator {
+    align-content: center;
+    font-size: x-small;
+    color: var(--medium-gray-highlight);
+    padding: 5px 5px 5px 0;
+}
+
+input.task-header {
+    display: flex;
+    flex-shrink: 1;
+
     background-color: inherit;
     font-family: var(--atkinson-sans-serif);
     font-size: medium;
 
     border: none;
     outline: none;
-    background-image: unset;
-    background-position: top 50% left 0px;  /* Positions important indicator */
-    background-repeat: no-repeat;
 
     padding-left: unset;  /* Makes room for important indicator when needed*/
 
@@ -795,16 +820,16 @@ button.task-remove-button:focus-visible {
 
 /* POPUP TIME PICKER */
 div.task-time-picker {
+    z-index: 1;
     position: absolute;
     bottom: -30px;  /* Time picker attaches to task-container */
     right: 45px;
-    z-index: 3;
     padding: 2px 2px 4px 2px;
 
     width: 75px;
     height: 15px;
     background-color: white;
-    outline: solid 1px black;
+    border: solid 1px black;
 }
 
 div.hour-minute-container {
@@ -831,9 +856,9 @@ div.time-picker-minute {
 
     max-height: 15px;
     overflow-y: scroll;
+    scrollbar-width: none;
     overscroll-behavior: contain;
-
-    background-color: white;
+    scroll-snap-type: y mandatory;
 }
 
 div.time-picker-hour {
@@ -847,8 +872,11 @@ div.time-picker-minute {
 div.time-picker-hour:hover,
 div.time-picker-minute:hover,
 div.time-picker-hour:focus-visible,
-div.time-picker-minute:focus-visible {
+div.time-picker-minute:focus-visible,
+div.time-picker-hour:has(div.hour-select:focus-visible),
+div.time-picker-minute:has(div.minute-select:focus-visible) {
     max-height: 75px;
+    border-bottom: ridge 2px rgba(0, 0, 0, 0.1);
 }
 
 div.hour-minute-container * {
@@ -860,11 +888,16 @@ div.hour-minute-container * {
 div.hour-select,
 div.minute-select {
     text-align: center;
+    scroll-snap-align: start;
+    z-index: 2;
 }
 
 div.hour-select:hover,
-div.minute-select:hover {
+div.minute-select:hover,
+div.hour-select:focus-visible,
+div.minute-select:focus-visible {
     background-color: rgba(153, 205, 50, 0.5);
+    outline: unset;
 }
 
 /* This allows for the last values to scroll into view */

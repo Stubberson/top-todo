@@ -492,10 +492,21 @@ div.today-summary-items {
 }
 
 div.today-summary-item {
+    display: flex;
     color: var(--medium-gray-highlight);
     font-family: var(--atkinson-mono);
     font-size: smaller;
+    gap: 4px;
 }
+
+div.summary-star {
+    background-image: var(--important-fill-gray);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 17px;
+    height: 17px;
+}
+
 
 /* PROJECT CONTENT */
 div.content-container h1 {

@@ -195,7 +195,7 @@ function displayDate(date) {
         }
         // Focus correct task header
         const copies = getTaskHTML(task)
-        copies.length === 1 ? copies[0].children[1].focus() : copies[copies.length - 1].children[1].focus()
+        copies.length === 1 ? copies[0].children[1].lastChild.focus() : copies[copies.length - 1].children[1].lastChild.focus()
 
         indicateDate(date)  // Indicate date on calendar
     })

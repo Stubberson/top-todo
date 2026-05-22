@@ -61,43 +61,64 @@ function viewToday() {
 };
 
 function appendSummaryTasks(tasksToday, itemsContainer) {
-    // Add today's tasks to the summary ('refresh' it)
-    let prevTime = 0
+    // Add today's tasks to the summary
+    let times = []
     tasksToday.forEach(task => {
         const summaryItem = createSummaryItem(task)
         if (task.hour || task.hour === 0) {
-            const timeString = task.getHourString() + task.getMinuteString()
+            const timeString = `${task.getHourString()}${task.getMinuteString()}`
             const time = Number.parseInt(timeString)
-            console.log(time)
-            if (time > prevTime) {
-                itemsContainer.append(summaryItem)        
+            
+            // Sort the summary to show the most imminent task first etc.
+            if (itemsContainer.children.length === 0) {
+                itemsContainer.appendChild(summaryItem)
             } else {
-                itemsContainer.prepend(summaryItem)
+                const insertPosition = times.findIndex(t => time <= t)
+                if (insertPosition >= 0) {
+                    itemsContainer.children[insertPosition].before(summaryItem)
+                } else {
+                    if (times.length) {
+                        itemsContainer.children[times.length - 1].after(summaryItem)
+                    } else {
+                        itemsContainer.children[0].before(summaryItem)
+                    }
+                }
             }
-            prevTime = time
+            times.push(time)
+            times.sort((a, b) => a - b)  // Sort ascending to find correct index
         } else {
-            itemsContainer.append(summaryItem)
+            // If no time given for the task, position it in the end
+            itemsContainer.appendChild(summaryItem)
         }
     })
 };
 
-// TODO: SUMMARY SHOULD SORT THE TASKS BASED ON TIME
 function createSummaryItem(task) {
     const summaryItemContainer = document.createElement('div')
     summaryItemContainer.className = 'today-summary-item'
     
     const headerStyle = task.style['header-decoration']
     const element = taskElementCreate(task)
-    const span = document.createElement('span')
+    const star = document.createElement('div')
+    star.className = 'summary-star'
+    const time = document.createElement('span')
+    const text = document.createElement('span')
+
     if (task.hour || task.hour === 0) {
-        span.textContent = task.getHourString() + ':' + task.getMinuteString() + ' '
-        span.textContent += task.header
-    } else {
-        span.textContent = task.header
+        time.textContent = task.getHourString() + ':' + task.getMinuteString() + ' '
+        time.style['text-decoration'] = headerStyle
+        time.style['color'] = 'var(--dusk-blue)'
+        summaryItemContainer.append(time) 
     }
-    span.style['text-decoration'] = headerStyle
     
-    summaryItemContainer.append(span)
+    text.textContent = task.header
+    text.style['text-decoration'] = headerStyle
+    summaryItemContainer.append(text)
+    
+    if (task.important) {
+        summaryItemContainer.append(star)
+    }
+    
     return summaryItemContainer
 };
 

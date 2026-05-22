@@ -137,13 +137,7 @@ function taskElementCreate(task) {
     taskTimeButton.addEventListener('keydown', (event) => {
         // Allow to delete a time marking
         if (event.key === 'Backspace') {
-            taskTimeButton.textContent = 'Date'
-            taskTimeButton.style = 'revert-layer'
-            taskTimePicker.hidden = true
-            taskTimeButton.blur()
-
-            task.hour = undefined
-            task.minute = 0
+            taskSyncLinked(task, 'time-delete', event)
         }
     })
     
@@ -257,6 +251,24 @@ function taskSyncLinked(task, property, event = '') {
                     copy.children[topLineContainer].firstChild.prepend(indicator)
                 }
                 break
+            case 'time-delete':
+                // Remove time
+                if (copy.children[topLineContainer].firstChild.querySelector('.tag-important')) {
+                    while (copy.children[topLineContainer].firstChild.childNodes.length > 1) {
+                        copy.children[topLineContainer].firstChild.removeChild(copy.children[topLineContainer].firstChild.lastChild)
+                    }
+                } else {
+                    Array.from(copy.children[topLineContainer].firstChild.childNodes).forEach(node => node.remove())
+                }
+
+                event.target.textContent = 'Time'
+                event.target.style = 'revert-layer'
+                event.target.blur()
+                copy.children[timePicker].hidden = true
+
+                task.hour = undefined
+                task.minute = 0
+                break
             case 'time-h':
                 // Indicate selection in the time picker
                 const hours = copy.children[timePicker].querySelectorAll('.hour-select')
@@ -312,10 +324,10 @@ function taskSyncLinked(task, property, event = '') {
                 break
             case 'date':
                 if (event.key === 'Backspace') {
-                    copy.children[tags].children[2].textContent = 'Date'
-                    copy.children[tags].children[2].style = 'revert-layer'
+                    event.target.textContent = 'Date'
+                    event.target.style = 'revert-layer'
                     copy.children[datePicker].hidden = true
-                    copy.children[tags].children[2].blur()
+                    event.target.blur()
 
                     const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${task.dateToString()}"`)
                     revertDateIndicator(calendarDateContainer)

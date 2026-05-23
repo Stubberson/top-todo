@@ -6,7 +6,6 @@ import { Task } from '../task/task-class.js'
 import { Project } from '../project/project-class.js'
 import { viewToday } from '../sidebar-left/today-dom.js'
 
-// Basic building blocks
 const rightSidebar = document.querySelector('div.sidebar-right')
 const dateContainer = document.createElement('div')
 dateContainer.className = 'date-container'
@@ -298,7 +297,6 @@ function indicateDate(date = '', project = '') {
 };
 
 function revertDateIndicator(dateContainer) {
-    console.log(dateContainer.lastChild)
     if (dateContainer.lastChild.childNodes.length === 1) {
         dateContainer.lastChild.firstChild.remove()
         dateContainer.firstChild.style['font-weight'] = 'revert-layer'

@@ -27,6 +27,8 @@ body {
     --calendar-today-line: url('./visuals/calendar/today-line.svg');
     --calendar-today-fill: url('./visuals/calendar/today-fill.svg');
     --check-black: url('./visuals/check-black.svg');
+    --chevron-left: url('./visuals/chevron-left.svg');
+    --chevron-right: url('./visuals/chevron-right.svg');
     --close-line: url('./visuals/close-line.svg');
     --counter-1: url('./visuals/priority/priority-1-line.svg');
     --counter-2: url('./visuals/priority/priority-2-line.svg');
@@ -55,7 +57,10 @@ body {
     height: 100vh;
 
     display: grid;
-    grid-template: 1fr 2em / 300px 3fr 300px;
+    --left: 300px;  /* Variables allow to change the layout more easily */
+    --middle: 1fr;
+    --right: 300px;
+    grid-template: 1fr 2em / var(--left) var(--middle) var(--right);
 }
 
 button {
@@ -98,6 +103,8 @@ div.navigation button {
     height: 40px;
     padding-left: 3em;
     font-weight: 300;
+
+    overflow: hidden;
 }
 
 div.navigation button::before {
@@ -957,16 +964,17 @@ div.footer button {
     width: 100px;
 }
 
-div.footer button#toggle-left {
-    background-image: var(--arrow-down);
-    background-repeat: no-repeat;
-    background-position: center;
+div.footer button#toggle-left,
+div.footer button#toggle-right {
+    width: 40px;
 }
 
 div.footer button#toggle-right {
     margin-left: auto;
-    background-image: var(--arrow-down);
-    background-repeat: no-repeat;
-    background-position: center;
 }
 
+svg {
+    width: inherit;
+    height: inherit;
+    transition: transform 0.2s ease-in-out;
+}

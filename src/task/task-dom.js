@@ -1,9 +1,10 @@
 import { Task } from "./task-class.js"
-import { clearContent } from "../utilities/utility.js"
+import { clearContent, isToday } from "../utilities/utility.js"
 import { createTimePicker } from "../utilities/time.js"
 import { Project } from "../project/project-class.js"
 import { viewToday } from "../sidebar-left/today-dom.js"
 import { createCalendar, displayDate, indicateDate, revertDateIndicator } from "../sidebar-right/calendar-dom.js"
+import { currentView } from "../index.js"
 
 function taskElementCreate(task) {
     const taskContainer = document.createElement('div')
@@ -53,7 +54,7 @@ function taskElementCreate(task) {
     taskHeader.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             event.preventDefault()  // Prevent adding new line in description
-            taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
+            taskDescriptionMaximize(task)
         }
     })
 
@@ -63,9 +64,9 @@ function taskElementCreate(task) {
     taskDescription.style['text-decoration'] = task.style['description-decoration']
     taskDescriptionOpener.addEventListener('click', () => {
         if (taskDescription.hidden) {
-            taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton)
+            taskDescriptionMaximize(task)
         } else {
-            taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
+            taskDescriptionMinimize(task)
         }
     })
 
@@ -81,7 +82,7 @@ function taskElementCreate(task) {
     })
     taskDescription.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-            taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker)
+            taskDescriptionMinimize(task)
         }
     })
 
@@ -324,14 +325,17 @@ function taskSyncLinked(task, property, event = '') {
                 break
             case 'date':
                 if (event.key === 'Backspace') {
-                    event.target.textContent = 'Date'
-                    event.target.style = 'revert-layer'
-                    copy.children[datePicker].hidden = true
-                    event.target.blur()
+                    if (!isToday(task.date)) {  // You can't change the date of today-task
+                        event.target.textContent = 'Date'
+                        event.target.style = 'revert-layer'
+                        copy.children[datePicker].hidden = true
+                        event.target.blur()
 
-                    const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${task.dateToString()}"`)
-                    revertDateIndicator(calendarDateContainer)
-                    task.date = ''
+                        const calendarDateContainer = document.querySelector(`.sidebar-right td[time^="${task.dateToString()}"`)
+                    
+                        revertDateIndicator(calendarDateContainer)
+                        task.date = ''
+                    }
                 } else {
                     copy.children[tags].children[2].textContent = task.date.toLocaleString('en-de', { day: '2-digit', month: 'short', year:'2-digit' })
                     copy.children[tags].children[2].style['background-image'] = 'var(--calendar-add-fill)'
@@ -361,23 +365,26 @@ function removeTask(task) {
     }
 }
 
-function taskDescriptionMaximize(taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton) {
-    taskDescription.hidden = false
-    Array.from(taskTagsContainer.children).forEach(tag => tag.hidden = false)
-    taskDescriptionOpener.checked = true
-    taskRemoveButton.hidden = false
+function taskDescriptionMaximize(task) {
+    const taskHTML = getTaskHTML(task)
+    const [completed, topLineContainer, opener, description, tags, timePicker, datePicker] = [0, 1, 2, 3, 4, 5, 6]
     
-    taskDescription.focus()
+    taskHTML.forEach(copy => {
+        copy.children[description].hidden = false
+        Array.from(copy.children[tags].children).forEach(tag => tag.hidden = false)
+        copy.children[opener].checked = true
+    })
 }
 
-function taskDescriptionMinimize(task, taskHeader, taskDescription, taskTagsContainer, taskDescriptionOpener, taskRemoveButton, taskDatePicker) {
-    taskDescription.hidden = true
-    Array.from(taskTagsContainer.children).forEach(tag => {
-        tag.hidden = true
+function taskDescriptionMinimize(task) {
+    const taskHTML = getTaskHTML(task)
+    const [completed, topLineContainer, opener, description, tags, timePicker, datePicker] = [0, 1, 2, 3, 4, 5, 6]
+    
+    taskHTML.forEach(copy => {
+        copy.children[description].hidden = true
+        Array.from(copy.children[tags].children).forEach(tag => tag.hidden = true)
+        copy.children[opener].checked = false
     })
-    taskDescriptionOpener.checked = false
-    taskRemoveButton.hidden = true
-    taskDatePicker.hidden = true
 }
 
 export { taskElementCreate, getTaskHTML, taskSyncLinked, removeTask }

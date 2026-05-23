@@ -1,10 +1,12 @@
-import { clearContent } from '../utilities/utility.js'
+import { clearContent, trackView } from '../utilities/utility.js'
 import { Task } from '../task/task-class.js'
 import { taskSyncLinked, taskElementCreate } from '../task/task-dom.js'
 
 const contentContainer = document.querySelector('div.content-container')
 
 function viewImportant() {
+    trackView('important')  // Keep track of the current view
+    
     clearContent(contentContainer)
 
     const importantHeader = document.createElement('h1')

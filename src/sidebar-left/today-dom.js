@@ -4,8 +4,6 @@ import { Task } from '../task/task-class.js'
 import { taskElementCreate, taskRemove } from '../task/task-dom.js'
 import { displayDate, indicateDate } from '../sidebar-right/calendar-dom.js'
 
-// --- Today's tasks DOM control ---
-
 function viewToday() {
     trackView('today')  // Keep track of the current view
 
@@ -70,18 +68,14 @@ function appendSummaryTasks(tasksToday, itemsContainer) {
             const time = Number.parseInt(timeString)
             
             // Sort the summary to show the most imminent task first etc.
-            if (itemsContainer.children.length === 0) {
-                itemsContainer.appendChild(summaryItem)
+            if (itemsContainer.children.length === 0 || times.length === 0) {
+                itemsContainer.prepend(summaryItem)
             } else {
                 const insertPosition = times.findIndex(t => time <= t)
                 if (insertPosition >= 0) {
                     itemsContainer.children[insertPosition].before(summaryItem)
                 } else {
-                    if (times.length) {
-                        itemsContainer.children[times.length - 1].after(summaryItem)
-                    } else {
-                        itemsContainer.children[0].before(summaryItem)
-                    }
+                    itemsContainer.children[times.length - 1].after(summaryItem)
                 }
             }
             times.push(time)

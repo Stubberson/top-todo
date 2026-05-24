@@ -144,6 +144,11 @@ function taskElementCreate(task) {
     
     taskTimePicker.hidden = true
     taskTimePicker.setAttribute('tabindex', 0)  // Allows focus on time picker
+    taskTimePicker.addEventListener('keydown', (event) => {
+        if (event.key === 'Backspace') {
+            taskSyncLinked(task, 'time-delete', event)
+        }
+    })
 
     taskDateButton.classList.add('task-date-button', 'task-tag')
     taskDateButton.hidden = true
@@ -262,9 +267,9 @@ function taskSyncLinked(task, property, event = '') {
                     Array.from(copy.children[topLineContainer].firstChild.childNodes).forEach(node => node.remove())
                 }
 
-                event.target.textContent = 'Time'
-                event.target.style = 'revert-layer'
-                event.target.blur()
+                copy.children[tags].children[1].textContent = 'Time'
+                copy.children[tags].children[1].style = 'revert-layer'
+                copy.children[tags].children[1].blur()
                 copy.children[timePicker].hidden = true
 
                 task.hour = undefined

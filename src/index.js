@@ -66,20 +66,20 @@ let rightMinimized = false
 function toggleRightSidebar(event) {
     const body = document.querySelector('body')
     const sidebarRight = document.querySelector('.sidebar-right')
-    const calendar = document.querySelector('.calendar-container')
-    const dateContainer = document.querySelector('.date-container')
+    const calendarContainer = document.querySelector('div.calendar-container')
+    const dateContainer = document.querySelector('div.date-container')
     const arrow = document.querySelector('svg#chevron-right')
     // Close
     if (!rightMinimized) {
         body.style.setProperty('--right', '40px')
         arrow.style['transform'] = 'rotate(180deg)'
-        calendar.style['display'] = 'none'
+        calendarContainer.style['display'] = 'none'
         dateContainer.style['display'] = 'none'
         rightMinimized = true
     } else {
         body.style.setProperty('--right', '300px')
         arrow.style['transform'] = 'revert-layer'
-        calendar.style['display'] = 'revert-layer'
+        calendarContainer.style['display'] = 'revert-layer'
         dateContainer.style['display'] = 'revert-layer'
         rightMinimized = false
     }

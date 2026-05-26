@@ -135,6 +135,10 @@ function listProject(project) {
 
     projectButton.append(projectButtonHeader, projectButtonDate)
     projectListing.append(projectButton, projectRemoveButton)
+    const leftPanelToggle = document.querySelector('button#toggle-left')
+    if (leftPanelToggle.classList.contains('closed')) {
+        projectRemoveButton.hidden = true
+    }
 
     projectsList.appendChild(projectListing)
 

@@ -41,6 +41,10 @@ body {
     --important-line-gray: url('./visuals/important/important-line-gray.svg');
     --important-fill-black: url('./visuals/important/important-fill-black.svg');
     --important-fill-gray: url('./visuals/important/important-fill-gray.svg');
+    --l-panel-close: url('./visuals/l-panel-close.svg');
+    --l-panel-closed: url('./visuals/l-panel-closed.svg');
+    --r-panel-close: url('./visuals/r-panel-close.svg');
+    --r-panel-closed: url('./visuals/r-panel-closed.svg');
     --minimize-black: url('./visuals/minimize-black.svg');
     --new-line-black: url('./visuals/new-default.svg');
     --new-line-white: url('./visuals/new-hover.svg');
@@ -155,7 +159,7 @@ ul.projects-list {
     max-width: 100%;
 }
 
-ul.projects-list > li {
+ul.projects-list li {
     position: relative;
     list-style: none;
     display: flex;
@@ -955,26 +959,27 @@ div.date-picker .calendar-today-reset {
 /* -------------- */
 div.footer {
     grid-area: 2 / 1 / 3 / 4;
-    border-top: solid 1px var(--medium-gray-highlight);
     display: flex;
 }
 
 div.footer button {
     height: 100%;
     width: 100px;
+    border-top: 1px solid var(--light-gray-highlight);
+
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
-div.footer button#toggle-left,
-div.footer button#toggle-right {
-    width: 40px;
+div.footer button#toggle-left {
+    width: var(--left);
+    background-image: var(--l-panel-close);
+    background-position: 10px;
 }
 
 div.footer button#toggle-right {
+    width: var(--right);
     margin-left: auto;
-}
-
-svg {
-    width: inherit;
-    height: inherit;
-    transition: transform 0.2s ease-in-out;
+    background-image: var(--r-panel-close);
+    background-position: calc(100% - 10px);
 }

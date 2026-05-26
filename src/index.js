@@ -46,39 +46,44 @@ let currentView = [];  // Track currently open view
     })
 })();
 
+const body = document.querySelector('body')
 let leftMinimized = false
 function toggleLeftSidebar(event) {
-    const body = document.querySelector('body')
     const arrow = document.querySelector('svg#chevron-left')
+    const listedProjects = document.querySelectorAll('li')
+    const lButton = document.querySelector('button#toggle-left')
     // Close
     if (!leftMinimized) {
         body.style.setProperty('--left', '40px')
-        arrow.style['transform'] = 'rotate(180deg)'
+        listedProjects.forEach(project => project.lastChild.hidden = true)
+        lButton.style['background-image'] = 'var(--l-panel-closed)'
+        lButton.classList.add('closed')
         leftMinimized = true
     } else {
         body.style.setProperty('--left', '300px')
-        arrow.style['transform'] = 'revert-layer'
+        listedProjects.forEach(project => project.lastChild.hidden = false)
+        lButton.style['background-image'] = 'revert-layer'
+        lButton.classList.remove('closed')
         leftMinimized = false
     }
 }
 
 let rightMinimized = false
 function toggleRightSidebar(event) {
-    const body = document.querySelector('body')
     const sidebarRight = document.querySelector('.sidebar-right')
-    const calendarContainer = document.querySelector('div.calendar-container')
+    const calendarContainer = document.querySelector('.sidebar-right > .calendar-container')
     const dateContainer = document.querySelector('div.date-container')
-    const arrow = document.querySelector('svg#chevron-right')
+    const rButton = document.querySelector('button#toggle-right')
     // Close
     if (!rightMinimized) {
         body.style.setProperty('--right', '40px')
-        arrow.style['transform'] = 'rotate(180deg)'
         calendarContainer.style['display'] = 'none'
         dateContainer.style['display'] = 'none'
+        rButton.style['background-image'] = 'var(--r-panel-closed)'
         rightMinimized = true
     } else {
         body.style.setProperty('--right', '300px')
-        arrow.style['transform'] = 'revert-layer'
+        rButton.style['background-image'] = 'revert-layer'
         calendarContainer.style['display'] = 'revert-layer'
         dateContainer.style['display'] = 'revert-layer'
         rightMinimized = false

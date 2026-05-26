@@ -7,6 +7,7 @@ There is still a lot that could be done and I am returning to this project to im
 - task ordering by dragging and dropping,
 - task-grouping,
 - a back-end.
+
 Some smaller improvements, like the look of the time-picker, are also on my mind. However, I have been developing this project for a few months now and thus want to move onto something else for a while, coming back to this at a later stage.
 
 ## Functionality
